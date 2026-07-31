@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HNB Finance - Geo-Tracker Pro</title>
+    <!-- CSS Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        :root { --hnb: #004a99; --accent: #00f2ff; --bg: #f4f7f9; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; background: var(--bg); -webkit-user-select: none; user-select: none; }
+        
+        /* Top Status Bar */
+        .status-bar {
+            background: #111;
+            color: #888;
+            padding: 5px 20px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            font-family: monospace;
+            border-bottom: 1px solid #222;
+        }
+        .status-item span { color: var(--accent); margin-left: 5px; }
+
+        .container { max-width: 900px; margin: 10px auto 30px auto; background: #fff; border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); overflow: hidden; position: relative; }
+        
+        /* Neon Border Header */
+        .header { 
+            background: #050508; 
+            color: #fff; 
+            padding: 20px 15px; 
+            text-align: center; 
+            position: relative;
+            margin: 4px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(transparent, transparent, var(--accent), #ff007f, var(--accent));
+            animation: rotateLight 4s linear infinite;
+            z-index: 1;
+        }
+        .header::after {
+            content: '';
+            position: absolute;
+            inset: 3px;
+            background: #0b0c10;
+            border-radius: 6px;
+            z-index: 2;
+        }
+        .header h1 { 
+            margin: 0; 
+            font-size: 26px; 
+            font-weight: 900;
+            letter-spacing: 4px; 
+            color: #fff; 
+            position: relative;
+            z-index: 3;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px var(--accent), 0 0 20px var(--accent);
+        }
+        
+        @keyframes rotateLight {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* GLOWING IDEA & HELP BUTTON (TOP RIGHT) */
+        .btn-help-floating {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 10;
+            background: linear-gradient(135deg, #ff007f, #7928ca);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 0 12px rgba(255, 0, 127, 0.6), 0 0 20px rgba(121, 40, 202, 0.4);
+            animation: glowPulse 2s infinite alternate;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255,255,255,0.4);
+            cursor: pointer;
+        }
+
+        .btn-help-floating:hover {
+            transform: scale(1.1) translateY(-2px);
+            box-shadow: 0 0 22px rgba(0, 242, 255, 0.9), 0 0 35px rgba(255, 0, 127, 0.8);
+            background: linear-gradient(135deg, #00f2ff, #004a99);
+            color: #fff;
+        }
+
+        @keyframes glowPulse {
+            0% { box-shadow: 0 0 8px rgba(255, 0, 127, 0.5), 0 0 15px rgba(121, 40, 202, 0.3); }
+            100% { box-shadow: 0 0 18px rgba(255, 0, 127, 0.9), 0 0 30px rgba(0, 242, 255, 0.8); }
+        }
+
+        .controls { padding: 12px 20px; display: flex; gap: 10px; background: #fff; border-bottom: 1px solid #eee; align-items: center; flex-wrap: wrap; }
+        .input-group { flex: 1; min-width: 200px; }
+        input, select { padding: 10px 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 13px; outline: none; background: #fafafa; }
+        input { width: 100%; box-sizing: border-box; }
+        select { font-weight: 600; color: #333; cursor: pointer; }
+        button { padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; transition: 0.3s; white-space: nowrap; }
+        .btn-start { background: #2563eb; color: #fff; font-size: 14px; padding: 10px 20px; font-weight: 700; box-shadow: 0 4px 12px rgba(37,99,235,0.3); }
+        .btn-live { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+        .btn-route { background: var(--hnb); color: #fff; }
+        .btn-print { background: #4f46e5; color: #fff; }
+
+        .info-grid { display: grid; grid-template-columns: repeat(3, 1fr); padding: 12px; background: #fff; border-bottom: 1px solid #eee; text-align: center; }
+        .info-box b { font-size: 9px; color: var(--hnb); text-transform: uppercase; display: block; }
+        .info-box span { font-weight: 700; color: #333; font-size: 13px; }
+
+        #map { width: 100%; height: 450px; background: #e5e3df; cursor: crosshair; }
+        .footer { padding: 10px; text-align: center; background: #fff; }
+        
+        /* Scan Ready QR Box */
+        #qrcode { 
+            display: inline-block; 
+            padding: 10px; 
+            background: #ffffff; 
+            border: 3px solid #000000; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        #qrcode img { display: block; margin: 0 auto; image-rendering: pixelated; }
+        
+        .hnbf-marker-container { position: relative; text-align: center; }
+        .hnbf-arrow { width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 16px solid #d32f2f; margin: 0 auto; }
+        .hnbf-label { background: var(--hnb); color: white; border: 1.5px solid white; border-radius: 4px; padding: 2px 6px; font-weight: bold; font-size: 10px; white-space: nowrap; position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); }
+
+        /* WIZARD & ALERT MODAL STYLES */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.75);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            backdrop-filter: blur(4px);
+        }
+        .modal-box {
+            background: #fff;
+            padding: 30px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            border: 2px solid var(--hnb);
+        }
+        .modal-box h2 { margin-top: 0; color: var(--hnb); font-size: 20px; }
+        .modal-box label { display: block; text-align: left; font-size: 12px; font-weight: bold; color: #555; margin: 12px 0 4px 0; }
+        .modal-box select, .modal-box input { width: 100%; box-sizing: border-box; margin-bottom: 15px; }
+        .modal-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--hnb);
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            border: none;
+            margin-top: 10px;
+        }
+        .modal-btn-draw { background: #059669; }
+
+        /* 100KM ALERT POPUP SPECIFIC STYLES */
+        .alert-box {
+            border: 2px solid #e11d48;
+            background: #fff;
+        }
+        .alert-icon { font-size: 45px; margin-bottom: 10px; }
+        .alert-box h3 { color: #e11d48; margin: 0 0 10px 0; font-size: 20px; }
+        .alert-msg {
+            background: #fff1f2;
+            border: 1px dashed #f43f5e;
+            padding: 12px;
+            border-radius: 8px;
+            color: #9f1239;
+            font-size: 13px;
+            line-height: 1.5;
+            text-align: left;
+            margin-bottom: 15px;
+        }
+        .btn-alert-ok { background: #e11d48; color: #fff; font-size: 14px; font-weight: bold; }
+
+        /* PRINT STYLES */
+        @media print {
+            @page { size: A4; margin: 0; }
+            .no-print, .status-bar, .modal-overlay, #distanceAlertModal, .btn-help-floating { display: none !important; }
+            body { background: #fff !important; margin: 0 !important; padding: 0 !important; }
+
+            /* MODE 1: 2W & 3W PRINT MODE */
+            body.print-2w-3w .container {
+                width: 15cm !important;
+                height: 20.7cm !important;
+                margin: 4cm auto 0 auto !important;
+                border: 1.5pt solid #000 !important;
+                display: flex !important;
+                flex-direction: column !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                box-sizing: border-box !important;
+            }
+            body.print-2w-3w .header {
+                background: #fff !important;
+                color: #000 !important;
+                padding: 10px !important;
+                margin: 0 !important;
+            }
+            body.print-2w-3w .header::before, body.print-2w-3w .header::after { display: none !important; }
+            body.print-2w-3w .header h1 { font-size: 15pt !important; color: #000 !important; text-shadow: none !important; letter-spacing: 2px !important; }
+            body.print-2w-3w #map { flex-grow: 1 !important; height: auto !important; border-top: 1pt solid #000 !important; border-bottom: 1pt solid #000 !important; }
+            body.print-2w-3w #qrcode { border: 2pt solid #000 !important; padding: 6px !important; }
+            body.print-2w-3w #qrcode img { width: 120px !important; height: 120px !important; }
+
+            /* MODE 2: AUTO PRINT MODE */
+            body.print-auto .container {
+                position: absolute !important;
+                top: 4cm !important;
+                left: 2cm !important;
+                width: 17cm !important;
+                height: 9.5cm !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                border: 2px solid #000 !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                display: flex !important;
+                flex-direction: column !important;
+                overflow: hidden !important;
+                background: #fff !important;
+                box-sizing: border-box !important;
+            }
+            body.print-auto .header { padding: 4px !important; margin: 0 !important; border-bottom: 2px solid var(--hnb) !important; border-radius: 0 !important; background: #fff !important; }
+            body.print-auto .header::before, body.print-auto .header::after { display: none !important; }
+            body.print-auto .header h1 { font-size: 13pt !important; letter-spacing: 2px !important; text-shadow: none !important; color: #000 !important; }
+            body.print-auto .info-grid { padding: 4px !important; font-size: 8pt !important; border-bottom: 1px solid #ccc !important; }
+            body.print-auto .info-box span { font-size: 8pt !important; }
+            body.print-auto #map { flex-grow: 1 !important; height: auto !important; width: 100% !important; border-top: 1pt solid #000 !important; border-bottom: 1pt solid #000 !important; }
+            body.print-auto .footer { position: absolute !important; bottom: 2px !important; right: 2px !important; padding: 0 !important; background: #fff !important; z-index: 9999 !important; }
+            body.print-auto #qrcode { border: 2pt solid #000 !important; padding: 3px !important; }
+            body.print-auto #qrcode img { width: 80px !important; height: 80px !important; }
+        }
+    </style>
+    <!-- Leaflet Map JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+
+<div class="status-bar no-print">
+    <div class="status-item">SPEED: <span id="netSpeed">0.00 Mbps</span></div>
+    <div class="status-item">DATE: <span id="curDate">--/--/----</span></div>
+    <div class="status-item">TIME: <span id="curTime">00:00:00</span></div>
+</div>
+
+<div class="container">
+    <div class="header">
+        <h1>HNB FINANCE</h1>
+        <!-- Glowing Floating Idea & Help Button -->
+        <button class="btn-help-floating no-print" onclick="openHelpLink()">💡 Idea & Help</button>
+    </div>
+    
+    <div class="controls no-print">
+        <button class="btn-start" onclick="openWizard()">🗺️ Draw the Map</button>
+        <div class="input-group"><input type="text" id="destCoords" placeholder="Click map or paste coordinates"></div>
+        <button class="btn-live" id="lBtn">📍 My Loc</button>
+        <button class="btn-route" id="rBtn">🚀 Generate</button>
+        
+        <select id="printOption">
+            <option value="2w_3w">2W & 3W Mode</option>
+            <option value="auto">Auto Mode</option>
+        </select>
+        
+        <button class="btn-print" id="pBtn">🖨️ Print</button>
+    </div>
+    
+    <div class="info-grid">
+        <div class="info-box"><b>Branch</b><span id="currentBranchName">HNBF Anuradhapura</span></div>
+        <div class="info-box"><b>Target</b><span id="targetLabel">--</span></div>
+        <div class="info-box"><b>Distance</b><span id="distLabel">--</span></div>
+    </div>
+    <div id="map"></div>
+    <div class="footer"><div id="qrcode"></div></div>
+</div>
+
+<!-- STEP-BY-STEP POPUP WIZARD -->
+<div class="modal-overlay no-print" id="wizardModal">
+    <div class="modal-box" id="step0">
+        <h2>HNB FINANCE GEO-TRACKER</h2>
+        <p style="color:#666; font-size:14px;">Click the button below to draw the map.</p>
+        <button class="modal-btn" onclick="goToStep(1)">🗺️ Draw the Map</button>
+    </div>
+
+    <div class="modal-box" id="step1" style="display:none;">
+        <h2>Step 1: Select Your Branch</h2>
+        <label>Select relevant HNB Finance Branch:</label>
+        <select id="modalBranchSelect">
+            <option value="8.335351,80.411615|HNBF Anuradhapura">HNBF Anuradhapura</option>
+            <option value="8.003788259137602,80.27115376074129|HNBF Galgamuwa">HNBF Galgamuwa</option>
+            <option value="6.9373977982193304,79.9770854504675|HNBF Kaduwela">HNBF Kaduwela</option>
+            <option value="7.577366674604863,79.79526423466038|HNBF Chilaw">HNBF Chilaw</option>
+            <option value="8.262481044460486,80.20736562695471|HNBF Nochchiyagama">HNBF Nochchiyagama</option>
+            <option value="8.048322,79.737257|HNBF Norachcholai">HNBF Norachcholai</option>
+            <option value="8.832094454675605,80.77298497765483|HNBF Padaviya">HNBF Padaviya</option>
+            <option value="6.990035205448142,79.89295039174291|HNBF Wattala">HNBF Wattala</option>
+            <option value="8.02633538732535,79.83643853862367|HNBF Puttalam">HNBF Puttalam</option>
+            <option value="6.787665070989205,79.88512232810733|HNBF Moratuwa">HNBF Moratuwa</option>
+            <option value="8.290629351040467,80.71554546566082|HNBF Galenbidunuwewa">HNBF Galenbidunuwewa</option>
+            <option value="6.877532810992226,79.87818111024245|HNBF City">HNBF City</option>
+            <option value="8.538874,80.493198|HNBF Medawachchiya">HNBF Medawachchiya</option>
+            <option value="7.09175794868064,79.99863253605719|HNBF Gampaha">HNBF Gampaha</option>
+            <option value="7.094013021198048,79.99666153457918|HNBF Gampaha 2">HNBF Gampaha 2</option>
+        </select>
+        <button class="modal-btn" onclick="goToStep(2)">OK / Next ➡️</button>
+    </div>
+
+    <div class="modal-box" id="step2" style="display:none;">
+        <h2>Step 2: Enter Target Location</h2>
+        <label>Enter target location coordinates (Lat, Lng):</label>
+        <input type="text" id="modalDestCoords" placeholder="e.g. 8.3512, 80.4021">
+        <p style="font-size: 11px; color: #888;">(Or click directly on the map after selecting OK)</p>
+        <button class="modal-btn modal-btn-draw" onclick="executeDrawAndPrint()">🚀 Enter Draw the Map</button>
+    </div>
+</div>
+
+<!-- 100 KM+ DISTANCE APPROVAL REMINDER MODAL POPUP -->
+<div class="modal-overlay no-print" id="distanceAlertModal" style="display: none;">
+    <div class="modal-box alert-box">
+        <div class="alert-icon">⚠️</div>
+        <h3>Distance Exceeds 100 KM!</h3>
+        <div class="alert-msg">
+            <b>Important Reminder:</b><br>
+            The customer is located <b><span id="alertKmValue">0</span> KM</b> away from the branch. As the distance exceeds the 100 KM limit, please ensure the required <b>Special Approval</b> has been obtained for this facility.
+        </div>
+        <button class="modal-btn btn-alert-ok" onclick="closeAlertModal()">I Understand / OK</button>
+    </div>
+</div>
+
+<script>
+    // Help Button Target Link
+    var helpLink = "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=Xqpfvj37g0mkFC1mBArnbxYIJwbXtbVCsCZt4u4BQp1UNzdGMUVBUFhWSTlHUEFaS05aMFYxSUxXTC4u";
+
+    function openHelpLink() {
+        window.open(helpLink, '_blank');
+    }
+
+    var currentStartLoc = [8.335351, 80.411615];
+    var currentBranchName = "HNBF Anuradhapura";
+    var map, hnbfMarker, currentRouteLine, targetMarker;
+
+    function openWizard() {
+        document.getElementById('wizardModal').style.display = 'flex';
+        goToStep(0);
+    }
+
+    function goToStep(stepNum) {
+        document.getElementById('step0').style.display = 'none';
+        document.getElementById('step1').style.display = 'none';
+        document.getElementById('step2').style.display = 'none';
+        document.getElementById('step' + stepNum).style.display = 'block';
+    }
+
+    function closeAlertModal() {
+        document.getElementById('distanceAlertModal').style.display = 'none';
+    }
+
+    function checkDistanceAndAlert(km) {
+        if (km > 100) {
+            document.getElementById('alertKmValue').innerText = km.toFixed(1);
+            document.getElementById('distanceAlertModal').style.display = 'flex';
+        }
+    }
+
+    function executeDrawAndPrint() {
+        var bVal = document.getElementById('modalBranchSelect').value.split('|');
+        var bCoords = bVal[0].split(',');
+        currentStartLoc = [parseFloat(bCoords[0]), parseFloat(bCoords[1])];
+        currentBranchName = bVal[1];
+        document.getElementById('currentBranchName').innerText = currentBranchName;
+
+        updateBranchMarker();
+
+        var destVal = document.getElementById('modalDestCoords').value;
+        document.getElementById('wizardModal').style.display = 'none';
+
+        setTimeout(() => {
+            if(map) map.invalidateSize();
+            if (destVal && destVal.includes(',')) {
+                var parts = destVal.split(',');
+                generateRoute(parseFloat(parts[0].trim()), parseFloat(parts[1].trim()));
+            }
+        }, 300);
+    }
+
+    function refreshMapSize() {
+        if(map) {
+            setTimeout(() => { map.invalidateSize(); }, 300);
+        }
+    }
+
+    function triggerPrint() {
+        var selectedOption = document.getElementById('printOption').value;
+        document.body.classList.remove('print-auto', 'print-2w-3w');
+        
+        if (selectedOption === 'auto') {
+            document.body.classList.add('print-auto');
+        } else {
+            document.body.classList.add('print-2w-3w');
+        }
+        
+        refreshMapSize();
+        setTimeout(() => { window.print(); }, 400);
+    }
+
+    document.getElementById('pBtn').onclick = triggerPrint;
+
+    function updateClock() {
+        const now = new Date();
+        document.getElementById('curTime').innerText = now.toLocaleTimeString();
+        document.getElementById('curDate').innerText = now.toLocaleDateString('en-GB');
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    function updateSpeed() {
+        if (navigator.connection && navigator.connection.downlink) {
+            document.getElementById('netSpeed').innerText = navigator.connection.downlink.toFixed(2) + " Mbps";
+        } else {
+            document.getElementById('netSpeed').innerText = (Math.random() * (15 - 5) + 5).toFixed(2) + " Mbps";
+        }
+    }
+    setInterval(updateSpeed, 3000);
+    updateSpeed();
+
+    // GOOGLE MAPS TILE INITIALIZATION
+    function initMap() {
+        map = L.map('map', { zoomControl: false }).setView(currentStartLoc, 13);
+        
+        L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+            maxZoom: 20,
+            subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+            attribution: '© Google Maps'
+        }).addTo(map);
+
+        updateBranchMarker();
+
+        map.on('click', function(e) { 
+            generateRoute(e.latlng.lat.toFixed(6), e.latlng.lng.toFixed(6)); 
+        });
+
+        refreshMapSize();
+    }
+
+    function updateBranchMarker() {
+        if(hnbfMarker) map.removeLayer(hnbfMarker);
+        
+        var hnbfIcon = L.divIcon({ 
+            className: 'hnbf-marker-container', 
+            html: `<div class="hnbf-label">${currentBranchName.toUpperCase()}</div><div class="hnbf-arrow"></div>`, 
+            iconSize: [160, 40], iconAnchor: [80, 40] 
+        });
+        hnbfMarker = L.marker(currentStartLoc, {icon: hnbfIcon}).addTo(map);
+        map.setView(currentStartLoc, 13);
+    }
+
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+        var R = 6371;
+        var dLat = (lat2 - lat1) * Math.PI / 180;
+        var dLon = (lon2 - lon1) * Math.PI / 180;
+        var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c;
+    }
+
+    function generateRoute(destLat, destLng) {
+        var val = destLat + ", " + destLng;
+        document.getElementById('destCoords').value = val;
+        document.getElementById('targetLabel').innerText = val;
+        
+        if(targetMarker) map.removeLayer(targetMarker);
+        if(currentRouteLine) map.removeLayer(currentRouteLine);
+
+        targetMarker = L.marker([destLat, destLng]).addTo(map);
+
+        // Fetch Route from selected branch to typed location
+        fetch(`https://router.project-osrm.org/route/v1/driving/${currentStartLoc[1]},${currentStartLoc[0]};${destLng},${destLat}?overview=full&geometries=geojson`)
+        .then(res => res.json())
+        .then(data => {
+            if(data.routes && data.routes.length > 0) {
+                var routeCoords = data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
+                var distKm = data.routes[0].distance / 1000;
+                document.getElementById('distLabel').innerText = distKm.toFixed(2) + " KM";
+                currentRouteLine = L.polyline(routeCoords, {color: '#d32f2f', weight: 5}).addTo(map);
+                map.fitBounds(currentRouteLine.getBounds(), {padding: [50, 50]});
+                
+                // Trigger 100KM Check
+                checkDistanceAndAlert(distKm);
+            } else {
+                fallbackDirectLine(destLat, destLng);
+            }
+        })
+        .catch(e => {
+            fallbackDirectLine(destLat, destLng);
+        });
+
+        // LIVE USER LOCATION DIRECT NAVIGATION QR ENGINE
+        var qrContainer = document.getElementById('qrcode');
+        qrContainer.innerHTML = "";
+        
+        var liveNavUrl = "https://www.google.com/maps/dir/?api=1&destination=" + destLat + "," + destLng;
+        
+        var img = document.createElement('img');
+        img.src = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(liveNavUrl) + "&ecc=M&margin=2";
+        img.alt = "Scan Direction QR";
+        img.style.width = "100px";
+        img.style.height = "100px";
+        qrContainer.appendChild(img);
+
+        refreshMapSize();
+    }
+
+    function fallbackDirectLine(destLat, destLng) {
+        var dist = calculateDistance(currentStartLoc[0], currentStartLoc[1], destLat, destLng);
+        document.getElementById('distLabel').innerText = dist.toFixed(2) + " KM";
+        currentRouteLine = L.polyline([currentStartLoc, [destLat, destLng]], {color: '#d32f2f', weight: 4, dashArray: '6, 6'}).addTo(map);
+        map.fitBounds(currentRouteLine.getBounds(), {padding: [50, 50]});
+        
+        // Trigger 100KM Check
+        checkDistanceAndAlert(dist);
+    }
+
+    window.onload = function() {
+        initMap();
+        document.getElementById('rBtn').onclick = function() {
+            var val = document.getElementById('destCoords').value.split(',');
+            if(val.length === 2) generateRoute(parseFloat(val[0].trim()), parseFloat(val[1].trim()));
+        };
+        document.getElementById('lBtn').onclick = function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((p) => { generateRoute(p.coords.latitude, p.coords.longitude); });
+            }
+        };
+    };
+</script>
+</body>
+</html>
