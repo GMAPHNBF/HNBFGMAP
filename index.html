@@ -71,12 +71,42 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* GLOWING IDEA & HELP BUTTON (TOP RIGHT) */
-        .btn-help-floating {
+        /* HEADER BUTTON CONTAINER */
+        .header-btn-group {
             position: absolute;
             top: 15px;
             right: 15px;
             z-index: 10;
+            display: flex;
+            gap: 10px;
+        }
+
+        /* HOME BUTTON STYLES */
+        .btn-home-floating {
+            background: linear-gradient(135deg, #004a99, #00f2ff);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 0 12px rgba(0, 242, 255, 0.6), 0 0 20px rgba(0, 74, 153, 0.4);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255,255,255,0.4);
+            cursor: pointer;
+        }
+
+        .btn-home-floating:hover {
+            transform: scale(1.1) translateY(-2px);
+            box-shadow: 0 0 22px rgba(0, 242, 255, 0.9);
+            background: linear-gradient(135deg, #00f2ff, #004a99);
+        }
+
+        /* GLOWING IDEA & HELP BUTTON */
+        .btn-help-floating {
             background: linear-gradient(135deg, #ff007f, #7928ca);
             color: #fff;
             padding: 8px 16px;
@@ -290,7 +320,7 @@
         /* PRINT STYLES */
         @media print {
             @page { size: A4; margin: 0; }
-            .no-print, .status-bar, .modal-overlay, #distanceAlertModal, .btn-help-floating { display: none !important; }
+            .no-print, .status-bar, .modal-overlay, #distanceAlertModal, .header-btn-group { display: none !important; }
             body { background: #fff !important; margin: 0 !important; padding: 0 !important; }
 
             /* MODE 1: 2W & 3W PRINT MODE */
@@ -360,8 +390,11 @@
 <div class="container">
     <div class="header">
         <h1>HNB FINANCE</h1>
-        <!-- Glowing Floating Idea & Help Button -->
-        <button class="btn-help-floating no-print" onclick="openHelpLink()">💡 Idea & Help</button>
+        <!-- Header Button Group (HOME and IDEA & HELP) -->
+        <div class="header-btn-group no-print">
+            <button class="btn-home-floating" onclick="openWizard()">🏠 HOME</button>
+            <button class="btn-help-floating" onclick="openHelpLink()">💡 Idea & Help</button>
+        </div>
     </div>
     
     <div class="controls no-print">
