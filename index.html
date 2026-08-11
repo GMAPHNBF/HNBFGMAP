@@ -163,7 +163,7 @@
         }
         .modal-box h2 { margin-top: 0; color: var(--hnb); font-size: 20px; }
         .modal-box label { display: block; text-align: left; font-size: 12px; font-weight: bold; color: #555; margin: 12px 0 4px 0; }
-        .modal-box select, .modal-box input { width: 100%; box-sizing: border-box; margin-bottom: 15px; }
+        .modal-box select, .modal-box input { width: 100%; box-sizing: border-box; margin-bottom: 12px; }
         .modal-btn {
             width: 100%;
             padding: 12px;
@@ -308,9 +308,13 @@
 
     <div class="modal-box" id="step1" style="display:none;">
         <h2>Step 1: Select Your Branch</h2>
-        <label>Select relevant HNB Finance Branch:</label>
-        <select id="modalBranchSelect">
-            <option value="8.335351,80.411615|HNBF Anuradhapura">HNBF Anuradhapura</option>
+        <label>Search / Select relevant HNB Finance Branch:</label>
+        
+        <!-- SEARCH BOX FOR BRANCHES -->
+        <input type="text" id="branchSearchInput" placeholder="🔍 Type branch name to search..." onkeyup="filterBranches()" style="border:2px solid var(--hnb);">
+        
+        <select id="modalBranchSelect" size="5" style="height: 120px;">
+            <option value="8.335351,80.411615|HNBF Anuradhapura" selected>HNBF Anuradhapura</option>
             <option value="8.003788259137602,80.27115376074129|HNBF Galgamuwa">HNBF Galgamuwa</option>
             <option value="6.9373977982193304,79.9770854504675|HNBF Kaduwela">HNBF Kaduwela</option>
             <option value="7.577366674604863,79.79526423466038|HNBF Chilaw">HNBF Chilaw</option>
@@ -378,6 +382,29 @@
         document.getElementById('step' + stepNum).style.display = 'block';
     }
 
+    /* BRANCH SEARCH FILTER FUNCTION */
+    function filterBranches() {
+        var input = document.getElementById("branchSearchInput");
+        var filter = input.value.toUpperCase();
+        var select = document.getElementById("modalBranchSelect");
+        var options = select.getElementsByTagName("option");
+
+        var firstMatchFound = false;
+        for (var i = 0; i < options.length; i++) {
+            var txtValue = options[i].text || options[i].innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                options[i].style.display = "";
+                if (!firstMatchFound) {
+                    options[i].selected = true;
+                    firstMatchFound = true;
+                }
+            } else {
+                options[i].style.display = "none";
+                options[i].selected = false;
+            }
+        }
+    }
+
     function closeAlertModal() {
         document.getElementById('distanceAlertModal').style.display = 'none';
     }
@@ -390,13 +417,27 @@
     }
 
     function executeDrawAndPrint() {
-        var bVal = document.getElementById('modalBranchSelect').value.split('|');
-        var bCoords = bVal[0].split(',');
-        currentStartLoc = [parseFloat(bCoords[0]), parseFloat(bCoords[1])];
-        currentBranchName = bVal[1];
-        document.getElementById('currentBranchName').innerText = currentBranchName;
+        var selectEl = document.getElementById('modalBranchSelect');
+        var bVal = selectEl.value;
+        
+        if (!bVal && selectEl.options.length > 0) {
+            for (var i = 0; i < selectEl.options.length; i++) {
+                if (selectEl.options[i].style.display !== "none") {
+                    bVal = selectEl.options[i].value;
+                    break;
+                }
+            }
+        }
 
-        updateBranchMarker();
+        if(bVal) {
+            var parts = bVal.split('|');
+            var bCoords = parts[0].split(',');
+            currentStartLoc = [parseFloat(bCoords[0]), parseFloat(bCoords[1])];
+            currentBranchName = parts[1];
+            document.getElementById('currentBranchName').innerText = currentBranchName;
+
+            updateBranchMarker();
+        }
 
         var destVal = document.getElementById('modalDestCoords').value;
         document.getElementById('wizardModal').style.display = 'none';
