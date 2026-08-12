@@ -210,16 +210,52 @@
             text-transform: uppercase;
         }
 
-        /* LIVE HITS BADGE STYLES */
-        .live-counter-container {
-            margin: 10px 0 15px 0;
-            display: flex;
-            justify-content: center;
+        /* REALTIME LIVE COUNTER & GREEN LED STYLES */
+        .live-status-box {
+            display: inline-flex;
             align-items: center;
+            gap: 8px;
+            background: #09131d;
+            border: 1px solid #10b981;
+            padding: 6px 16px;
+            border-radius: 30px;
+            margin: 10px auto 15px auto;
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
         }
-        .live-counter-container img {
+
+        /* BLINKING GREEN LED LIGHT */
+        .green-led {
+            width: 10px;
+            height: 10px;
+            background-color: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #10b981, 0 0 15px #10b981;
+            animation: blinkLed 1.2s infinite ease-in-out;
+        }
+
+        @keyframes blinkLed {
+            0% { opacity: 1; transform: scale(1); box-shadow: 0 0 8px #10b981, 0 0 15px #10b981; }
+            50% { opacity: 0.2; transform: scale(0.85); box-shadow: none; }
+            100% { opacity: 1; transform: scale(1); box-shadow: 0 0 8px #10b981, 0 0 15px #10b981; }
+        }
+
+        .live-text {
+            color: #10b981;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .live-count-num {
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: 800;
+            font-family: monospace;
+            background: #04080d;
+            padding: 2px 8px;
             border-radius: 6px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            border: 1px solid rgba(16, 185, 129, 0.4);
         }
 
         /* MENU BUTTON CONTAINER */
@@ -460,9 +496,11 @@
         <span class="menu-badge">MAIN MENU</span>
         <h2>HNB FINANCE</h2>
         
-        <!-- LIVE VISITORS / HITS COUNTER BADGE -->
-        <div class="live-counter-container">
-            <img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgmaphnbf.github.io%2F&count_bg=%23004A99&title_bg=%23111111&icon=&icon_color=%23E7E7E7&title=VISITORS&edge_flat=false" alt="Live Visitors Count" />
+        <!-- GREEN LED BLINKING LIVE USER COUNTER UI -->
+        <div class="live-status-box">
+            <div class="green-led"></div>
+            <span class="live-text">LIVE USERS:</span>
+            <span class="live-count-num" id="liveUserCount">3</span>
         </div>
 
         <p style="color:#666; font-size:13px; margin-bottom: 10px;">Select an option to proceed:</p>
@@ -481,13 +519,13 @@
             </a>
 
             <!-- OPTION 3: EDIT PDF -->
-            <a href="https://gmaphnbf.github.io/pdf-editor/" target="_blank" class="menu-item-btn btn-opt-pdf">
+            <a href="https://gmaphnbf.github.io/pdf-editor/" target="_blank" class="menu-item-btn btn-opt-pdf"[cite: 1]>
                 <span class="btn-icon">📝</span>
                 <span>Edit PDF</span>
             </a>
 
             <!-- OPTION 4: THREE WHEEL PRICE LIST -->
-            <a href="https://gmaphnbf.github.io/3WH3/" target="_blank" class="menu-item-btn btn-opt-3w">
+            <a href="https://gmaphnbf.github.io/3WH3/" target="_blank" class="menu-item-btn btn-opt-3w"[cite: 1]>
                 <span class="btn-icon">🛺</span>
                 <span>Three Wheel price list</span>
             </a>
@@ -500,7 +538,7 @@
         <label>Search / Select relevant HNB Finance Branch:</label>
         
         <!-- SEARCH BOX FOR BRANCHES -->
-        <input type="text" id="branchSearchInput" placeholder="🔍 Type branch name to search..." onkeyup="filterBranches()" style="border:2px solid var(--hnb);">
+        <input type="text" id="branchSearchInput" placeholder="🔍 Type branch name to search..." onkeyup="filterBranches()" style="border:2px solid var(--hnb);"[cite: 1]>
         
         <select id="modalBranchSelect" size="5" style="height: 120px;">
             <option value="8.335351,80.411615|HNBF Anuradhapura" selected>HNBF Anuradhapura</option>
@@ -791,8 +829,25 @@
         checkDistanceAndAlert(dist);
     }
 
+    // LIVE USER COUNTER SIMULATOR WITH SMOOTH RANDOM FLUTTER
+    function initLiveUserCounter() {
+        let currentUsers = Math.floor(Math.random() * 6) + 3; // 3 සිට 8 දක්වා Random අගයක්
+        const countEl = document.getElementById('liveUserCount');
+        
+        if(countEl) {
+            countEl.innerText = currentUsers;
+
+            setInterval(() => {
+                let change = Math.floor(Math.random() * 3) - 1; // -1, 0, හෝ +1
+                currentUsers = Math.max(1, currentUsers + change);
+                countEl.innerText = currentUsers;
+            }, 5000);
+        }
+    }
+
     window.onload = function() {
         initMap();
+        initLiveUserCounter();
         
         // Open Step 0 Popup when page loads
         openWizard();
