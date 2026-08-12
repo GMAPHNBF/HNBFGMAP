@@ -210,6 +210,18 @@
             text-transform: uppercase;
         }
 
+        /* LIVE HITS BADGE STYLES */
+        .live-counter-container {
+            margin: 10px 0 15px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .live-counter-container img {
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
         /* MENU BUTTON CONTAINER */
         .menu-options-container {
             display: flex;
@@ -401,8 +413,6 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
-    <img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=YOUR-LIVE-URL-HERE&count_bg=%237928CA&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false"/>
-    
 
 <div class="status-bar no-print">
     <div class="status-item">SPEED: <span id="netSpeed">0.00 Mbps</span></div>
@@ -449,6 +459,12 @@
     <div class="modal-box" id="step0">
         <span class="menu-badge">MAIN MENU</span>
         <h2>HNB FINANCE</h2>
+        
+        <!-- LIVE VISITORS / HITS COUNTER BADGE -->
+        <div class="live-counter-container">
+            <img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgmaphnbf.github.io%2F&count_bg=%23004A99&title_bg=%23111111&icon=&icon_color=%23E7E7E7&title=VISITORS&edge_flat=false" alt="Live Visitors Count" />
+        </div>
+
         <p style="color:#666; font-size:13px; margin-bottom: 10px;">Select an option to proceed:</p>
         
         <div class="menu-options-container">
@@ -465,13 +481,13 @@
             </a>
 
             <!-- OPTION 3: EDIT PDF -->
-            <a href="https://gmaphnbf.github.io/pdf-editor/" target="_blank" class="menu-item-btn btn-opt-pdf"[cite: 1]>
+            <a href="https://gmaphnbf.github.io/pdf-editor/" target="_blank" class="menu-item-btn btn-opt-pdf">
                 <span class="btn-icon">📝</span>
                 <span>Edit PDF</span>
             </a>
 
             <!-- OPTION 4: THREE WHEEL PRICE LIST -->
-            <a href="https://gmaphnbf.github.io/3WH3/" target="_blank" class="menu-item-btn btn-opt-3w"[cite: 1]>
+            <a href="https://gmaphnbf.github.io/3WH3/" target="_blank" class="menu-item-btn btn-opt-3w">
                 <span class="btn-icon">🛺</span>
                 <span>Three Wheel price list</span>
             </a>
@@ -484,7 +500,7 @@
         <label>Search / Select relevant HNB Finance Branch:</label>
         
         <!-- SEARCH BOX FOR BRANCHES -->
-        <input type="text" id="branchSearchInput" placeholder="🔍 Type branch name to search..." onkeyup="filterBranches()" style="border:2px solid var(--hnb);"[cite: 1]>
+        <input type="text" id="branchSearchInput" placeholder="🔍 Type branch name to search..." onkeyup="filterBranches()" style="border:2px solid var(--hnb);">
         
         <select id="modalBranchSelect" size="5" style="height: 120px;">
             <option value="8.335351,80.411615|HNBF Anuradhapura" selected>HNBF Anuradhapura</option>
