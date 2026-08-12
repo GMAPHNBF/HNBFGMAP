@@ -97,6 +97,7 @@
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             border: 1px solid rgba(255,255,255,0.4);
             cursor: pointer;
+            text-decoration: none;
         }
 
         .btn-home-floating:hover {
@@ -255,6 +256,16 @@
             transform: translateY(-3px);
             box-shadow: 0 8px 22px rgba(0, 242, 255, 0.5);
             background: linear-gradient(135deg, #00f2ff, #004a99);
+        }
+
+        /* LESING CAL BUTTON STYLES */
+        .btn-opt-lesing-cal {
+            background: linear-gradient(135deg, #FF6600, #FFD100);
+        }
+        .btn-opt-lesing-cal:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 22px rgba(255, 102, 0, 0.5);
+            background: linear-gradient(135deg, #FFD100, #FF6600);
         }
 
         /* EDIT PDF BUTTON */
@@ -445,14 +456,20 @@
                 <span>Draw the Map</span>
             </button>
             
-            <!-- OPTION 2: EDIT PDF -->
-            <a href="https://gmaphnbf.github.io/pdf-editor/" target="_blank" class="menu-item-btn btn-opt-pdf">
+            <!-- OPTION 2: LESING CAL -->
+            <a href="https://gmaphnbf.github.io/LESINGCAL/" target="_blank" class="menu-item-btn btn-opt-lesing-cal">
+                <span class="btn-icon">🧮</span>
+                <span>LESING CAL</span>
+            </a>
+
+            <!-- OPTION 3: EDIT PDF -->
+            <a href="https://gmaphnbf.github.io/pdf-editor/" target="_blank" class="menu-item-btn btn-opt-pdf"[cite: 1]>
                 <span class="btn-icon">📝</span>
                 <span>Edit PDF</span>
             </a>
 
-            <!-- OPTION 3: THREE WHEEL PRICE LIST -->
-            <a href="https://gmaphnbf.github.io/3WH3/" target="_blank" class="menu-item-btn btn-opt-3w">
+            <!-- OPTION 4: THREE WHEEL PRICE LIST -->
+            <a href="https://gmaphnbf.github.io/3WH3/" target="_blank" class="menu-item-btn btn-opt-3w"[cite: 1]>
                 <span class="btn-icon">🛺</span>
                 <span>Three Wheel price list</span>
             </a>
@@ -465,7 +482,7 @@
         <label>Search / Select relevant HNB Finance Branch:</label>
         
         <!-- SEARCH BOX FOR BRANCHES -->
-        <input type="text" id="branchSearchInput" placeholder="🔍 Type branch name to search..." onkeyup="filterBranches()" style="border:2px solid var(--hnb);">
+        <input type="text" id="branchSearchInput" placeholder="🔍 Type branch name to search..." onkeyup="filterBranches()" style="border:2px solid var(--hnb);"[cite: 1]>
         
         <select id="modalBranchSelect" size="5" style="height: 120px;">
             <option value="8.335351,80.411615|HNBF Anuradhapura" selected>HNBF Anuradhapura</option>
