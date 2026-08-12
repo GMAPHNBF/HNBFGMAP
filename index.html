@@ -448,7 +448,7 @@
     <!-- Leaflet Map JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-    <!-- FIREBASE SDKs (COMPAT MODULE FOR EASY REALTIME PRESENCE ENGINE) -->
+    <!-- FIREBASE SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
@@ -499,7 +499,7 @@
     <!-- STEP 0: MAIN MENU POPUP -->
     <div class="modal-box" id="step0">
         <span class="menu-badge">MAIN MENU</span>
-        <h2>HNB FINANCE</h2>
+        2><h2>HNB FINANCE</h2>
         
         <!-- REALTIME FIREBASE LIVE USER COUNTER UI -->
         <div class="live-status-box">
@@ -524,13 +524,13 @@
             </a>
 
             <!-- OPTION 3: EDIT PDF -->
-            <a href="https://gmaphnbf.github.io/pdf-editor/" target="_blank" class="menu-item-btn btn-opt-pdf">
+            <a href="https://gmaphnbf.github.io/pdf-editor/" target="_blank" class="menu-item-btn btn-opt-pdf" cite="1">
                 <span class="btn-icon">📝</span>
                 <span>Edit PDF</span>
             </a>
 
             <!-- OPTION 4: THREE WHEEL PRICE LIST -->
-            <a href="https://gmaphnbf.github.io/3WH3/" target="_blank" class="menu-item-btn btn-opt-3w">
+            <a href="https://gmaphnbf.github.io/3WH3/" target="_blank" class="menu-item-btn btn-opt-3w" cite="1">
                 <span class="btn-icon">🛺</span>
                 <span>Three Wheel price list</span>
             </a>
@@ -543,7 +543,7 @@
         <label>Search / Select relevant HNB Finance Branch:</label>
         
         <!-- SEARCH BOX FOR BRANCHES -->
-        <input type="text" id="branchSearchInput" placeholder="🔍 Type branch name to search..." onkeyup="filterBranches()" style="border:2px solid var(--hnb);">
+        <input type="text" id="branchSearchInput" placeholder="🔍 Type branch name to search..." onkeyup="filterBranches()" style="border:2px solid var(--hnb);" cite="1">
         
         <select id="modalBranchSelect" size="5" style="height: 120px;">
             <option value="8.335351,80.411615|HNBF Anuradhapura" selected>HNBF Anuradhapura</option>
@@ -603,11 +603,11 @@
 </div>
 
 <script>
-    // YOUR FIREBASE CONFIGURATION
+    // CORRECTED FIREBASE CONFIGURATION
     const firebaseConfig = {
         apiKey: "AIzaSyDKkMovF3OWweyQSveA8KUKk63b-i5cqUg",
         authDomain: "gmap-e4d9c.firebaseapp.com",
-        databaseURL: "https://gmap-e4d9c-default-rtdb.firebaseio.com",
+        databaseURL: "https://gmap-e4d9c-default-rtdb.asia-southeast1.firebasedatabase.app",
         projectId: "gmap-e4d9c",
         storageBucket: "gmap-e4d9c.firebasestorage.app",
         messagingSenderId: "463028372030",
@@ -622,20 +622,16 @@
 
     // REALTIME LIVE PRESENCE TRACKER
     function setupRealtimePresence() {
-        // අලුත් visitor කෙනෙකුට Unique Session ID එකක් සාදා ගැනීම
         const mySessionRef = db.ref('status/' + Date.now() + "_" + Math.random().toString(36).substr(2, 5));
         const connectedRef = db.ref('.info/connected');
 
         connectedRef.on('value', (snap) => {
             if (snap.val() === true) {
-                // User site එකට Connect වුණු ගමන් Realtime DB එකට Record එක දානවා
                 mySessionRef.set(true);
-                // Tab එක Close කළාම හෝ Internet 끊ුණාම DB එකෙන් Auto Remove වෙනවා
                 mySessionRef.onDisconnect().remove();
             }
         });
 
-        // DB එකේ ඉන්න සැබෑ පරිශීලකයින් ගණන Live Update ලබාගැනීම
         db.ref('status').on('value', (snap) => {
             const activeCount = snap.numChildren();
             const countEl = document.getElementById('liveUserCount');
