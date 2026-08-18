@@ -6,8 +6,23 @@
     <!-- CSS Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
-        :root { --hnb: #004a99; --accent: #00f2ff; --bg: #f4f7f9; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; background: var(--bg); -webkit-user-select: none; user-select: none; }
+        :root { 
+            --hnb: #004a99; 
+            --accent: #00f2ff; 
+            --bg: #f4f7f9; 
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --border-color: #eeeeee;
+        }
+
+        body.dark-mode {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f8fafc;
+            --border-color: #334155;
+        }
+
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; background: var(--bg); color: var(--text-color); -webkit-user-select: none; user-select: none; transition: background 0.3s, color 0.3s; }
         
         /* Top Status Bar */
         .status-bar {
@@ -22,7 +37,7 @@
         }
         .status-item span { color: var(--accent); margin-left: 5px; }
 
-        .container { max-width: 900px; margin: 10px auto 30px auto; background: #fff; border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); overflow: hidden; position: relative; }
+        .container { max-width: 900px; margin: 10px auto 30px auto; background: var(--card-bg); border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); overflow: hidden; position: relative; }
         
         /* Neon Border Header */
         .header { 
@@ -106,55 +121,92 @@
             background: linear-gradient(135deg, #00f2ff, #004a99);
         }
 
-        /* GLOWING IDEA & HELP BUTTON */
-        .btn-help-floating {
-            background: linear-gradient(135deg, #ff007f, #7928ca);
+        /* SETTINGS BUTTON IN HEADER */
+        .btn-settings-floating {
+            background: #1e293b;
             color: #fff;
-            padding: 8px 16px;
-            border-radius: 30px;
-            font-size: 12px;
-            font-weight: 800;
-            letter-spacing: 0.5px;
-            text-decoration: none;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            font-size: 16px;
             display: flex;
             align-items: center;
-            gap: 6px;
-            box-shadow: 0 0 12px rgba(255, 0, 127, 0.6), 0 0 20px rgba(121, 40, 202, 0.4);
-            animation: glowPulse 2s infinite alternate;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 1px solid rgba(255,255,255,0.4);
+            justify-content: center;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.3);
             cursor: pointer;
         }
 
-        .btn-help-floating:hover {
-            transform: scale(1.1) translateY(-2px);
-            box-shadow: 0 0 22px rgba(0, 242, 255, 0.9), 0 0 35px rgba(255, 0, 127, 0.8);
-            background: linear-gradient(135deg, #00f2ff, #004a99);
+        .btn-settings-floating:hover {
+            transform: rotate(90deg) scale(1.1);
+            background: #334155;
+        }
+
+        /* FLOATING HOME BUTTON ON MAP */
+        .map-home-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 1000;
+            background: linear-gradient(135deg, #004a99, #00f2ff);
             color: #fff;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 800;
+            box-shadow: 0 0 10px rgba(0, 242, 255, 0.6);
+            border: 1px solid rgba(255,255,255,0.4);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .map-home-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.9);
+        }
+
+        /* FLOATING HELP BUTTON ON MAP */
+        .map-help-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            background: linear-gradient(135deg, #ff007f, #7928ca);
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 800;
+            box-shadow: 0 0 10px rgba(255, 0, 127, 0.6);
+            border: 1px solid rgba(255,255,255,0.4);
+            cursor: pointer;
+            animation: glowPulse 2s infinite alternate;
         }
 
         @keyframes glowPulse {
-            0% { box-shadow: 0 0 8px rgba(255, 0, 127, 0.5), 0 0 15px rgba(121, 40, 202, 0.3); }
-            100% { box-shadow: 0 0 18px rgba(255, 0, 127, 0.9), 0 0 30px rgba(0, 242, 255, 0.8); }
+            0% { box-shadow: 0 0 8px rgba(255, 0, 127, 0.5); }
+            100% { box-shadow: 0 0 18px rgba(255, 0, 127, 0.9); }
         }
 
-        .controls { padding: 12px 20px; display: flex; gap: 10px; background: #fff; border-bottom: 1px solid #eee; align-items: center; flex-wrap: wrap; }
+        .controls { padding: 12px 20px; display: flex; gap: 10px; background: var(--card-bg); border-bottom: 1px solid var(--border-color); align-items: center; flex-wrap: wrap; }
         .input-group { flex: 1; min-width: 200px; }
-        input, select { padding: 10px 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 13px; outline: none; background: #fafafa; }
+        input, select { padding: 10px 12px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 13px; outline: none; background: var(--bg); color: var(--text-color); }
         input { width: 100%; box-sizing: border-box; }
-        select { font-weight: 600; color: #333; cursor: pointer; }
+        select { font-weight: 600; cursor: pointer; }
         button { padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; transition: 0.3s; white-space: nowrap; }
         .btn-start { background: #2563eb; color: #fff; font-size: 14px; padding: 10px 20px; font-weight: 700; box-shadow: 0 4px 12px rgba(37,99,235,0.3); }
         .btn-live { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
         .btn-route { background: var(--hnb); color: #fff; }
         .btn-print { background: #4f46e5; color: #fff; }
 
-        .info-grid { display: grid; grid-template-columns: repeat(3, 1fr); padding: 12px; background: #fff; border-bottom: 1px solid #eee; text-align: center; }
+        .info-grid { display: grid; grid-template-columns: repeat(3, 1fr); padding: 12px; background: var(--card-bg); border-bottom: 1px solid var(--border-color); text-align: center; }
         .info-box b { font-size: 9px; color: var(--hnb); text-transform: uppercase; display: block; }
-        .info-box span { font-weight: 700; color: #333; font-size: 13px; }
+        .info-box span { font-weight: 700; color: var(--text-color); font-size: 13px; }
 
-        #map { width: 100%; height: 450px; background: #e5e3df; cursor: crosshair; }
-        .footer { padding: 10px; text-align: center; background: #fff; }
+        .map-wrapper { position: relative; width: 100%; height: 450px; }
+        #map { width: 100%; height: 100%; background: #e5e3df; cursor: crosshair; }
+        .footer { padding: 10px; text-align: center; background: var(--card-bg); }
         
         /* Scan Ready QR Box */
         #qrcode { 
@@ -183,7 +235,8 @@
             backdrop-filter: blur(6px);
         }
         .modal-box {
-            background: #fff;
+            background: var(--card-bg);
+            color: var(--text-color);
             padding: 25px;
             border-radius: 16px;
             width: 90%;
@@ -194,8 +247,34 @@
             position: relative;
         }
         .modal-box h2 { margin-top: 10px; color: var(--hnb); font-size: 20px; }
-        .modal-box label { display: block; text-align: left; font-size: 12px; font-weight: bold; color: #555; margin: 12px 0 4px 0; }
+        .modal-box label { display: block; text-align: left; font-size: 12px; font-weight: bold; color: #888; margin: 12px 0 4px 0; }
         .modal-box select, .modal-box input { width: 100%; box-sizing: border-box; margin-bottom: 12px; }
+
+        /* MAIN MENU SPECIFIC SETTINGS BUTTON */
+        .menu-settings-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 11;
+        }
+
+        .menu-settings-btn:hover {
+            transform: rotate(90deg) scale(1.1);
+            background: var(--hnb);
+            color: #fff;
+        }
 
         /* MENU HEADER BADGE */
         .menu-badge {
@@ -224,7 +303,6 @@
             box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
         }
 
-        /* BLINKING GREEN LED LIGHT */
         .green-led {
             width: 10px;
             height: 10px;
@@ -240,13 +318,7 @@
             100% { opacity: 1; transform: scale(1); box-shadow: 0 0 8px #10b981, 0 0 15px #10b981; }
         }
 
-        .live-text {
-            color: #10b981;
-            font-size: 11px;
-            font-weight: 800;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
+        .live-text { color: #10b981; font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
 
         .live-count-num {
             color: #ffffff;
@@ -259,41 +331,6 @@
             border: 1px solid rgba(16, 185, 129, 0.4);
         }
 
-        /* VIEW TOGGLE BAR - ABSOLUTE TOP-RIGHT POSITIONING */
-        .view-toggle-bar {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            display: flex;
-            gap: 3px;
-            background: #0f172a;
-            padding: 3px;
-            border-radius: 20px;
-            border: 1px solid rgba(0, 242, 255, 0.3);
-            z-index: 10;
-        }
-
-        .toggle-btn {
-            background: transparent;
-            color: #94a3b8;
-            border: none;
-            padding: 4px 10px;
-            border-radius: 16px;
-            font-size: 10px;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 3px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .toggle-btn.active {
-            background: linear-gradient(135deg, #004a99, #00f2ff);
-            color: #ffffff;
-            box-shadow: 0 0 8px rgba(0, 242, 255, 0.5);
-        }
-
         /* MENU BUTTON CONTAINER & MODES */
         .menu-options-container {
             display: grid;
@@ -302,28 +339,11 @@
             transition: all 0.4s ease;
         }
 
-        /* Default Grid Mode (2 Columns) */
-        .menu-options-container.grid-mode {
-            grid-template-columns: repeat(2, 1fr);
-        }
-
-        .menu-options-container.grid-mode .btn-full-width {
-            grid-column: span 2;
-        }
-
-        /* List Mode (1 Column) */
-        .menu-options-container.list-mode {
-            grid-template-columns: 1fr !important;
-        }
-
-        .menu-options-container.list-mode .menu-item-btn {
-            padding: 12px 18px;
-            justify-content: flex-start;
-        }
-
-        .menu-options-container.list-mode .btn-full-width {
-            grid-column: span 1;
-        }
+        .menu-options-container.grid-mode { grid-template-columns: repeat(2, 1fr); }
+        .menu-options-container.grid-mode .btn-full-width { grid-column: span 2; }
+        .menu-options-container.list-mode { grid-template-columns: 1fr !important; }
+        .menu-options-container.list-mode .menu-item-btn { padding: 12px 18px; justify-content: flex-start; }
+        .menu-options-container.list-mode .btn-full-width { grid-column: span 1; }
 
         .menu-item-btn {
             width: 100%;
@@ -357,69 +377,18 @@
             flex-shrink: 0;
         }
 
-        /* ANIMATION FOR LAYOUT SWITCH */
         @keyframes switchAnim {
-            0% {
-                opacity: 0.2;
-                transform: scale(0.9) translateY(8px);
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
+            0% { opacity: 0.2; transform: scale(0.9) translateY(8px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
         }
 
-        /* DRAW MAP BUTTON */
-        .btn-opt-map {
-            background: linear-gradient(135deg, #004a99, #00f2ff);
-        }
-        .btn-opt-map:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 22px rgba(0, 242, 255, 0.5);
-            background: linear-gradient(135deg, #00f2ff, #004a99);
-        }
+        /* MENU BUTTON COLOR STYLES */
+        .btn-opt-map { background: linear-gradient(135deg, #004a99, #00f2ff); }
+        .btn-opt-lesing-cal { background: linear-gradient(135deg, #FF6600, #FFD100); }
+        .btn-opt-pdf { background: linear-gradient(135deg, #7928ca, #ff007f); }
+        .btn-opt-3w { background: linear-gradient(135deg, #ff9900, #ff5500); }
+        .btn-opt-nic { background: linear-gradient(135deg, #10b981, #059669); }
 
-        /* LESING CAL BUTTON STYLES */
-        .btn-opt-lesing-cal {
-            background: linear-gradient(135deg, #FF6600, #FFD100);
-        }
-        .btn-opt-lesing-cal:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 22px rgba(255, 102, 0, 0.5);
-            background: linear-gradient(135deg, #FFD100, #FF6600);
-        }
-
-        /* EDIT PDF BUTTON */
-        .btn-opt-pdf {
-            background: linear-gradient(135deg, #7928ca, #ff007f);
-        }
-        .btn-opt-pdf:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 22px rgba(255, 0, 127, 0.5);
-            background: linear-gradient(135deg, #ff007f, #7928ca);
-        }
-
-        /* THREE WHEEL PRICE LIST BUTTON */
-        .btn-opt-3w {
-            background: linear-gradient(135deg, #ff9900, #ff5500);
-        }
-        .btn-opt-3w:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 22px rgba(255, 153, 0, 0.5);
-            background: linear-gradient(135deg, #ff5500, #ff9900);
-        }
-
-        /* NIC TO DOB BUTTON STYLES */
-        .btn-opt-nic {
-            background: linear-gradient(135deg, #10b981, #059669);
-        }
-        .btn-opt-nic:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 22px rgba(16, 185, 129, 0.5);
-            background: linear-gradient(135deg, #059669, #10b981);
-        }
-
-        /* TOP-RIGHT ACTION BUTTON ROW (BACK / HOME / NEXT / DRAW) */
         .modal-action-row {
             position: absolute;
             top: 15px;
@@ -438,32 +407,72 @@
             border-radius: 6px;
             cursor: pointer;
             border: none;
-            transition: all 0.2s ease;
         }
         
-        .modal-btn:hover {
-            filter: brightness(1.1);
-        }
-
-        .btn-nav-secondary {
-            background: #64748b;
-        }
-
+        .btn-nav-secondary { background: #64748b; }
         .modal-btn-draw { background: #059669; }
 
-        /* 100KM ALERT POPUP SPECIFIC STYLES */
-        .alert-box {
-            border: 2px solid #e11d48;
-            background: #fff;
+        /* SETTINGS CONTROL STYLES */
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 13px;
         }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 22px;
+        }
+
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 22px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider { background-color: var(--hnb); }
+        input:checked + .slider:before { transform: translateX(22px); }
+
+        .developer-tag {
+            font-size: 10px;
+            color: #888;
+            margin-top: 15px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        /* ALERT POPUP */
+        .alert-box { border: 2px solid #e11d48; background: var(--card-bg); }
         .alert-icon { font-size: 45px; margin-bottom: 10px; }
         .alert-box h3 { color: #e11d48; margin: 0 0 10px 0; font-size: 20px; }
         .alert-msg {
-            background: #fff1f2;
+            background: rgba(225, 29, 72, 0.1);
             border: 1px dashed #f43f5e;
             padding: 12px;
             border-radius: 8px;
-            color: #9f1239;
+            color: #e11d48;
             font-size: 13px;
             line-height: 1.5;
             text-align: left;
@@ -474,10 +483,9 @@
         /* PRINT STYLES */
         @media print {
             @page { size: A4; margin: 0; }
-            .no-print, .status-bar, .modal-overlay, #distanceAlertModal, .header-btn-group { display: none !important; }
-            body { background: #fff !important; margin: 0 !important; padding: 0 !important; }
+            .no-print, .status-bar, .modal-overlay, #distanceAlertModal, .header-btn-group, .map-help-btn, .map-home-btn { display: none !important; }
+            body { background: #fff !important; margin: 0 !important; padding: 0 !important; color: #000 !important; }
 
-            /* MODE 1: 2W & 3W PRINT MODE */
             body.print-2w-3w .container {
                 width: 15cm !important;
                 height: 20.7cm !important;
@@ -488,20 +496,15 @@
                 box-shadow: none !important;
                 border-radius: 0 !important;
                 box-sizing: border-box !important;
-            }
-            body.print-2w-3w .header {
                 background: #fff !important;
-                color: #000 !important;
-                padding: 10px !important;
-                margin: 0 !important;
             }
+            body.print-2w-3w .header { background: #fff !important; color: #000 !important; padding: 10px !important; margin: 0 !important; }
             body.print-2w-3w .header::before, body.print-2w-3w .header::after { display: none !important; }
             body.print-2w-3w .header h1 { font-size: 15pt !important; color: #000 !important; text-shadow: none !important; letter-spacing: 2px !important; }
             body.print-2w-3w #map { flex-grow: 1 !important; height: auto !important; border-top: 1pt solid #000 !important; border-bottom: 1pt solid #000 !important; }
             body.print-2w-3w #qrcode { border: 2pt solid #000 !important; padding: 6px !important; }
             body.print-2w-3w #qrcode img { width: 120px !important; height: 120px !important; }
 
-            /* MODE 2: AUTO PRINT MODE */
             body.print-auto .container {
                 position: absolute !important;
                 top: 4cm !important;
@@ -549,10 +552,10 @@
 <div class="container">
     <div class="header">
         <h1>HNB FINANCE</h1>
-        <!-- Header Button Group (HOME and IDEA & HELP) -->
+        <!-- Header Button Group -->
         <div class="header-btn-group no-print">
             <button class="btn-home-floating" onclick="openWizard()">🏠 HOME</button>
-            <button class="btn-help-floating" onclick="openHelpLink()">💡 Idea & Help</button>
+            <button class="btn-settings-floating" onclick="toggleSettingsModal(true)">⚙️</button>
         </div>
     </div>
     
@@ -575,7 +578,14 @@
         <div class="info-box"><b>CUSTOMER LOCATION</b><span id="targetLabel">--</span></div>
         <div class="info-box"><b>Distance</b><span id="distLabel">--</span></div>
     </div>
-    <div id="map"></div>
+
+    <!-- MAP WRAPPER WITH EMBEDDED HOME & HELP BUTTONS -->
+    <div class="map-wrapper">
+        <button class="map-home-btn" onclick="openWizard()">🏠 Home</button>
+        <button class="map-help-btn" onclick="openHelpLink()">💡 Idea & Help</button>
+        <div id="map"></div>
+    </div>
+
     <div class="footer"><div id="qrcode"></div></div>
 </div>
 
@@ -583,27 +593,20 @@
 <div class="modal-overlay no-print" id="wizardModal">
     <!-- STEP 0: MAIN MENU POPUP -->
     <div class="modal-box" id="step0">
-        <!-- GRID / LIST VIEW TOGGLE SWITCHER (TOP-RIGHT CORNER) -->
-        <div class="view-toggle-bar">
-            <button class="toggle-btn active" id="btnGrid" onclick="switchMenuView('grid')">
-                <span>🔲</span> Grid
-            </button>
-            <button class="toggle-btn" id="btnList" onclick="switchMenuView('list')">
-                <span>☰</span> List
-            </button>
-        </div>
+        <!-- SETTINGS BUTTON ON TOP RIGHT OF MAIN MENU -->
+        <button class="menu-settings-btn" onclick="toggleSettingsModal(true)" title="Settings">⚙️</button>
 
         <span class="menu-badge">MAIN MENU</span>
         <h2>HNB FINANCE</h2>
         
         <!-- REALTIME FIREBASE LIVE USER COUNTER UI -->
-        <div class="live-status-box">
+        <div class="live-status-box" id="liveCounterContainer">
             <div class="green-led"></div>
             <span class="live-text">LIVE USERS:</span>
             <span class="live-count-num" id="liveUserCount">1</span>
         </div>
 
-        <p style="color:#666; font-size:12px; margin-bottom: 8px;">Select an option to proceed:</p>
+        <p style="color:#888; font-size:12px; margin-bottom: 8px;">Select an option to proceed:</p>
         
         <div class="menu-options-container grid-mode" id="menuContainer">
             <!-- OPTION 1: DRAW MAP -->
@@ -640,7 +643,6 @@
 
     <!-- STEP 1: SELECT BRANCH -->
     <div class="modal-box" id="step1" style="display:none;">
-        <!-- TOP RIGHT BUTTONS -->
         <div class="modal-action-row">
             <button class="modal-btn btn-nav-secondary" onclick="goToStep(0)">⬅️ Back</button>
             <button class="modal-btn" onclick="goToStep(2)">OK / Next ➡️</button>
@@ -649,7 +651,6 @@
         <h2>Step 1: Select Your Branch</h2>
         <label>Search / Select relevant HNB Finance Branch:</label>
         
-        <!-- SEARCH BOX FOR BRANCHES -->
         <input type="text" id="branchSearchInput" placeholder="🔍 Type branch name to search..." onkeyup="filterBranches()" style="border:2px solid var(--hnb);">
         
         <select id="modalBranchSelect" size="5" style="height: 120px;">
@@ -677,7 +678,6 @@
 
     <!-- STEP 2: TARGET LOCATION -->
     <div class="modal-box" id="step2" style="display:none;">
-        <!-- TOP RIGHT BUTTONS -->
         <div class="modal-action-row">
             <button class="modal-btn btn-nav-secondary" onclick="goToStep(0)">🏠 Home</button>
             <button class="modal-btn modal-btn-draw" onclick="executeDrawAndPrint()">🚀 Draw Map</button>
@@ -687,6 +687,47 @@
         <label>Enter target location coordinates (Lat, Lng):</label>
         <input type="text" id="modalDestCoords" placeholder="e.g. 8.3512, 80.4021">
         <p style="font-size: 11px; color: #888; margin-top: 25px;">(Or click directly on the map after selecting OK)</p>
+    </div>
+</div>
+
+<!-- SETTINGS MODAL POPUP -->
+<div class="modal-overlay no-print" id="settingsModal" style="display: none;">
+    <div class="modal-box">
+        <div class="modal-action-row">
+            <button class="modal-btn btn-nav-secondary" onclick="toggleSettingsModal(false)">✖ Close</button>
+        </div>
+        <h2>⚙️ Settings</h2>
+        
+        <!-- GRID / LIST MODE TOGGLE -->
+        <div class="setting-row">
+            <span>Menu Layout</span>
+            <div>
+                <button class="modal-btn" onclick="switchMenuView('grid')">Grid</button>
+                <button class="modal-btn btn-nav-secondary" onclick="switchMenuView('list')">List</button>
+            </div>
+        </div>
+
+        <!-- DARK / LIGHT MODE SWITCH -->
+        <div class="setting-row">
+            <span>Dark Mode</span>
+            <label class="toggle-switch">
+                <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode(this.checked)">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <!-- SHOW / HIDE ONLINE COUNTER -->
+        <div class="setting-row">
+            <span>Show Online Users Count</span>
+            <label class="toggle-switch">
+                <input type="checkbox" id="onlineCounterToggle" checked onchange="toggleOnlineCounter(this.checked)">
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <div class="developer-tag">
+            Develop by 9299
+        </div>
     </div>
 </div>
 
@@ -704,31 +745,45 @@
 </div>
 
 <script>
+    // SETTINGS & CONTROL FUNCTIONS
+    function toggleSettingsModal(show) {
+        document.getElementById('settingsModal').style.display = show ? 'flex' : 'none';
+    }
+
+    function toggleDarkMode(isDark) {
+        if(isDark) {
+            document.body.classList.add('dark-mode');
+        } else {
+            document.body.classList.remove('dark-mode');
+        }
+    }
+
+    function toggleOnlineCounter(show) {
+        const container = document.getElementById('liveCounterContainer');
+        if(container) {
+            container.style.display = show ? 'inline-flex' : 'none';
+        }
+    }
+
     // LAYOUT SWITCHER FUNCTION
     function switchMenuView(mode) {
         const container = document.getElementById('menuContainer');
-        const btnGrid = document.getElementById('btnGrid');
-        const btnList = document.getElementById('btnList');
         const items = document.querySelectorAll('.menu-item-btn');
 
         if (!container) return;
 
         items.forEach(item => {
             item.style.animation = 'none';
-            item.offsetHeight; // Reflow trigger
+            item.offsetHeight;
             item.style.animation = 'switchAnim 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards';
         });
 
         if (mode === 'list') {
             container.classList.remove('grid-mode');
             container.classList.add('list-mode');
-            btnList.classList.add('active');
-            btnGrid.classList.remove('active');
         } else {
             container.classList.remove('list-mode');
             container.classList.add('grid-mode');
-            btnGrid.classList.add('active');
-            btnList.classList.remove('active');
         }
     }
 
@@ -748,7 +803,6 @@
     firebase.analytics();
     const db = firebase.database();
 
-    // REALTIME LIVE PRESENCE TRACKER
     function setupRealtimePresence() {
         const mySessionRef = db.ref('status/' + Date.now() + "_" + Math.random().toString(36).substr(2, 5));
         const connectedRef = db.ref('.info/connected');
@@ -791,7 +845,6 @@
         document.getElementById('step' + stepNum).style.display = 'block';
     }
 
-    /* BRANCH SEARCH FILTER FUNCTION */
     function filterBranches() {
         var input = document.getElementById("branchSearchInput");
         var filter = input.value.toUpperCase();
@@ -900,7 +953,6 @@
     setInterval(updateSpeed, 3000);
     updateSpeed();
 
-    // GOOGLE MAPS TILE INITIALIZATION
     function initMap() {
         map = L.map('map', { zoomControl: false }).setView(currentStartLoc, 13);
         
@@ -998,7 +1050,6 @@
     window.onload = function() {
         initMap();
         setupRealtimePresence();
-        
         openWizard();
 
         document.getElementById('rBtn').onclick = function() {
