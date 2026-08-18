@@ -184,15 +184,16 @@
         }
         .modal-box {
             background: #fff;
-            padding: 30px;
+            padding: 25px;
             border-radius: 16px;
             width: 90%;
-            max-width: 450px;
+            max-width: 480px;
             text-align: center;
             box-shadow: 0 20px 40px rgba(0,0,0,0.3);
             border: 2px solid var(--hnb);
+            position: relative;
         }
-        .modal-box h2 { margin-top: 0; color: var(--hnb); font-size: 20px; }
+        .modal-box h2 { margin-top: 10px; color: var(--hnb); font-size: 20px; }
         .modal-box label { display: block; text-align: left; font-size: 12px; font-weight: bold; color: #555; margin: 12px 0 4px 0; }
         .modal-box select, .modal-box input { width: 100%; box-sizing: border-box; margin-bottom: 12px; }
 
@@ -219,7 +220,7 @@
             border: 1px solid #10b981;
             padding: 6px 16px;
             border-radius: 30px;
-            margin: 10px auto 15px auto;
+            margin: 5px auto 10px auto;
             box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
         }
 
@@ -258,42 +259,114 @@
             border: 1px solid rgba(16, 185, 129, 0.4);
         }
 
-        /* MENU BUTTON CONTAINER */
-        .menu-options-container {
+        /* VIEW TOGGLE BAR - ABSOLUTE TOP-RIGHT POSITIONING */
+        .view-toggle-bar {
+            position: absolute;
+            top: 15px;
+            right: 15px;
             display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 15px;
+            gap: 3px;
+            background: #0f172a;
+            padding: 3px;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 242, 255, 0.3);
+            z-index: 10;
+        }
+
+        .toggle-btn {
+            background: transparent;
+            color: #94a3b8;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 16px;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .toggle-btn.active {
+            background: linear-gradient(135deg, #004a99, #00f2ff);
+            color: #ffffff;
+            box-shadow: 0 0 8px rgba(0, 242, 255, 0.5);
+        }
+
+        /* MENU BUTTON CONTAINER & MODES */
+        .menu-options-container {
+            display: grid;
+            gap: 10px;
+            margin-top: 10px;
+            transition: all 0.4s ease;
+        }
+
+        /* Default Grid Mode (2 Columns) */
+        .menu-options-container.grid-mode {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .menu-options-container.grid-mode .btn-full-width {
+            grid-column: span 2;
+        }
+
+        /* List Mode (1 Column) */
+        .menu-options-container.list-mode {
+            grid-template-columns: 1fr !important;
+        }
+
+        .menu-options-container.list-mode .menu-item-btn {
+            padding: 12px 18px;
+            justify-content: flex-start;
+        }
+
+        .menu-options-container.list-mode .btn-full-width {
+            grid-column: span 1;
         }
 
         .menu-item-btn {
             width: 100%;
-            padding: 14px 18px;
+            padding: 14px 12px;
             color: white;
-            font-size: 15px;
+            font-size: 13px;
             font-weight: 700;
             border-radius: 12px;
             cursor: pointer;
             border: none;
-            transition: all 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             display: flex;
             align-items: center;
-            justify-content: flex-start;
-            gap: 14px;
+            justify-content: center;
+            gap: 10px;
             text-decoration: none;
             box-sizing: border-box;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            animation: switchAnim 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
 
         .menu-item-btn .btn-icon {
-            font-size: 20px;
-            width: 32px;
-            height: 32px;
+            font-size: 18px;
+            width: 30px;
+            height: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
             background: rgba(255, 255, 255, 0.2);
             border-radius: 8px;
+            flex-shrink: 0;
+        }
+
+        /* ANIMATION FOR LAYOUT SWITCH */
+        @keyframes switchAnim {
+            0% {
+                opacity: 0.2;
+                transform: scale(0.9) translateY(8px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
         }
 
         /* DRAW MAP BUTTON */
@@ -301,7 +374,7 @@
             background: linear-gradient(135deg, #004a99, #00f2ff);
         }
         .btn-opt-map:hover {
-            transform: translateY(-3px);
+            transform: translateY(-2px);
             box-shadow: 0 8px 22px rgba(0, 242, 255, 0.5);
             background: linear-gradient(135deg, #00f2ff, #004a99);
         }
@@ -311,7 +384,7 @@
             background: linear-gradient(135deg, #FF6600, #FFD100);
         }
         .btn-opt-lesing-cal:hover {
-            transform: translateY(-3px);
+            transform: translateY(-2px);
             box-shadow: 0 8px 22px rgba(255, 102, 0, 0.5);
             background: linear-gradient(135deg, #FFD100, #FF6600);
         }
@@ -321,7 +394,7 @@
             background: linear-gradient(135deg, #7928ca, #ff007f);
         }
         .btn-opt-pdf:hover {
-            transform: translateY(-3px);
+            transform: translateY(-2px);
             box-shadow: 0 8px 22px rgba(255, 0, 127, 0.5);
             background: linear-gradient(135deg, #ff007f, #7928ca);
         }
@@ -331,26 +404,38 @@
             background: linear-gradient(135deg, #ff9900, #ff5500);
         }
         .btn-opt-3w:hover {
-            transform: translateY(-3px);
+            transform: translateY(-2px);
             box-shadow: 0 8px 22px rgba(255, 153, 0, 0.5);
             background: linear-gradient(135deg, #ff5500, #ff9900);
         }
 
-        /* BUTTON ACTION ROW (BACK / HOME / NEXT) */
+        /* NIC TO DOB BUTTON STYLES */
+        .btn-opt-nic {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+        .btn-opt-nic:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(16, 185, 129, 0.5);
+            background: linear-gradient(135deg, #059669, #10b981);
+        }
+
+        /* TOP-RIGHT ACTION BUTTON ROW (BACK / HOME / NEXT / DRAW) */
         .modal-action-row {
+            position: absolute;
+            top: 15px;
+            right: 15px;
             display: flex;
-            gap: 10px;
-            margin-top: 15px;
+            gap: 6px;
+            z-index: 10;
         }
 
         .modal-btn {
-            flex: 1;
-            padding: 12px;
+            padding: 6px 12px;
             background: var(--hnb);
             color: white;
-            font-size: 14px;
+            font-size: 11px;
             font-weight: bold;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
             border: none;
             transition: all 0.2s ease;
@@ -364,7 +449,7 @@
             background: #64748b;
         }
 
-        .modal-btn-draw { background: #059669; flex: 2; }
+        .modal-btn-draw { background: #059669; }
 
         /* 100KM ALERT POPUP SPECIFIC STYLES */
         .alert-box {
@@ -498,6 +583,16 @@
 <div class="modal-overlay no-print" id="wizardModal">
     <!-- STEP 0: MAIN MENU POPUP -->
     <div class="modal-box" id="step0">
+        <!-- GRID / LIST VIEW TOGGLE SWITCHER (TOP-RIGHT CORNER) -->
+        <div class="view-toggle-bar">
+            <button class="toggle-btn active" id="btnGrid" onclick="switchMenuView('grid')">
+                <span>🔲</span> Grid
+            </button>
+            <button class="toggle-btn" id="btnList" onclick="switchMenuView('list')">
+                <span>☰</span> List
+            </button>
+        </div>
+
         <span class="menu-badge">MAIN MENU</span>
         <h2>HNB FINANCE</h2>
         
@@ -508,11 +603,11 @@
             <span class="live-count-num" id="liveUserCount">1</span>
         </div>
 
-        <p style="color:#666; font-size:13px; margin-bottom: 10px;">Select an option to proceed:</p>
+        <p style="color:#666; font-size:12px; margin-bottom: 8px;">Select an option to proceed:</p>
         
-        <div class="menu-options-container">
+        <div class="menu-options-container grid-mode" id="menuContainer">
             <!-- OPTION 1: DRAW MAP -->
-            <button class="menu-item-btn btn-opt-map" onclick="goToStep(1)">
+            <button class="menu-item-btn btn-opt-map btn-full-width" onclick="goToStep(1)">
                 <span class="btn-icon">🗺️</span>
                 <span>Draw the Map</span>
             </button>
@@ -524,26 +619,38 @@
             </a>
 
             <!-- OPTION 3: EDIT PDF -->
-            <a href="https://gmaphnbf.github.io/pdf-editor/" target="_blank" class="menu-item-btn btn-opt-pdf" cite="1">
+            <a href="https://gmaphnbf.github.io/pdf-editor/" target="_blank" class="menu-item-btn btn-opt-pdf">
                 <span class="btn-icon">📝</span>
                 <span>Edit PDF</span>
             </a>
 
             <!-- OPTION 4: THREE WHEEL PRICE LIST -->
-            <a href="https://gmaphnbf.github.io/3WH3/" target="_blank" class="menu-item-btn btn-opt-3w" cite="1">
+            <a href="https://gmaphnbf.github.io/3WH3/" target="_blank" class="menu-item-btn btn-opt-3w">
                 <span class="btn-icon">🛺</span>
-                <span>Three Wheel price list</span>
+                <span>3W Price List</span>
+            </a>
+
+            <!-- OPTION 5: NIC TO DOB -->
+            <a href="https://gmaphnbf.github.io/NICTODOB/" target="_blank" class="menu-item-btn btn-opt-nic">
+                <span class="btn-icon">🪪</span>
+                <span>NIC TO DOB</span>
             </a>
         </div>
     </div>
 
     <!-- STEP 1: SELECT BRANCH -->
     <div class="modal-box" id="step1" style="display:none;">
+        <!-- TOP RIGHT BUTTONS -->
+        <div class="modal-action-row">
+            <button class="modal-btn btn-nav-secondary" onclick="goToStep(0)">⬅️ Back</button>
+            <button class="modal-btn" onclick="goToStep(2)">OK / Next ➡️</button>
+        </div>
+
         <h2>Step 1: Select Your Branch</h2>
         <label>Search / Select relevant HNB Finance Branch:</label>
         
         <!-- SEARCH BOX FOR BRANCHES -->
-        <input type="text" id="branchSearchInput" placeholder="🔍 Type branch name to search..." onkeyup="filterBranches()" style="border:2px solid var(--hnb);" cite="1">
+        <input type="text" id="branchSearchInput" placeholder="🔍 Type branch name to search..." onkeyup="filterBranches()" style="border:2px solid var(--hnb);">
         
         <select id="modalBranchSelect" size="5" style="height: 120px;">
             <option value="8.335351,80.411615|HNBF Anuradhapura" selected>HNBF Anuradhapura</option>
@@ -566,26 +673,20 @@
             <option value="7.083000701591264,79.8908642441365|HNBF JA-ELA">HNBF JA-ELA</option>
             <option value="6.882545578276103,79.88789225396044|HNBF Head Office">HNBF Head Office</option>
         </select>
-        
-        <div class="modal-action-row">
-            <!-- BACK BUTTON TO MAIN MENU -->
-            <button class="modal-btn btn-nav-secondary" onclick="goToStep(0)">⬅️ Back</button>
-            <button class="modal-btn" onclick="goToStep(2)">OK / Next ➡️</button>
-        </div>
     </div>
 
     <!-- STEP 2: TARGET LOCATION -->
     <div class="modal-box" id="step2" style="display:none;">
-        <h2>Step 2: Enter Target Location</h2>
-        <label>Enter target location coordinates (Lat, Lng):</label>
-        <input type="text" id="modalDestCoords" placeholder="e.g. 8.3512, 80.4021">
-        <p style="font-size: 11px; color: #888;">(Or click directly on the map after selecting OK)</p>
-        
+        <!-- TOP RIGHT BUTTONS -->
         <div class="modal-action-row">
-            <!-- HOME BUTTON TO RETURN TO MAIN MENU -->
             <button class="modal-btn btn-nav-secondary" onclick="goToStep(0)">🏠 Home</button>
             <button class="modal-btn modal-btn-draw" onclick="executeDrawAndPrint()">🚀 Draw Map</button>
         </div>
+
+        <h2>Step 2: Enter Target Location</h2>
+        <label>Enter target location coordinates (Lat, Lng):</label>
+        <input type="text" id="modalDestCoords" placeholder="e.g. 8.3512, 80.4021">
+        <p style="font-size: 11px; color: #888; margin-top: 25px;">(Or click directly on the map after selecting OK)</p>
     </div>
 </div>
 
@@ -603,7 +704,35 @@
 </div>
 
 <script>
-    // CORRECTED FIREBASE CONFIGURATION
+    // LAYOUT SWITCHER FUNCTION
+    function switchMenuView(mode) {
+        const container = document.getElementById('menuContainer');
+        const btnGrid = document.getElementById('btnGrid');
+        const btnList = document.getElementById('btnList');
+        const items = document.querySelectorAll('.menu-item-btn');
+
+        if (!container) return;
+
+        items.forEach(item => {
+            item.style.animation = 'none';
+            item.offsetHeight; // Reflow trigger
+            item.style.animation = 'switchAnim 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards';
+        });
+
+        if (mode === 'list') {
+            container.classList.remove('grid-mode');
+            container.classList.add('list-mode');
+            btnList.classList.add('active');
+            btnGrid.classList.remove('active');
+        } else {
+            container.classList.remove('list-mode');
+            container.classList.add('grid-mode');
+            btnGrid.classList.add('active');
+            btnList.classList.remove('active');
+        }
+    }
+
+    // FIREBASE CONFIGURATION
     const firebaseConfig = {
         apiKey: "AIzaSyDKkMovF3OWweyQSveA8KUKk63b-i5cqUg",
         authDomain: "gmap-e4d9c.firebaseapp.com",
@@ -615,7 +744,6 @@
         measurementId: "G-PCH9WKCTLD"
     };
 
-    // Initialize Firebase Engine & Analytics
     firebase.initializeApp(firebaseConfig);
     firebase.analytics();
     const db = firebase.database();
@@ -641,7 +769,6 @@
         });
     }
 
-    // Help Button Target Link
     var helpLink = "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=Xqpfvj37g0mkFC1mBArnbxYIJwbXtbVCsCZt4u4BQp1UNzdGMUVBUFhWSTlHUEFaS05aMFYxSUxXTC4u";
 
     function openHelpLink() {
@@ -825,7 +952,6 @@
 
         targetMarker = L.marker([destLat, destLng]).addTo(map);
 
-        // Fetch Route from selected branch to typed location
         fetch(`https://router.project-osrm.org/route/v1/driving/${currentStartLoc[1]},${currentStartLoc[0]};${destLng},${destLat}?overview=full&geometries=geojson`)
         .then(res => res.json())
         .then(data => {
@@ -836,7 +962,6 @@
                 currentRouteLine = L.polyline(routeCoords, {color: '#d32f2f', weight: 5}).addTo(map);
                 map.fitBounds(currentRouteLine.getBounds(), {padding: [50, 50]});
                 
-                // Trigger 100KM Check
                 checkDistanceAndAlert(distKm);
             } else {
                 fallbackDirectLine(destLat, destLng);
@@ -846,7 +971,6 @@
             fallbackDirectLine(destLat, destLng);
         });
 
-        // LIVE USER LOCATION DIRECT NAVIGATION QR ENGINE
         var qrContainer = document.getElementById('qrcode');
         qrContainer.innerHTML = "";
         
@@ -868,7 +992,6 @@
         currentRouteLine = L.polyline([currentStartLoc, [destLat, destLng]], {color: '#d32f2f', weight: 4, dashArray: '6, 6'}).addTo(map);
         map.fitBounds(currentRouteLine.getBounds(), {padding: [50, 50]});
         
-        // Trigger 100KM Check
         checkDistanceAndAlert(dist);
     }
 
@@ -876,7 +999,6 @@
         initMap();
         setupRealtimePresence();
         
-        // Open Step 0 Popup when page loads
         openWizard();
 
         document.getElementById('rBtn').onclick = function() {
