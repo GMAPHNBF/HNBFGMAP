@@ -336,6 +336,16 @@
             background: linear-gradient(135deg, #ff5500, #ff9900);
         }
 
+        /* NIC TO DOB BUTTON STYLES */
+        .btn-opt-nic {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+        .btn-opt-nic:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 22px rgba(16, 185, 129, 0.5);
+            background: linear-gradient(135deg, #059669, #10b981);
+        }
+
         /* BUTTON ACTION ROW (BACK / HOME / NEXT) */
         .modal-action-row {
             display: flex;
@@ -524,15 +534,21 @@
             </a>
 
             <!-- OPTION 3: EDIT PDF -->
-            <a href="https://gmaphnbf.github.io/pdf-editor/" target="_blank" class="menu-item-btn btn-opt-pdf" cite="1">
+            <a href="https://gmaphnbf.github.io/pdf-editor/" target="_blank" class="menu-item-btn btn-opt-pdf">
                 <span class="btn-icon">📝</span>
                 <span>Edit PDF</span>
             </a>
 
             <!-- OPTION 4: THREE WHEEL PRICE LIST -->
-            <a href="https://gmaphnbf.github.io/3WH3/" target="_blank" class="menu-item-btn btn-opt-3w" cite="1">
+            <a href="https://gmaphnbf.github.io/3WH3/" target="_blank" class="menu-item-btn btn-opt-3w">
                 <span class="btn-icon">🛺</span>
                 <span>Three Wheel price list</span>
+            </a>
+
+            <!-- OPTION 5: NIC TO DOB -->
+            <a href="https://gmaphnbf.github.io/NICTODOB/" target="_blank" class="menu-item-btn btn-opt-nic">
+                <span class="btn-icon">🪪</span>
+                <span>NIC TO DOB</span>
             </a>
         </div>
     </div>
@@ -543,7 +559,7 @@
         <label>Search / Select relevant HNB Finance Branch:</label>
         
         <!-- SEARCH BOX FOR BRANCHES -->
-        <input type="text" id="branchSearchInput" placeholder="🔍 Type branch name to search..." onkeyup="filterBranches()" style="border:2px solid var(--hnb);" cite="1">
+        <input type="text" id="branchSearchInput" placeholder="🔍 Type branch name to search..." onkeyup="filterBranches()" style="border:2px solid var(--hnb);">
         
         <select id="modalBranchSelect" size="5" style="height: 120px;">
             <option value="8.335351,80.411615|HNBF Anuradhapura" selected>HNBF Anuradhapura</option>
