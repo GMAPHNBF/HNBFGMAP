@@ -419,7 +419,7 @@
             background: linear-gradient(135deg, #059669, #10b981);
         }
 
-        /* FIXED DEPOSIT BUTTON STYLES - NEW */
+        /* FIXED DEPOSIT BUTTON STYLES */
         .btn-opt-fixed-deposit {
             background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
         }
@@ -429,14 +429,73 @@
             background: linear-gradient(135deg, #0f3460, #16213e, #1a1a2e);
         }
 
-        /* 🆕 COMMENT BUTTON STYLES */
-        .btn-opt-comment {
-            background: linear-gradient(135deg, #6c63ff, #a29bfe);
+        /* 🏍️ REG BIKE BUTTON STYLES */
+        .btn-opt-regbike {
+            background: linear-gradient(135deg, #0284c7, #06b6d4, #38bdf8);
         }
-        .btn-opt-comment:hover {
+        .btn-opt-regbike:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 22px rgba(108, 99, 255, 0.5);
-            background: linear-gradient(135deg, #a29bfe, #6c63ff);
+            box-shadow: 0 8px 22px rgba(6, 182, 212, 0.6);
+            background: linear-gradient(135deg, #38bdf8, #06b6d4, #0284c7);
+        }
+
+        /* 💬 SEPARATED GLOWING COMMENT BUTTON STYLES */
+        .comment-section-wrapper {
+            margin-top: 15px;
+            padding-top: 12px;
+            border-top: 1px dashed rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-opt-comment-glowing {
+            position: relative;
+            background: linear-gradient(135deg, #10002b, #240046, #3c096c);
+            color: #fff;
+            padding: 14px 20px;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            border: 2px solid #9d4edd;
+            box-shadow: 0 0 15px rgba(157, 78, 221, 0.6), inset 0 0 10px rgba(224, 170, 255, 0.3);
+            animation: neonGlow 2.5s infinite alternate;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .btn-opt-comment-glowing::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+            transform: rotate(45deg);
+            pointer-events: none;
+        }
+
+        .btn-opt-comment-glowing:hover {
+            transform: scale(1.03) translateY(-2px);
+            border-color: #e0aaff;
+            box-shadow: 0 0 25px rgba(224, 170, 255, 0.9), 0 0 40px rgba(157, 78, 221, 0.8);
+            background: linear-gradient(135deg, #3c096c, #5a189a, #7b2cbf);
+        }
+
+        @keyframes neonGlow {
+            0% {
+                box-shadow: 0 0 10px rgba(157, 78, 221, 0.5), inset 0 0 5px rgba(224, 170, 255, 0.2);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(247, 37, 133, 0.7), 0 0 30px rgba(114, 9, 183, 0.6);
+            }
+            100% {
+                box-shadow: 0 0 15px rgba(76, 201, 240, 0.8), inset 0 0 10px rgba(224, 170, 255, 0.4);
+            }
         }
 
         /* TOP-RIGHT ACTION BUTTON ROW (BACK / HOME / NEXT / DRAW) */
@@ -656,16 +715,24 @@
                 <span>NIC TO DOB</span>
             </a>
 
-            <!-- OPTION 6: FIXED DEPOSIT (NEW) -->
+            <!-- OPTION 6: FIXED DEPOSIT -->
             <a href="https://gmaphnbf.github.io/HNBFFD/" target="_blank" class="menu-item-btn btn-opt-fixed-deposit">
                 <span class="btn-icon">🏦</span>
                 <span>FIXED DEPOSIT</span>
             </a>
 
-            <!-- 🆕 OPTION 7: COMMENT (NEW) -->
-            <a href="https://gmaphnbf.github.io/COMMENT/" target="_blank" class="menu-item-btn btn-opt-comment">
-                <span class="btn-icon">💬</span>
-                <span>Comment</span>
+            <!-- 🏍️ OPTION 7: REG BIKE (NEWLY ADDED) -->
+            <a href="https://gmaphnbf.github.io/regbike/" target="_blank" class="menu-item-btn btn-opt-regbike">
+                <span class="btn-icon">🏍️</span>
+                <span>REG BIKE</span>
+            </a>
+        </div>
+
+        <!-- 💬 SEPARATED GLOWING COMMENT BUTTON AT THE BOTTOM -->
+        <div class="comment-section-wrapper">
+            <a href="https://gmaphnbf.github.io/COMMENT/" target="_blank" class="btn-opt-comment-glowing">
+                <span style="font-size:20px;">💬</span>
+                <span>LEAVE A COMMENT</span>
             </a>
         </div>
     </div>
