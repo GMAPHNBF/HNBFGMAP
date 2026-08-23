@@ -155,6 +155,7 @@
         .btn-live { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
         .btn-route { background: var(--hnb); color: #fff; }
         .btn-print { background: #4f46e5; color: #fff; }
+        .btn-save { background: #059669; color: #fff; }
 
         .info-grid { display: grid; grid-template-columns: repeat(3, 1fr); padding: 12px; background: #fff; border-bottom: 1px solid #eee; text-align: center; }
         .info-box b { font-size: 9px; color: var(--hnb); text-transform: uppercase; display: block; }
@@ -738,6 +739,7 @@
         </select>
         
         <button class="btn-print" id="pBtn">🖨️ Print</button>
+        <button class="btn-save" id="saveBtn" onclick="savePdfWithCustomName()">📱 Save PDF / Mobile Print</button>
     </div>
     
     <div class="info-grid">
@@ -1062,7 +1064,7 @@
         }
     }
 
-    function triggerPrint() {
+    function preparePrintLayout() {
         var selectedOption = document.getElementById('printOption').value;
         document.body.classList.remove('print-auto', 'print-2w-3w');
         
@@ -1071,9 +1073,31 @@
         } else {
             document.body.classList.add('print-2w-3w');
         }
-        
         refreshMapSize();
+    }
+
+    function triggerPrint() {
+        preparePrintLayout();
         setTimeout(() => { window.print(); }, 400);
+    }
+
+    // NEW FUNCTION: SAVE PDF WITH CUSTOM FILE NAME
+    function savePdfWithCustomName() {
+        var defaultFileName = "HNB_Finance_Map_" + currentBranchName.replace(/\s+/g, '_');
+        var userFileName = prompt("Enter File Name to Save / Print PDF:", defaultFileName);
+
+        if (userFileName !== null && userFileName.trim() !== "") {
+            var originalTitle = document.title;
+            document.title = userFileName.trim(); // PDF නම ලෙස Document Title එක සැකසේ
+
+            preparePrintLayout();
+            
+            setTimeout(() => { 
+                window.print();
+                // Print window වැසුණු පසු මුල් Title එක නැවත ලබා දේ
+                setTimeout(() => { document.title = originalTitle; }, 1000);
+            }, 400);
+        }
     }
 
     document.getElementById('pBtn').onclick = triggerPrint;
