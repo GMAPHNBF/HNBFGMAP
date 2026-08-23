@@ -2,8 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- 1. MOBILE RESPONSIVE VIEWPORT TAG -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HNB Finance - Geo-Tracker Pro</title>
     <!-- CSS Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -15,28 +13,16 @@
         .status-bar {
             background: #111;
             color: #888;
-            padding: 5px 15px;
+            padding: 5px 20px;
             display: flex;
             justify-content: space-between;
             font-size: 11px;
             font-family: monospace;
             border-bottom: 1px solid #222;
-            flex-wrap: wrap;
-            gap: 5px;
         }
         .status-item span { color: var(--accent); margin-left: 5px; }
 
-        .container { 
-            width: 95%; 
-            max-width: 900px; 
-            margin: 10px auto 30px auto; 
-            background: #fff; 
-            border-radius: 12px; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1); 
-            overflow: hidden; 
-            position: relative; 
-            box-sizing: border-box;
-        }
+        .container { max-width: 900px; margin: 10px auto 30px auto; background: #fff; border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); overflow: hidden; position: relative; }
         
         /* Neon Border Header */
         .header { 
@@ -48,11 +34,6 @@
             margin: 4px;
             border-radius: 8px;
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
         }
         .header::before {
             content: '';
@@ -75,9 +56,9 @@
         }
         .header h1 { 
             margin: 0; 
-            font-size: 22px; 
+            font-size: 26px; 
             font-weight: 900;
-            letter-spacing: 2px; 
+            letter-spacing: 4px; 
             color: #fff; 
             position: relative;
             z-index: 3;
@@ -92,81 +73,99 @@
 
         /* HEADER BUTTON CONTAINER */
         .header-btn-group {
-            position: relative;
+            position: absolute;
+            top: 15px;
+            right: 15px;
             z-index: 10;
             display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            justify-content: center;
+            gap: 10px;
         }
 
-        /* BUTTON STYLES */
-        .btn-home-floating, .btn-help-floating {
+        /* HOME BUTTON STYLES */
+        .btn-home-floating {
+            background: linear-gradient(135deg, #004a99, #00f2ff);
             color: #fff;
-            padding: 6px 12px;
+            padding: 8px 16px;
             border-radius: 30px;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 800;
             letter-spacing: 0.5px;
             display: flex;
             align-items: center;
             gap: 6px;
+            box-shadow: 0 0 12px rgba(0, 242, 255, 0.6), 0 0 20px rgba(0, 74, 153, 0.4);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             border: 1px solid rgba(255,255,255,0.4);
             cursor: pointer;
             text-decoration: none;
-            transition: all 0.3s ease;
         }
-        .btn-home-floating {
-            background: linear-gradient(135deg, #004a99, #00f2ff);
-            box-shadow: 0 0 12px rgba(0, 242, 255, 0.6);
+
+        .btn-home-floating:hover {
+            transform: scale(1.1) translateY(-2px);
+            box-shadow: 0 0 22px rgba(0, 242, 255, 0.9);
+            background: linear-gradient(135deg, #00f2ff, #004a99);
         }
+
+        /* GLOWING IDEA & HELP BUTTON */
         .btn-help-floating {
             background: linear-gradient(135deg, #ff007f, #7928ca);
-            box-shadow: 0 0 12px rgba(255, 0, 127, 0.6);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 0 12px rgba(255, 0, 127, 0.6), 0 0 20px rgba(121, 40, 202, 0.4);
             animation: glowPulse 2s infinite alternate;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255,255,255,0.4);
+            cursor: pointer;
+        }
+
+        .btn-help-floating:hover {
+            transform: scale(1.1) translateY(-2px);
+            box-shadow: 0 0 22px rgba(0, 242, 255, 0.9), 0 0 35px rgba(255, 0, 127, 0.8);
+            background: linear-gradient(135deg, #00f2ff, #004a99);
+            color: #fff;
         }
 
         @keyframes glowPulse {
-            0% { box-shadow: 0 0 8px rgba(255, 0, 127, 0.5); }
-            100% { box-shadow: 0 0 18px rgba(255, 0, 127, 0.9); }
+            0% { box-shadow: 0 0 8px rgba(255, 0, 127, 0.5), 0 0 15px rgba(121, 40, 202, 0.3); }
+            100% { box-shadow: 0 0 18px rgba(255, 0, 127, 0.9), 0 0 30px rgba(0, 242, 255, 0.8); }
         }
 
-        .controls { 
-            padding: 12px; 
-            display: flex; 
-            gap: 8px; 
-            background: #fff; 
-            border-bottom: 1px solid #eee; 
-            align-items: center; 
-            flex-wrap: wrap; 
-        }
-        .input-group { flex: 1 1 100%; }
-        input, select { padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 13px; outline: none; background: #fafafa; box-sizing: border-box; }
-        input { width: 100%; }
-        select { font-weight: 600; color: #333; cursor: pointer; width: 100%; }
-        button { padding: 10px 14px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 12px; transition: 0.3s; white-space: nowrap; flex: 1; }
-        
-        .btn-start { background: #2563eb; color: #fff; font-size: 13px; font-weight: 700; flex: 1 1 100%; }
+        .controls { padding: 12px 20px; display: flex; gap: 10px; background: #fff; border-bottom: 1px solid #eee; align-items: center; flex-wrap: wrap; }
+        .input-group { flex: 1; min-width: 200px; }
+        input, select { padding: 10px 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 13px; outline: none; background: #fafafa; }
+        input { width: 100%; box-sizing: border-box; }
+        select { font-weight: 600; color: #333; cursor: pointer; }
+        button { padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; transition: 0.3s; white-space: nowrap; }
+        .btn-start { background: #2563eb; color: #fff; font-size: 14px; padding: 10px 20px; font-weight: 700; box-shadow: 0 4px 12px rgba(37,99,235,0.3); }
         .btn-live { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
         .btn-route { background: var(--hnb); color: #fff; }
         .btn-print { background: #4f46e5; color: #fff; }
 
-        .info-grid { display: grid; grid-template-columns: repeat(3, 1fr); padding: 10px; background: #fff; border-bottom: 1px solid #eee; text-align: center; gap: 5px; }
+        .info-grid { display: grid; grid-template-columns: repeat(3, 1fr); padding: 12px; background: #fff; border-bottom: 1px solid #eee; text-align: center; }
         .info-box b { font-size: 9px; color: var(--hnb); text-transform: uppercase; display: block; }
-        .info-box span { font-weight: 700; color: #333; font-size: 11px; word-break: break-all; }
+        .info-box span { font-weight: 700; color: #333; font-size: 13px; }
 
-        #map { width: 100%; height: 350px; background: #e5e3df; cursor: crosshair; }
+        #map { width: 100%; height: 450px; background: #e5e3df; cursor: crosshair; }
         .footer { padding: 10px; text-align: center; background: #fff; }
         
         /* Scan Ready QR Box */
         #qrcode { 
             display: inline-block; 
-            padding: 8px; 
+            padding: 10px; 
             background: #ffffff; 
-            border: 2px solid #000000; 
+            border: 3px solid #000000; 
             border-radius: 8px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
-        #qrcode img { display: block; margin: 0 auto; }
+        #qrcode img { display: block; margin: 0 auto; image-rendering: pixelated; }
         
         .hnbf-marker-container { position: relative; text-align: center; }
         .hnbf-arrow { width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 16px solid #d32f2f; margin: 0 auto; }
@@ -182,79 +181,95 @@
             align-items: center;
             z-index: 10000;
             backdrop-filter: blur(6px);
-            padding: 10px;
-            box-sizing: border-box;
         }
         .modal-box {
             background: #fff;
-            padding: 20px 15px;
+            padding: 25px;
             border-radius: 16px;
-            width: 100%;
-            max-width: 450px;
-            max-height: 90vh;
-            overflow-y: auto;
+            width: 90%;
+            max-width: 480px;
             text-align: center;
             box-shadow: 0 20px 40px rgba(0,0,0,0.3);
             border: 2px solid var(--hnb);
             position: relative;
-            box-sizing: border-box;
         }
-        .modal-box h2 { margin-top: 25px; color: var(--hnb); font-size: 18px; }
+        .modal-box h2 { margin-top: 10px; color: var(--hnb); font-size: 20px; }
         .modal-box label { display: block; text-align: left; font-size: 12px; font-weight: bold; color: #555; margin: 12px 0 4px 0; }
+        .modal-box select, .modal-box input { width: 100%; box-sizing: border-box; margin-bottom: 12px; }
 
         /* MENU HEADER BADGE */
         .menu-badge {
             display: inline-block;
             background: var(--hnb);
             color: #fff;
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 800;
-            letter-spacing: 1px;
-            padding: 4px 12px;
+            letter-spacing: 2px;
+            padding: 4px 14px;
             border-radius: 20px;
+            margin-bottom: 8px;
             text-transform: uppercase;
         }
 
-        /* LIVE COUNTER */
+        /* REALTIME LIVE COUNTER & GREEN LED STYLES */
         .live-status-box {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             background: #09131d;
             border: 1px solid #10b981;
-            padding: 4px 12px;
+            padding: 6px 16px;
             border-radius: 30px;
             margin: 5px auto 10px auto;
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
         }
 
+        /* BLINKING GREEN LED LIGHT */
         .green-led {
-            width: 8px;
-            height: 8px;
+            width: 10px;
+            height: 10px;
             background-color: #10b981;
             border-radius: 50%;
-            box-shadow: 0 0 8px #10b981;
+            box-shadow: 0 0 8px #10b981, 0 0 15px #10b981;
             animation: blinkLed 1.2s infinite ease-in-out;
         }
 
         @keyframes blinkLed {
-            0% { opacity: 1; }
-            50% { opacity: 0.2; }
-            100% { opacity: 1; }
+            0% { opacity: 1; transform: scale(1); box-shadow: 0 0 8px #10b981, 0 0 15px #10b981; }
+            50% { opacity: 0.2; transform: scale(0.85); box-shadow: none; }
+            100% { opacity: 1; transform: scale(1); box-shadow: 0 0 8px #10b981, 0 0 15px #10b981; }
         }
 
-        .live-text { color: #10b981; font-size: 10px; font-weight: 800; }
-        .live-count-num { color: #ffffff; font-size: 11px; font-weight: 800; font-family: monospace; background: #04080d; padding: 2px 6px; border-radius: 4px; }
+        .live-text {
+            color: #10b981;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
 
-        /* VIEW TOGGLE BAR */
+        .live-count-num {
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: 800;
+            font-family: monospace;
+            background: #04080d;
+            padding: 2px 8px;
+            border-radius: 6px;
+            border: 1px solid rgba(16, 185, 129, 0.4);
+        }
+
+        /* VIEW TOGGLE BAR - ABSOLUTE TOP-RIGHT POSITIONING */
         .view-toggle-bar {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 15px;
+            right: 15px;
             display: flex;
             gap: 3px;
             background: #0f172a;
             padding: 3px;
             border-radius: 20px;
+            border: 1px solid rgba(0, 242, 255, 0.3);
             z-index: 10;
         }
 
@@ -262,117 +277,288 @@
             background: transparent;
             color: #94a3b8;
             border: none;
-            padding: 4px 8px;
+            padding: 4px 10px;
             border-radius: 16px;
             font-size: 10px;
             font-weight: 700;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .toggle-btn.active {
             background: linear-gradient(135deg, #004a99, #00f2ff);
             color: #ffffff;
+            box-shadow: 0 0 8px rgba(0, 242, 255, 0.5);
         }
 
-        /* MENU BUTTON CONTAINER */
+        /* MENU BUTTON CONTAINER & MODES */
         .menu-options-container {
             display: grid;
-            gap: 8px;
+            gap: 10px;
             margin-top: 10px;
+            transition: all 0.4s ease;
         }
 
-        .menu-options-container.grid-mode { grid-template-columns: repeat(2, 1fr); }
-        .menu-options-container.grid-mode .btn-full-width { grid-column: span 2; }
-        .menu-options-container.list-mode { grid-template-columns: 1fr !important; }
-        .menu-options-container.list-mode .btn-full-width { grid-column: span 1; }
+        /* Default Grid Mode (2 Columns) */
+        .menu-options-container.grid-mode {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .menu-options-container.grid-mode .btn-full-width {
+            grid-column: span 2;
+        }
+
+        /* List Mode (1 Column) */
+        .menu-options-container.list-mode {
+            grid-template-columns: 1fr !important;
+        }
+
+        .menu-options-container.list-mode .menu-item-btn {
+            padding: 12px 18px;
+            justify-content: flex-start;
+        }
+
+        .menu-options-container.list-mode .btn-full-width {
+            grid-column: span 1;
+        }
 
         .menu-item-btn {
             width: 100%;
-            padding: 10px 8px;
+            padding: 14px 12px;
             color: white;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 700;
-            border-radius: 10px;
+            border-radius: 12px;
             cursor: pointer;
             border: none;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 10px;
             text-decoration: none;
             box-sizing: border-box;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            animation: switchAnim 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
 
-        .menu-item-btn .btn-icon { font-size: 16px; }
+        .menu-item-btn .btn-icon {
+            font-size: 18px;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
 
-        /* BUTTON COLORS */
-        .btn-opt-map { background: linear-gradient(135deg, #004a99, #00f2ff); }
-        .btn-opt-lesing-cal { background: linear-gradient(135deg, #FF6600, #FFD100); }
-        .btn-opt-pdf { background: linear-gradient(135deg, #7928ca, #ff007f); }
-        .btn-opt-3w { background: linear-gradient(135deg, #ff9900, #ff5500); }
-        .btn-opt-nic { background: linear-gradient(135deg, #10b981, #059669); }
-        .btn-opt-fixed-deposit { background: linear-gradient(135deg, #1a1a2e, #0f3460); }
-        .btn-opt-regbike { background: linear-gradient(135deg, #0284c7, #06b6d4); }
-        .btn-opt-lkr { background: linear-gradient(135deg, #00a6b5, #004a99); }
+        /* ANIMATION FOR LAYOUT SWITCH */
+        @keyframes switchAnim {
+            0% {
+                opacity: 0.2;
+                transform: scale(0.9) translateY(8px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
 
-        .comment-section-wrapper { margin-top: 12px; padding-top: 10px; border-top: 1px dashed #ccc; }
+        /* DRAW MAP BUTTON */
+        .btn-opt-map {
+            background: linear-gradient(135deg, #004a99, #00f2ff);
+        }
+        .btn-opt-map:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(0, 242, 255, 0.5);
+            background: linear-gradient(135deg, #00f2ff, #004a99);
+        }
+
+        /* LESING CAL BUTTON STYLES */
+        .btn-opt-lesing-cal {
+            background: linear-gradient(135deg, #FF6600, #FFD100);
+        }
+        .btn-opt-lesing-cal:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(255, 102, 0, 0.5);
+            background: linear-gradient(135deg, #FFD100, #FF6600);
+        }
+
+        /* EDIT PDF BUTTON */
+        .btn-opt-pdf {
+            background: linear-gradient(135deg, #7928ca, #ff007f);
+        }
+        .btn-opt-pdf:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(255, 0, 127, 0.5);
+            background: linear-gradient(135deg, #ff007f, #7928ca);
+        }
+
+        /* THREE WHEEL PRICE LIST BUTTON */
+        .btn-opt-3w {
+            background: linear-gradient(135deg, #ff9900, #ff5500);
+        }
+        .btn-opt-3w:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(255, 153, 0, 0.5);
+            background: linear-gradient(135deg, #ff5500, #ff9900);
+        }
+
+        /* NIC TO DOB BUTTON STYLES */
+        .btn-opt-nic {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+        .btn-opt-nic:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(16, 185, 129, 0.5);
+            background: linear-gradient(135deg, #059669, #10b981);
+        }
+
+        /* FIXED DEPOSIT BUTTON STYLES */
+        .btn-opt-fixed-deposit {
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+        }
+        .btn-opt-fixed-deposit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(15, 52, 96, 0.6);
+            background: linear-gradient(135deg, #0f3460, #16213e, #1a1a2e);
+        }
+
+        /* 🏍️ REG BIKE BUTTON STYLES */
+        .btn-opt-regbike {
+            background: linear-gradient(135deg, #0284c7, #06b6d4, #38bdf8);
+        }
+        .btn-opt-regbike:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(6, 182, 212, 0.6);
+            background: linear-gradient(135deg, #38bdf8, #06b6d4, #0284c7);
+        }
+
+        /* 💰 LKR TO WORDS BUTTON STYLES */
+        .btn-opt-lkr {
+            background: linear-gradient(135deg, #00a6b5, #004a99);
+        }
+        .btn-opt-lkr:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(0, 166, 181, 0.5);
+            background: linear-gradient(135deg, #004a99, #00a6b5);
+        }
+
+        /* 💬 SEPARATED GLOWING COMMENT BUTTON STYLES */
+        .comment-section-wrapper {
+            margin-top: 15px;
+            padding-top: 12px;
+            border-top: 1px dashed rgba(0, 0, 0, 0.15);
+        }
+
         .btn-opt-comment-glowing {
-            background: linear-gradient(135deg, #10002b, #3c096c);
+            position: relative;
+            background: linear-gradient(135deg, #10002b, #240046, #3c096c);
             color: #fff;
-            padding: 12px;
-            border-radius: 10px;
-            font-size: 13px;
+            padding: 14px 20px;
+            border-radius: 14px;
+            font-size: 14px;
             font-weight: 800;
+            letter-spacing: 1px;
             text-decoration: none;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            border: 1px solid #9d4edd;
+            gap: 10px;
+            border: 2px solid #9d4edd;
+            box-shadow: 0 0 15px rgba(157, 78, 221, 0.6), inset 0 0 10px rgba(224, 170, 255, 0.3);
+            animation: neonGlow 2.5s infinite alternate;
+            transition: all 0.3s ease;
+            overflow: hidden;
         }
 
+        .btn-opt-comment-glowing::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+            transform: rotate(45deg);
+            pointer-events: none;
+        }
+
+        .btn-opt-comment-glowing:hover {
+            transform: scale(1.03) translateY(-2px);
+            border-color: #e0aaff;
+            box-shadow: 0 0 25px rgba(224, 170, 255, 0.9), 0 0 40px rgba(157, 78, 221, 0.8);
+            background: linear-gradient(135deg, #3c096c, #5a189a, #7b2cbf);
+        }
+
+        @keyframes neonGlow {
+            0% {
+                box-shadow: 0 0 10px rgba(157, 78, 221, 0.5), inset 0 0 5px rgba(224, 170, 255, 0.2);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(247, 37, 133, 0.7), 0 0 30px rgba(114, 9, 183, 0.6);
+            }
+            100% {
+                box-shadow: 0 0 15px rgba(76, 201, 240, 0.8), inset 0 0 10px rgba(224, 170, 255, 0.4);
+            }
+        }
+
+        /* TOP-RIGHT ACTION BUTTON ROW (BACK / HOME / NEXT / DRAW) */
         .modal-action-row {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 15px;
+            right: 15px;
             display: flex;
-            gap: 5px;
+            gap: 6px;
             z-index: 10;
         }
 
         .modal-btn {
-            padding: 5px 10px;
+            padding: 6px 12px;
             background: var(--hnb);
             color: white;
-            font-size: 10px;
+            font-size: 11px;
             font-weight: bold;
             border-radius: 6px;
             cursor: pointer;
             border: none;
+            transition: all 0.2s ease;
+        }
+        
+        .modal-btn:hover {
+            filter: brightness(1.1);
         }
 
-        .btn-nav-secondary { background: #64748b; }
+        .btn-nav-secondary {
+            background: #64748b;
+        }
+
         .modal-btn-draw { background: #059669; }
 
-        /* ALERT POPUP */
-        .alert-box { border: 2px solid #e11d48; }
-        .alert-icon { font-size: 35px; }
-        .alert-box h3 { color: #e11d48; margin: 0 0 8px 0; font-size: 18px; }
-        .alert-msg { background: #fff1f2; border: 1px dashed #f43f5e; padding: 10px; border-radius: 8px; color: #9f1239; font-size: 12px; text-align: left; margin-bottom: 12px; }
-        .btn-alert-ok { background: #e11d48; color: #fff; font-size: 13px; font-weight: bold; width: 100%; }
-
-        /* DESKTOP MEDIA QUERY (Screen > 600px) */
-        @media (min-width: 600px) {
-            .header { flex-direction: row; justify-content: space-between; }
-            .header h1 { font-size: 26px; }
-            .controls { flex-wrap: nowrap; }
-            .input-group { flex: 1; }
-            select { width: auto; }
-            button { flex: initial; }
-            .btn-start { flex: initial; }
-            #map { height: 450px; }
-            .info-box span { font-size: 13px; }
+        /* 100KM ALERT POPUP SPECIFIC STYLES */
+        .alert-box {
+            border: 2px solid #e11d48;
+            background: #fff;
         }
+        .alert-icon { font-size: 45px; margin-bottom: 10px; }
+        .alert-box h3 { color: #e11d48; margin: 0 0 10px 0; font-size: 20px; }
+        .alert-msg {
+            background: #fff1f2;
+            border: 1px dashed #f43f5e;
+            padding: 12px;
+            border-radius: 8px;
+            color: #9f1239;
+            font-size: 13px;
+            line-height: 1.5;
+            text-align: left;
+            margin-bottom: 15px;
+        }
+        .btn-alert-ok { background: #e11d48; color: #fff; font-size: 14px; font-weight: bold; width: 100%; }
 
         /* PRINT STYLES */
         @media print {
@@ -380,6 +566,7 @@
             .no-print, .status-bar, .modal-overlay, #distanceAlertModal, .header-btn-group { display: none !important; }
             body { background: #fff !important; margin: 0 !important; padding: 0 !important; }
 
+            /* MODE 1: 2W & 3W PRINT MODE */
             body.print-2w-3w .container {
                 width: 15cm !important;
                 height: 20.7cm !important;
@@ -391,13 +578,19 @@
                 border-radius: 0 !important;
                 box-sizing: border-box !important;
             }
-            body.print-2w-3w .header { background: #fff !important; color: #000 !important; padding: 10px !important; margin: 0 !important; }
+            body.print-2w-3w .header {
+                background: #fff !important;
+                color: #000 !important;
+                padding: 10px !important;
+                margin: 0 !important;
+            }
             body.print-2w-3w .header::before, body.print-2w-3w .header::after { display: none !important; }
-            body.print-2w-3w .header h1 { font-size: 15pt !important; color: #000 !important; text-shadow: none !important; }
+            body.print-2w-3w .header h1 { font-size: 15pt !important; color: #000 !important; text-shadow: none !important; letter-spacing: 2px !important; }
             body.print-2w-3w #map { flex-grow: 1 !important; height: auto !important; border-top: 1pt solid #000 !important; border-bottom: 1pt solid #000 !important; }
             body.print-2w-3w #qrcode { border: 2pt solid #000 !important; padding: 6px !important; }
             body.print-2w-3w #qrcode img { width: 120px !important; height: 120px !important; }
 
+            /* MODE 2: AUTO PRINT MODE */
             body.print-auto .container {
                 position: absolute !important;
                 top: 4cm !important;
@@ -417,7 +610,7 @@
             }
             body.print-auto .header { padding: 4px !important; margin: 0 !important; border-bottom: 2px solid var(--hnb) !important; border-radius: 0 !important; background: #fff !important; }
             body.print-auto .header::before, body.print-auto .header::after { display: none !important; }
-            body.print-auto .header h1 { font-size: 13pt !important; text-shadow: none !important; color: #000 !important; }
+            body.print-auto .header h1 { font-size: 13pt !important; letter-spacing: 2px !important; text-shadow: none !important; color: #000 !important; }
             body.print-auto .info-grid { padding: 4px !important; font-size: 8pt !important; border-bottom: 1px solid #ccc !important; }
             body.print-auto .info-box span { font-size: 8pt !important; }
             body.print-auto #map { flex-grow: 1 !important; height: auto !important; width: 100% !important; border-top: 1pt solid #000 !important; border-bottom: 1pt solid #000 !important; }
@@ -445,6 +638,7 @@
 <div class="container">
     <div class="header">
         <h1>HNB FINANCE</h1>
+        <!-- Header Button Group (HOME and IDEA & HELP) -->
         <div class="header-btn-group no-print">
             <button class="btn-home-floating" onclick="openWizard()">🏠 HOME</button>
             <button class="btn-help-floating" onclick="openHelpLink()">💡 Idea & Help</button>
@@ -476,15 +670,22 @@
 
 <!-- STEP-BY-STEP POPUP WIZARD -->
 <div class="modal-overlay no-print" id="wizardModal">
+    <!-- STEP 0: MAIN MENU POPUP -->
     <div class="modal-box" id="step0">
+        <!-- GRID / LIST VIEW TOGGLE SWITCHER (TOP-RIGHT CORNER) -->
         <div class="view-toggle-bar">
-            <button class="toggle-btn active" id="btnGrid" onclick="switchMenuView('grid')">🔲 Grid</button>
-            <button class="toggle-btn" id="btnList" onclick="switchMenuView('list')">☰ List</button>
+            <button class="toggle-btn active" id="btnGrid" onclick="switchMenuView('grid')">
+                <span>🔲</span> Grid
+            </button>
+            <button class="toggle-btn" id="btnList" onclick="switchMenuView('list')">
+                <span>☰</span> List
+            </button>
         </div>
 
         <span class="menu-badge">MAIN MENU</span>
         <h2>HNB FINANCE</h2>
         
+        <!-- REALTIME FIREBASE LIVE USER COUNTER UI -->
         <div class="live-status-box">
             <div class="green-led"></div>
             <span class="live-text">LIVE USERS:</span>
@@ -494,56 +695,67 @@
         <p style="color:#666; font-size:12px; margin-bottom: 8px;">Select an option to proceed:</p>
         
         <div class="menu-options-container grid-mode" id="menuContainer">
+            <!-- OPTION 1: DRAW MAP -->
             <button class="menu-item-btn btn-opt-map btn-full-width" onclick="goToStep(1)">
                 <span class="btn-icon">🗺️</span>
                 <span>Draw the Map</span>
             </button>
             
+            <!-- OPTION 2: LESING CAL -->
             <a href="https://gmaphnbf.github.io/LESINGCAL/" target="_blank" class="menu-item-btn btn-opt-lesing-cal">
                 <span class="btn-icon">🧮</span>
                 <span>LESING CAL</span>
             </a>
 
+            <!-- OPTION 3: EDIT PDF -->
             <a href="https://gmaphnbf.github.io/pdf-editor/" target="_blank" class="menu-item-btn btn-opt-pdf">
                 <span class="btn-icon">📝</span>
                 <span>Edit PDF</span>
             </a>
 
+            <!-- OPTION 4: THREE WHEEL PRICE LIST -->
             <a href="https://gmaphnbf.github.io/3WH3/" target="_blank" class="menu-item-btn btn-opt-3w">
                 <span class="btn-icon">🛺</span>
                 <span>3W Price List</span>
             </a>
 
+            <!-- OPTION 5: NIC TO DOB -->
             <a href="https://gmaphnbf.github.io/NICTODOB/" target="_blank" class="menu-item-btn btn-opt-nic">
                 <span class="btn-icon">🪪</span>
                 <span>NIC TO DOB</span>
             </a>
 
+            <!-- OPTION 6: FIXED DEPOSIT -->
             <a href="https://gmaphnbf.github.io/HNBFFD/" target="_blank" class="menu-item-btn btn-opt-fixed-deposit">
                 <span class="btn-icon">🏦</span>
                 <span>FIXED DEPOSIT</span>
             </a>
 
+            <!-- 🏍️ OPTION 7: REG BIKE -->
             <a href="https://gmaphnbf.github.io/regbike/" target="_blank" class="menu-item-btn btn-opt-regbike">
                 <span class="btn-icon">🏍️</span>
                 <span>REG BIKE</span>
             </a>
 
+            <!-- 💰 OPTION 8: LKR TO WORDS (NEWLY ADDED) -->
             <a href="https://gmaphnbf.github.io/-LKR-to-Words/" target="_blank" class="menu-item-btn btn-opt-lkr">
                 <span class="btn-icon">💰</span>
                 <span>LKR TO WORDS</span>
             </a>
         </div>
 
+        <!-- 💬 SEPARATED GLOWING COMMENT BUTTON AT THE BOTTOM -->
         <div class="comment-section-wrapper">
             <a href="https://gmaphnbf.github.io/COMMENT/" target="_blank" class="btn-opt-comment-glowing">
-                <span style="font-size:18px;">💬</span>
+                <span style="font-size:20px;">💬</span>
                 <span>LEAVE A COMMENT</span>
             </a>
         </div>
     </div>
 
+    <!-- STEP 1: SELECT BRANCH -->
     <div class="modal-box" id="step1" style="display:none;">
+        <!-- TOP RIGHT BUTTONS -->
         <div class="modal-action-row">
             <button class="modal-btn btn-nav-secondary" onclick="goToStep(0)">⬅️ Back</button>
             <button class="modal-btn" onclick="goToStep(2)">OK / Next ➡️</button>
@@ -552,6 +764,7 @@
         <h2>Step 1: Select Your Branch</h2>
         <label>Search / Select relevant HNB Finance Branch:</label>
         
+        <!-- SEARCH BOX FOR BRANCHES -->
         <input type="text" id="branchSearchInput" placeholder="🔍 Type branch name to search..." onkeyup="filterBranches()" style="border:2px solid var(--hnb);">
         
         <select id="modalBranchSelect" size="5" style="height: 120px;">
@@ -577,7 +790,9 @@
         </select>
     </div>
 
+    <!-- STEP 2: TARGET LOCATION -->
     <div class="modal-box" id="step2" style="display:none;">
+        <!-- TOP RIGHT BUTTONS -->
         <div class="modal-action-row">
             <button class="modal-btn btn-nav-secondary" onclick="goToStep(0)">🏠 Home</button>
             <button class="modal-btn modal-btn-draw" onclick="executeDrawAndPrint()">🚀 Draw Map</button>
@@ -586,10 +801,11 @@
         <h2>Step 2: Enter Target Location</h2>
         <label>Enter target location coordinates (Lat, Lng):</label>
         <input type="text" id="modalDestCoords" placeholder="e.g. 8.3512, 80.4021">
-        <p style="font-size: 11px; color: #888; margin-top: 15px;">(Or click directly on the map after selecting OK)</p>
+        <p style="font-size: 11px; color: #888; margin-top: 25px;">(Or click directly on the map after selecting OK)</p>
     </div>
 </div>
 
+<!-- 100 KM+ DISTANCE APPROVAL REMINDER MODAL POPUP -->
 <div class="modal-overlay no-print" id="distanceAlertModal" style="display: none;">
     <div class="modal-box alert-box">
         <div class="alert-icon">⚠️</div>
@@ -603,12 +819,20 @@
 </div>
 
 <script>
+    // LAYOUT SWITCHER FUNCTION
     function switchMenuView(mode) {
         const container = document.getElementById('menuContainer');
         const btnGrid = document.getElementById('btnGrid');
         const btnList = document.getElementById('btnList');
+        const items = document.querySelectorAll('.menu-item-btn');
 
         if (!container) return;
+
+        items.forEach(item => {
+            item.style.animation = 'none';
+            item.offsetHeight; // Reflow trigger
+            item.style.animation = 'switchAnim 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards';
+        });
 
         if (mode === 'list') {
             container.classList.remove('grid-mode');
@@ -623,6 +847,7 @@
         }
     }
 
+    // FIREBASE CONFIGURATION
     const firebaseConfig = {
         apiKey: "AIzaSyDKkMovF3OWweyQSveA8KUKk63b-i5cqUg",
         authDomain: "gmap-e4d9c.firebaseapp.com",
@@ -638,6 +863,7 @@
     firebase.analytics();
     const db = firebase.database();
 
+    // REALTIME LIVE PRESENCE TRACKER
     function setupRealtimePresence() {
         const mySessionRef = db.ref('status/' + Date.now() + "_" + Math.random().toString(36).substr(2, 5));
         const connectedRef = db.ref('.info/connected');
@@ -660,7 +886,9 @@
 
     var helpLink = "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=Xqpfvj37g0mkFC1mBArnbxYIJwbXtbVCsCZt4u4BQp1UNzdGMUVBUFhWSTlHUEFaS05aMFYxSUxXTC4u";
 
-    function openHelpLink() { window.open(helpLink, '_blank'); }
+    function openHelpLink() {
+        window.open(helpLink, '_blank');
+    }
 
     var currentStartLoc = [8.335351, 80.411615];
     var currentBranchName = "HNBF Anuradhapura";
@@ -678,6 +906,7 @@
         document.getElementById('step' + stepNum).style.display = 'block';
     }
 
+    /* BRANCH SEARCH FILTER FUNCTION */
     function filterBranches() {
         var input = document.getElementById("branchSearchInput");
         var filter = input.value.toUpperCase();
@@ -700,7 +929,9 @@
         }
     }
 
-    function closeAlertModal() { document.getElementById('distanceAlertModal').style.display = 'none'; }
+    function closeAlertModal() {
+        document.getElementById('distanceAlertModal').style.display = 'none';
+    }
 
     function checkDistanceAndAlert(km) {
         if (km > 100) {
@@ -784,6 +1015,7 @@
     setInterval(updateSpeed, 3000);
     updateSpeed();
 
+    // GOOGLE MAPS TILE INITIALIZATION
     function initMap() {
         map = L.map('map', { zoomControl: false }).setView(currentStartLoc, 13);
         
@@ -862,8 +1094,8 @@
         var img = document.createElement('img');
         img.src = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(liveNavUrl) + "&ecc=M&margin=2";
         img.alt = "Scan Direction QR";
-        img.style.width = "90px";
-        img.style.height = "90px";
+        img.style.width = "100px";
+        img.style.height = "100px";
         qrContainer.appendChild(img);
 
         refreshMapSize();
@@ -881,6 +1113,7 @@
     window.onload = function() {
         initMap();
         setupRealtimePresence();
+        
         openWizard();
 
         document.getElementById('rBtn').onclick = function() {
