@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HNB Finance - Geo-Tracker Pro</title>
     <!-- CSS Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -19,6 +20,8 @@
             font-size: 11px;
             font-family: monospace;
             border-bottom: 1px solid #222;
+            flex-wrap: wrap;
+            gap: 5px;
         }
         .status-item span { color: var(--accent); margin-left: 5px; }
 
@@ -34,6 +37,10 @@
             margin: 4px;
             border-radius: 8px;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
         .header::before {
             content: '';
@@ -181,6 +188,8 @@
             align-items: center;
             z-index: 10000;
             backdrop-filter: blur(6px);
+            padding: 10px;
+            box-sizing: border-box;
         }
         .modal-box {
             background: #fff;
@@ -188,10 +197,13 @@
             border-radius: 16px;
             width: 90%;
             max-width: 480px;
+            max-height: 90vh;
+            overflow-y: auto;
             text-align: center;
             box-shadow: 0 20px 40px rgba(0,0,0,0.3);
             border: 2px solid var(--hnb);
             position: relative;
+            box-sizing: border-box;
         }
         .modal-box h2 { margin-top: 10px; color: var(--hnb); font-size: 20px; }
         .modal-box label { display: block; text-align: left; font-size: 12px; font-weight: bold; color: #555; margin: 12px 0 4px 0; }
@@ -559,6 +571,75 @@
             margin-bottom: 15px;
         }
         .btn-alert-ok { background: #e11d48; color: #fff; font-size: 14px; font-weight: bold; width: 100%; }
+
+        /* MOBILE RESPONSIVE STYLES */
+        @media screen and (max-width: 600px) {
+            .status-bar {
+                font-size: 9px;
+                padding: 4px 10px;
+                justify-content: center;
+            }
+            .header {
+                padding: 15px 10px 50px 10px;
+            }
+            .header h1 {
+                font-size: 20px;
+                letter-spacing: 2px;
+            }
+            .header-btn-group {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin-top: 10px;
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            .btn-home-floating, .btn-help-floating {
+                padding: 6px 12px;
+                font-size: 11px;
+            }
+            .controls {
+                padding: 10px;
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .controls button, .controls select, .controls .input-group {
+                width: 100%;
+            }
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+                padding: 10px;
+            }
+            #map {
+                height: 350px;
+            }
+            .modal-box {
+                padding: 20px 15px;
+                width: 95%;
+            }
+            .modal-action-row {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin-bottom: 10px;
+                justify-content: flex-end;
+            }
+            .view-toggle-bar {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin: 0 auto 10px auto;
+                width: fit-content;
+            }
+            .menu-options-container.grid-mode {
+                grid-template-columns: 1fr;
+            }
+            .menu-options-container.grid-mode .btn-full-width {
+                grid-column: span 1;
+            }
+        }
 
         /* PRINT STYLES */
         @media print {
