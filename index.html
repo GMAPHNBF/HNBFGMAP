@@ -553,6 +553,27 @@
 
         .modal-btn-draw { background: #059669; }
 
+        .btn-curr-loc {
+            width: 100%;
+            background: #10b981;
+            color: #fff;
+            padding: 10px;
+            font-weight: bold;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+            transition: background 0.3s ease;
+        }
+        .btn-curr-loc:hover {
+            background: #059669;
+        }
+
         /* 100KM ALERT POPUP SPECIFIC STYLES */
         .alert-box {
             border: 2px solid #e11d48;
@@ -882,9 +903,13 @@
         </div>
 
         <h2>Step 2: Enter Target Location</h2>
+        
+        <!-- USE CURRENT LOCATION BUTTON -->
+        <button class="btn-curr-loc" onclick="fillCurrentLocationToStep2()">📍 Use Current Location</button>
+
         <label>Enter target location coordinates (Lat, Lng):</label>
         <input type="text" id="modalDestCoords" placeholder="e.g. 8.3512, 80.4021">
-        <p style="font-size: 11px; color: #888; margin-top: 25px;">(Or click directly on the map after selecting OK)</p>
+        <p style="font-size: 11px; color: #888; margin-top: 15px;">(Or click directly on the map after selecting OK)</p>
     </div>
 </div>
 
@@ -987,6 +1012,25 @@
         document.getElementById('step1').style.display = 'none';
         document.getElementById('step2').style.display = 'none';
         document.getElementById('step' + stepNum).style.display = 'block';
+    }
+
+    /* FUNCTION TO FILL CURRENT LOCATION TO STEP 2 INPUT */
+    function fillCurrentLocationToStep2() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    var lat = position.coords.latitude.toFixed(6);
+                    var lng = position.coords.longitude.toFixed(6);
+                    document.getElementById('modalDestCoords').value = lat + ", " + lng;
+                },
+                function(error) {
+                    alert("Unable to fetch location. Please allow location access on your browser.");
+                },
+                { enableHighAccuracy: true }
+            );
+        } else {
+            alert("Geolocation is not supported by your device/browser.");
+        }
     }
 
     /* BRANCH SEARCH FILTER FUNCTION */
