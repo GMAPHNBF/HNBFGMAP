@@ -573,6 +573,25 @@
         .btn-curr-loc:hover {
             background: #059669;
         }
+        .btn-curr-loc:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* iOS Fallback Message */
+        .ios-fallback-msg {
+            display: none;
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 10px 0;
+            font-size: 12px;
+            color: #991b1b;
+            text-align: left;
+            line-height: 1.6;
+        }
+        .ios-fallback-msg b { color: #dc2626; }
 
         /* 100KM ALERT POPUP SPECIFIC STYLES */
         .alert-box {
@@ -894,7 +913,7 @@
         </select>
     </div>
 
-    <!-- STEP 2: TARGET LOCATION -->
+    <!-- STEP 2: TARGET LOCATION - iOS සඳහා වැඩි දියුණු කළා -->
     <div class="modal-box" id="step2" style="display:none;">
         <!-- TOP RIGHT BUTTONS -->
         <div class="modal-action-row">
@@ -904,8 +923,14 @@
 
         <h2>Step 2: Enter Target Location</h2>
         
-        <!-- USE CURRENT LOCATION BUTTON -->
-        <button class="btn-curr-loc" onclick="fillCurrentLocationToStep2()">📍 Use Current Location</button>
+        <!-- USE CURRENT LOCATION BUTTON - iOS සඳහා වැඩි දියුණු කළා -->
+        <button class="btn-curr-loc" onclick="fillCurrentLocationToStep2()" id="currLocBtn">📍 Use Current Location</button>
+        
+        <!-- iOS Fallback Message - location access denied විට display වේ -->
+        <div class="ios-fallback-msg" id="iosFallbackMsg">
+            ⚠️ <b>Location access required</b><br>
+            Please allow location access or enter coordinates manually below.
+        </div>
 
         <label>Enter target location coordinates (Lat, Lng):</label>
         <input type="text" id="modalDestCoords" placeholder="e.g. 8.3512, 80.4021">
@@ -1014,22 +1039,85 @@
         document.getElementById('step' + stepNum).style.display = 'block';
     }
 
-    /* FUNCTION TO FILL CURRENT LOCATION TO STEP 2 INPUT */
+    /* ============================================================
+       iOS සඳහා වැඩි දියුණු කළ fillCurrentLocationToStep2() function
+       ============================================================ */
     function fillCurrentLocationToStep2() {
+        const btn = document.getElementById('currLocBtn');
+        const fallbackMsg = document.getElementById('iosFallbackMsg');
+        
+        // iOS device check (User Agent)
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        
+        // Already displaying fallback? then hide and retry
+        if (fallbackMsg.style.display === 'block') {
+            fallbackMsg.style.display = 'none';
+        }
+        
         if (navigator.geolocation) {
+            btn.textContent = '⏳ Fetching location...';
+            btn.disabled = true;
+            
+            // iOS සඳහා timeout එක වැඩි කරනවා (10s)
+            const geoOptions = {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            };
+            
             navigator.geolocation.getCurrentPosition(
+                // Success callback
                 function(position) {
                     var lat = position.coords.latitude.toFixed(6);
                     var lng = position.coords.longitude.toFixed(6);
                     document.getElementById('modalDestCoords').value = lat + ", " + lng;
+                    btn.textContent = '📍 Use Current Location';
+                    btn.disabled = false;
+                    fallbackMsg.style.display = 'none';
+                    // Success උනාම fallback message reset
+                    fallbackMsg.innerHTML = '⚠️ <b>Location access required</b><br>Please allow location access or enter coordinates manually below.';
                 },
+                // Error callback - iOS සඳහා විශේෂ හැසිරවීම
                 function(error) {
-                    alert("Unable to fetch location. Please allow location access on your browser.");
+                    console.warn('Geolocation error:', error.code, error.message);
+                    btn.textContent = '📍 Use Current Location';
+                    btn.disabled = false;
+                    
+                    // iOS specific error handling
+                    if (isIOS) {
+                        fallbackMsg.style.display = 'block';
+                        fallbackMsg.innerHTML = `
+                            ⚠️ <b>iOS Location Access Required</b><br>
+                            Please allow location access:<br>
+                            1. Go to <b>Settings → Privacy → Location Services</b><br>
+                            2. Enable location for <b>Safari</b><br>
+                            3. Or enter coordinates manually below.
+                        `;
+                    } else if (error.code === 1) { // PERMISSION_DENIED
+                        fallbackMsg.style.display = 'block';
+                        fallbackMsg.innerHTML = `
+                            ⚠️ <b>Location permission denied</b><br>
+                            Please allow location access in your browser settings, or enter coordinates manually below.
+                        `;
+                    } else {
+                        alert("Unable to fetch location. Please enter coordinates manually.");
+                        fallbackMsg.style.display = 'block';
+                        fallbackMsg.innerHTML = `
+                            ⚠️ <b>Location unavailable</b><br>
+                            Please enter target coordinates manually in the field below.
+                        `;
+                    }
                 },
-                { enableHighAccuracy: true }
+                geoOptions
             );
         } else {
-            alert("Geolocation is not supported by your device/browser.");
+            alert("Geolocation is not supported by your device/browser. Please enter coordinates manually.");
+            fallbackMsg.style.display = 'block';
+            fallbackMsg.innerHTML = `
+                ⚠️ <b>Geolocation not supported</b><br>
+                Please enter target coordinates manually in the field below.
+            `;
         }
     }
 
@@ -1132,13 +1220,12 @@
 
         if (userFileName !== null && userFileName.trim() !== "") {
             var originalTitle = document.title;
-            document.title = userFileName.trim(); // PDF නම ලෙස Document Title එක සැකසේ
+            document.title = userFileName.trim();
 
             preparePrintLayout();
             
             setTimeout(() => { 
                 window.print();
-                // Print window වැසුණු පසු මුල් Title එක නැවත ලබා දේ
                 setTimeout(() => { document.title = originalTitle; }, 1000);
             }, 400);
         }
