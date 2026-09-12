@@ -671,6 +671,34 @@
         }
         .btn-alert-ok { background: #e11d48; color: #fff; font-size: 14px; font-weight: bold; width: 100%; }
 
+        /* ============================================
+           STEP 1 BRANCH SELECT - LARGER STYLES (NEW)
+           ============================================ */
+        #step1 {
+            max-width: 620px !important;
+        }
+
+        #branchSearchInput {
+            padding: 14px 16px !important;
+            font-size: 15px !important;
+            border-radius: 10px !important;
+            margin-bottom: 12px !important;
+        }
+
+        #modalBranchSelect {
+            height: 300px !important;
+            font-size: 15px !important;
+            padding: 10px !important;
+            border-radius: 10px !important;
+            line-height: 1.8 !important;
+            border: 2px solid var(--hnb) !important;
+        }
+
+        #modalBranchSelect option {
+            padding: 10px 12px !important;
+            font-size: 14px !important;
+        }
+
         /* MOBILE RESPONSIVE STYLES */
         @media screen and (max-width: 600px) {
             .status-bar {
@@ -737,6 +765,19 @@
             }
             .menu-options-container.grid-mode .btn-full-width {
                 grid-column: span 1;
+            }
+
+            /* MOBILE: Step 1 Branch Select - Bigger */
+            #step1 {
+                max-width: 95% !important;
+            }
+            #modalBranchSelect {
+                height: 260px !important;
+                font-size: 14px !important;
+            }
+            #branchSearchInput {
+                padding: 12px 14px !important;
+                font-size: 14px !important;
             }
         }
 
@@ -958,9 +999,9 @@
         <label>Search / Select relevant HNB Finance Branch:</label>
         
         <!-- SEARCH BOX FOR BRANCHES -->
-        <input type="text" id="branchSearchInput" placeholder="🔍 Type branch name to search..." onkeyup="filterBranches()" style="border:2px solid var(--hnb);">
+        <input type="text" id="branchSearchInput" placeholder="🔍 Type branch name to search..." onkeyup="filterBranches()">
         
-        <select id="modalBranchSelect" size="5" style="height: 120px;">
+        <select id="modalBranchSelect" size="8">
             <option value="8.335351,80.411615|HNBF Anuradhapura" selected>HNBF Anuradhapura</option>
             <option value="8.003788259137602,80.27115376074129|HNBF Galgamuwa">HNBF Galgamuwa</option>
             <option value="6.9373977982193304,79.9770854504675|HNBF Kaduwela">HNBF Kaduwela</option>
