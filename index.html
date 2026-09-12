@@ -672,8 +672,10 @@
         .btn-alert-ok { background: #e11d48; color: #fff; font-size: 14px; font-weight: bold; width: 100%; }
 
         /* ============================================
-           STEP 1 BRANCH SELECT - LARGER STYLES (NEW)
+           STEP 1 & STEP 2 - LARGER STYLES (NEW)
            ============================================ */
+        
+        /* STEP 1: BRANCH SELECT */
         #step1 {
             max-width: 620px !important;
         }
@@ -697,6 +699,52 @@
         #modalBranchSelect option {
             padding: 10px 12px !important;
             font-size: 14px !important;
+        }
+
+        /* STEP 2: TARGET LOCATION - LARGER */
+        #step2 {
+            max-width: 620px !important;
+        }
+
+        #step2 h2 {
+            font-size: 24px !important;
+            margin-bottom: 15px !important;
+        }
+
+        #step2 label {
+            font-size: 14px !important;
+            margin: 18px 0 8px 0 !important;
+        }
+
+        #step2 .btn-curr-loc {
+            padding: 16px !important;
+            font-size: 16px !important;
+            border-radius: 12px !important;
+            margin-bottom: 15px !important;
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4) !important;
+        }
+
+        #modalDestCoords {
+            padding: 16px 18px !important;
+            font-size: 16px !important;
+            border-radius: 12px !important;
+            border: 2px solid var(--hnb) !important;
+            margin-bottom: 15px !important;
+            letter-spacing: 0.5px !important;
+        }
+
+        #step2 p {
+            font-size: 13px !important;
+            padding: 10px !important;
+            background: #f8fafc !important;
+            border-radius: 8px !important;
+            border-left: 4px solid var(--hnb) !important;
+            text-align: left !important;
+        }
+
+        #iosFallbackMsg {
+            font-size: 13px !important;
+            padding: 14px !important;
         }
 
         /* MOBILE RESPONSIVE STYLES */
@@ -778,6 +826,22 @@
             #branchSearchInput {
                 padding: 12px 14px !important;
                 font-size: 14px !important;
+            }
+
+            /* MOBILE: Step 2 Target Location - Bigger */
+            #step2 {
+                max-width: 95% !important;
+            }
+            #step2 h2 {
+                font-size: 20px !important;
+            }
+            #step2 .btn-curr-loc {
+                padding: 14px !important;
+                font-size: 15px !important;
+            }
+            #modalDestCoords {
+                padding: 14px 16px !important;
+                font-size: 15px !important;
             }
         }
 
