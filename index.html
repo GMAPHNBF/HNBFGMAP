@@ -4,13 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HNB Finance - Geo-Tracker Pro</title>
-    <!-- CSS Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root { --hnb: #004a99; --accent: #00f2ff; --bg: #f4f7f9; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; background: var(--bg); -webkit-user-select: none; user-select: none; }
         
-        /* Top Status Bar */
         .status-bar {
             background: #111;
             color: #888;
@@ -27,7 +25,6 @@
 
         .container { max-width: 900px; margin: 10px auto 30px auto; background: #fff; border-radius: 12px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); overflow: hidden; position: relative; }
         
-        /* Neon Border Header */
         .header { 
             background: #050508; 
             color: #fff; 
@@ -78,7 +75,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* HEADER BUTTON CONTAINER */
         .header-btn-group {
             position: absolute;
             top: 15px;
@@ -88,7 +84,6 @@
             gap: 10px;
         }
 
-        /* HOME BUTTON STYLES */
         .btn-home-floating {
             background: linear-gradient(135deg, #004a99, #00f2ff);
             color: #fff;
@@ -113,7 +108,6 @@
             background: linear-gradient(135deg, #00f2ff, #004a99);
         }
 
-        /* GLOWING IDEA & HELP BUTTON */
         .btn-help-floating {
             background: linear-gradient(135deg, #ff007f, #7928ca);
             color: #fff;
@@ -164,7 +158,6 @@
         #map { width: 100%; height: 450px; background: #e5e3df; cursor: crosshair; }
         .footer { padding: 10px; text-align: center; background: #fff; }
         
-        /* Scan Ready QR Box */
         #qrcode { 
             display: inline-block; 
             padding: 10px; 
@@ -179,7 +172,6 @@
         .hnbf-arrow { width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 16px solid #d32f2f; margin: 0 auto; }
         .hnbf-label { background: var(--hnb); color: white; border: 1.5px solid white; border-radius: 4px; padding: 2px 6px; font-weight: bold; font-size: 10px; white-space: nowrap; position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); }
 
-        /* WIZARD & ALERT MODAL STYLES */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -210,7 +202,6 @@
         .modal-box label { display: block; text-align: left; font-size: 12px; font-weight: bold; color: #555; margin: 12px 0 4px 0; }
         .modal-box select, .modal-box input { width: 100%; box-sizing: border-box; margin-bottom: 12px; }
 
-        /* MENU HEADER BADGE */
         .menu-badge {
             display: inline-block;
             background: var(--hnb);
@@ -224,7 +215,6 @@
             text-transform: uppercase;
         }
 
-        /* REALTIME LIVE COUNTER & GREEN LED STYLES */
         .live-status-box {
             display: inline-flex;
             align-items: center;
@@ -237,7 +227,6 @@
             box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
         }
 
-        /* BLINKING GREEN LED LIGHT */
         .green-led {
             width: 10px;
             height: 10px;
@@ -272,7 +261,6 @@
             border: 1px solid rgba(16, 185, 129, 0.4);
         }
 
-        /* VIEW TOGGLE BAR - ABSOLUTE TOP-RIGHT POSITIONING */
         .view-toggle-bar {
             position: absolute;
             top: 15px;
@@ -307,7 +295,6 @@
             box-shadow: 0 0 8px rgba(0, 242, 255, 0.5);
         }
 
-        /* MENU BUTTON CONTAINER & MODES */
         .menu-options-container {
             display: grid;
             gap: 10px;
@@ -315,7 +302,6 @@
             transition: all 0.4s ease;
         }
 
-        /* Default Grid Mode (2 Columns) */
         .menu-options-container.grid-mode {
             grid-template-columns: repeat(2, 1fr);
         }
@@ -324,7 +310,6 @@
             grid-column: span 2;
         }
 
-        /* List Mode (1 Column) */
         .menu-options-container.list-mode {
             grid-template-columns: 1fr !important;
         }
@@ -370,79 +355,29 @@
             flex-shrink: 0;
         }
 
-        /* ANIMATION FOR LAYOUT SWITCH */
         @keyframes switchAnim {
-            0% {
-                opacity: 0.2;
-                transform: scale(0.9) translateY(8px);
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
+            0% { opacity: 0.2; transform: scale(0.9) translateY(8px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
         }
 
-        /* DRAW MAP BUTTON */
-        .btn-opt-map {
-            background: linear-gradient(135deg, #004a99, #00f2ff);
-        }
-        .btn-opt-map:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 22px rgba(0, 242, 255, 0.5);
-            background: linear-gradient(135deg, #00f2ff, #004a99);
-        }
+        .btn-opt-map { background: linear-gradient(135deg, #004a99, #00f2ff); }
+        .btn-opt-map:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(0, 242, 255, 0.5); background: linear-gradient(135deg, #00f2ff, #004a99); }
 
-        /* LESING CAL BUTTON STYLES */
-        .btn-opt-lesing-cal {
-            background: linear-gradient(135deg, #FF6600, #FFD100);
-        }
-        .btn-opt-lesing-cal:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 22px rgba(255, 102, 0, 0.5);
-            background: linear-gradient(135deg, #FFD100, #FF6600);
-        }
+        .btn-opt-lesing-cal { background: linear-gradient(135deg, #FF6600, #FFD100); }
+        .btn-opt-lesing-cal:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(255, 102, 0, 0.5); background: linear-gradient(135deg, #FFD100, #FF6600); }
 
-        /* EDIT PDF BUTTON */
-        .btn-opt-pdf {
-            background: linear-gradient(135deg, #7928ca, #ff007f);
-        }
-        .btn-opt-pdf:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 22px rgba(255, 0, 127, 0.5);
-            background: linear-gradient(135deg, #ff007f, #7928ca);
-        }
+        .btn-opt-pdf { background: linear-gradient(135deg, #7928ca, #ff007f); }
+        .btn-opt-pdf:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(255, 0, 127, 0.5); background: linear-gradient(135deg, #ff007f, #7928ca); }
 
-        /* THREE WHEEL PRICE LIST BUTTON */
-        .btn-opt-3w {
-            background: linear-gradient(135deg, #ff9900, #ff5500);
-        }
-        .btn-opt-3w:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 22px rgba(255, 153, 0, 0.5);
-            background: linear-gradient(135deg, #ff5500, #ff9900);
-        }
+        .btn-opt-3w { background: linear-gradient(135deg, #ff9900, #ff5500); }
+        .btn-opt-3w:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(255, 153, 0, 0.5); background: linear-gradient(135deg, #ff5500, #ff9900); }
 
-        /* NIC TO DOB BUTTON STYLES */
-        .btn-opt-nic {
-            background: linear-gradient(135deg, #10b981, #059669);
-        }
-        .btn-opt-nic:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 22px rgba(16, 185, 129, 0.5);
-            background: linear-gradient(135deg, #059669, #10b981);
-        }
+        .btn-opt-nic { background: linear-gradient(135deg, #10b981, #059669); }
+        .btn-opt-nic:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(16, 185, 129, 0.5); background: linear-gradient(135deg, #059669, #10b981); }
 
-        /* FIXED DEPOSIT BUTTON STYLES */
-        .btn-opt-fixed-deposit {
-            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
-        }
-        .btn-opt-fixed-deposit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 22px rgba(15, 52, 96, 0.6);
-            background: linear-gradient(135deg, #0f3460, #16213e, #1a1a2e);
-        }
+        .btn-opt-fixed-deposit { background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460); }
+        .btn-opt-fixed-deposit:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(15, 52, 96, 0.6); background: linear-gradient(135deg, #0f3460, #16213e, #1a1a2e); }
 
-        /* 🥇 GOLD LOAN BUTTON STYLES (NEW) */
         .btn-opt-gold {
             background: linear-gradient(135deg, #8a6a0a, #D4A017, #FFC94D, #D4A017);
             background-size: 200% 200%;
@@ -460,44 +395,25 @@
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
             transition: left 0.6s ease;
         }
-        .btn-opt-gold:hover::before {
-            left: 100%;
-        }
+        .btn-opt-gold:hover::before { left: 100%; }
         .btn-opt-gold:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 22px rgba(212, 160, 23, 0.7), 0 0 30px rgba(255, 201, 77, 0.5);
             background: linear-gradient(135deg, #FFC94D, #D4A017, #8a6a0a, #D4A017);
         }
-        .btn-opt-gold .btn-icon {
-            background: rgba(26, 18, 0, 0.15) !important;
-        }
+        .btn-opt-gold .btn-icon { background: rgba(26, 18, 0, 0.15) !important; }
         @keyframes goldShimmer {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
 
-        /* 🏍️ REG BIKE BUTTON STYLES */
-        .btn-opt-regbike {
-            background: linear-gradient(135deg, #0284c7, #06b6d4, #38bdf8);
-        }
-        .btn-opt-regbike:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 22px rgba(6, 182, 212, 0.6);
-            background: linear-gradient(135deg, #38bdf8, #06b6d4, #0284c7);
-        }
+        .btn-opt-regbike { background: linear-gradient(135deg, #0284c7, #06b6d4, #38bdf8); }
+        .btn-opt-regbike:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(6, 182, 212, 0.6); background: linear-gradient(135deg, #38bdf8, #06b6d4, #0284c7); }
 
-        /* 💰 LKR TO WORDS BUTTON STYLES */
-        .btn-opt-lkr {
-            background: linear-gradient(135deg, #00a6b5, #004a99);
-        }
-        .btn-opt-lkr:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 22px rgba(0, 166, 181, 0.5);
-            background: linear-gradient(135deg, #004a99, #00a6b5);
-        }
+        .btn-opt-lkr { background: linear-gradient(135deg, #00a6b5, #004a99); }
+        .btn-opt-lkr:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(0, 166, 181, 0.5); background: linear-gradient(135deg, #004a99, #00a6b5); }
 
-        /* 🔗 HNBF LINK BUTTON STYLES (NEW) */
         .btn-opt-hnbf-link {
             background: linear-gradient(135deg, #004a99, #0077cc, #00a6e0);
             position: relative;
@@ -511,16 +427,13 @@
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
             transition: left 0.6s ease;
         }
-        .btn-opt-hnbf-link:hover::before {
-            left: 100%;
-        }
+        .btn-opt-hnbf-link:hover::before { left: 100%; }
         .btn-opt-hnbf-link:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 22px rgba(0, 166, 224, 0.6);
             background: linear-gradient(135deg, #00a6e0, #0077cc, #004a99);
         }
 
-        /* 💬 SEPARATED GLOWING COMMENT BUTTON STYLES */
         .comment-section-wrapper {
             margin-top: 15px;
             padding-top: 12px;
@@ -568,18 +481,11 @@
         }
 
         @keyframes neonGlow {
-            0% {
-                box-shadow: 0 0 10px rgba(157, 78, 221, 0.5), inset 0 0 5px rgba(224, 170, 255, 0.2);
-            }
-            50% {
-                box-shadow: 0 0 20px rgba(247, 37, 133, 0.7), 0 0 30px rgba(114, 9, 183, 0.6);
-            }
-            100% {
-                box-shadow: 0 0 15px rgba(76, 201, 240, 0.8), inset 0 0 10px rgba(224, 170, 255, 0.4);
-            }
+            0% { box-shadow: 0 0 10px rgba(157, 78, 221, 0.5), inset 0 0 5px rgba(224, 170, 255, 0.2); }
+            50% { box-shadow: 0 0 20px rgba(247, 37, 133, 0.7), 0 0 30px rgba(114, 9, 183, 0.6); }
+            100% { box-shadow: 0 0 15px rgba(76, 201, 240, 0.8), inset 0 0 10px rgba(224, 170, 255, 0.4); }
         }
 
-        /* TOP-RIGHT ACTION BUTTON ROW (BACK / HOME / NEXT / DRAW) */
         .modal-action-row {
             position: absolute;
             top: 15px;
@@ -601,14 +507,8 @@
             transition: all 0.2s ease;
         }
         
-        .modal-btn:hover {
-            filter: brightness(1.1);
-        }
-
-        .btn-nav-secondary {
-            background: #64748b;
-        }
-
+        .modal-btn:hover { filter: brightness(1.1); }
+        .btn-nav-secondary { background: #64748b; }
         .modal-btn-draw { background: #059669; }
 
         .btn-curr-loc {
@@ -628,15 +528,9 @@
             box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
             transition: background 0.3s ease;
         }
-        .btn-curr-loc:hover {
-            background: #059669;
-        }
-        .btn-curr-loc:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
+        .btn-curr-loc:hover { background: #059669; }
+        .btn-curr-loc:disabled { opacity: 0.6; cursor: not-allowed; }
 
-        /* iOS Fallback Message */
         .ios-fallback-msg {
             display: none;
             background: #fef2f2;
@@ -651,11 +545,7 @@
         }
         .ios-fallback-msg b { color: #dc2626; }
 
-        /* 100KM ALERT POPUP SPECIFIC STYLES */
-        .alert-box {
-            border: 2px solid #e11d48;
-            background: #fff;
-        }
+        .alert-box { border: 2px solid #e11d48; background: #fff; }
         .alert-icon { font-size: 45px; margin-bottom: 10px; }
         .alert-box h3 { color: #e11d48; margin: 0 0 10px 0; font-size: 20px; }
         .alert-msg {
@@ -672,186 +562,187 @@
         .btn-alert-ok { background: #e11d48; color: #fff; font-size: 14px; font-weight: bold; width: 100%; }
 
         /* ============================================
-           STEP 1 & STEP 2 - LARGER STYLES (NEW)
+           STEP 1: BRANCH LIST - CARD STYLE UI (NEW)
            ============================================ */
-        
-        /* STEP 1: BRANCH SELECT */
         #step1 {
-            max-width: 620px !important;
+            max-width: 650px !important;
+            padding: 25px 20px !important;
+        }
+
+        #step1 h2 {
+            font-size: 22px !important;
+            margin-bottom: 15px !important;
         }
 
         #branchSearchInput {
-            padding: 14px 16px !important;
+            padding: 14px 18px !important;
             font-size: 15px !important;
-            border-radius: 10px !important;
-            margin-bottom: 12px !important;
-        }
-
-        #modalBranchSelect {
-            height: 300px !important;
-            font-size: 15px !important;
-            padding: 10px !important;
-            border-radius: 10px !important;
-            line-height: 1.8 !important;
-            border: 2px solid var(--hnb) !important;
-        }
-
-        #modalBranchSelect option {
-            padding: 10px 12px !important;
-            font-size: 14px !important;
-        }
-
-        /* STEP 2: TARGET LOCATION - LARGER */
-        #step2 {
-            max-width: 620px !important;
-        }
-
-        #step2 h2 {
-            font-size: 24px !important;
-            margin-bottom: 15px !important;
-        }
-
-        #step2 label {
-            font-size: 14px !important;
-            margin: 18px 0 8px 0 !important;
-        }
-
-        #step2 .btn-curr-loc {
-            padding: 16px !important;
-            font-size: 16px !important;
             border-radius: 12px !important;
             margin-bottom: 15px !important;
-            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4) !important;
-        }
-
-        #modalDestCoords {
-            padding: 16px 18px !important;
-            font-size: 16px !important;
-            border-radius: 12px !important;
             border: 2px solid var(--hnb) !important;
-            margin-bottom: 15px !important;
-            letter-spacing: 0.5px !important;
-        }
-
-        #step2 p {
-            font-size: 13px !important;
-            padding: 10px !important;
             background: #f8fafc !important;
-            border-radius: 8px !important;
-            border-left: 4px solid var(--hnb) !important;
-            text-align: left !important;
+            transition: all 0.3s ease !important;
         }
 
-        #iosFallbackMsg {
-            font-size: 13px !important;
-            padding: 14px !important;
+        #branchSearchInput:focus {
+            background: #fff !important;
+            box-shadow: 0 0 0 4px rgba(0, 74, 153, 0.15) !important;
         }
 
-        /* MOBILE RESPONSIVE STYLES */
+        /* SCROLLABLE BRANCH LIST CONTAINER */
+        .branch-list-container {
+            max-height: 380px;
+            overflow-y: auto;
+            padding: 5px;
+            border-radius: 12px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        /* Custom Scrollbar */
+        .branch-list-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        .branch-list-container::-webkit-scrollbar-track {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+        .branch-list-container::-webkit-scrollbar-thumb {
+            background: var(--hnb);
+            border-radius: 10px;
+        }
+        .branch-list-container::-webkit-scrollbar-thumb:hover {
+            background: #003d7a;
+        }
+
+        /* BRANCH CARD ITEM */
+        .branch-item {
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 12px 14px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+            color: #334155;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .branch-item:hover {
+            border-color: var(--hnb);
+            background: #f0f7ff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 74, 153, 0.15);
+        }
+
+        .branch-item.selected {
+            background: linear-gradient(135deg, var(--hnb), #0066cc);
+            border-color: var(--hnb);
+            color: #ffffff;
+            box-shadow: 0 6px 20px rgba(0, 74, 153, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .branch-item.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            right: 12px;
+            transform: translateY(-50%);
+            font-size: 16px;
+            font-weight: 900;
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.25);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .branch-item .branch-icon {
+            font-size: 18px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #e0f2fe, #bae6fd);
+            border-radius: 8px;
+            flex-shrink: 0;
+            transition: all 0.25s ease;
+        }
+
+        .branch-item.selected .branch-icon {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .branch-item .branch-name {
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding-right: 25px;
+        }
+
+        /* NO RESULTS MESSAGE */
+        .no-results {
+            grid-column: span 2;
+            text-align: center;
+            padding: 30px 15px;
+            color: #94a3b8;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .no-results span {
+            display: block;
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        /* MOBILE RESPONSIVE */
         @media screen and (max-width: 600px) {
-            .status-bar {
-                font-size: 9px;
-                padding: 4px 10px;
-                justify-content: center;
-            }
-            .header {
-                padding: 15px 10px 50px 10px;
-            }
-            .header h1 {
-                font-size: 20px;
-                letter-spacing: 2px;
-            }
-            .header-btn-group {
-                position: relative;
-                top: auto;
-                right: auto;
-                margin-top: 10px;
-                width: 100%;
-                justify-content: center;
-                flex-wrap: wrap;
-            }
-            .btn-home-floating, .btn-help-floating {
-                padding: 6px 12px;
-                font-size: 11px;
-            }
-            .controls {
-                padding: 10px;
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .controls button, .controls select, .controls .input-group {
-                width: 100%;
-            }
-            .info-grid {
-                grid-template-columns: 1fr;
-                gap: 8px;
-                padding: 10px;
-            }
-            #map {
-                height: 350px;
-            }
-            .modal-box {
-                padding: 20px 15px;
-                width: 95%;
-            }
-            .modal-action-row {
-                position: relative;
-                top: auto;
-                right: auto;
-                margin-bottom: 10px;
-                justify-content: flex-end;
-            }
-            .view-toggle-bar {
-                position: relative;
-                top: auto;
-                right: auto;
-                margin: 0 auto 10px auto;
-                width: fit-content;
-            }
-            .menu-options-container.grid-mode {
-                grid-template-columns: 1fr;
-            }
-            .menu-options-container.grid-mode .btn-full-width {
-                grid-column: span 1;
-            }
+            .status-bar { font-size: 9px; padding: 4px 10px; justify-content: center; }
+            .header { padding: 15px 10px 50px 10px; }
+            .header h1 { font-size: 20px; letter-spacing: 2px; }
+            .header-btn-group { position: relative; top: auto; right: auto; margin-top: 10px; width: 100%; justify-content: center; flex-wrap: wrap; }
+            .btn-home-floating, .btn-help-floating { padding: 6px 12px; font-size: 11px; }
+            .controls { padding: 10px; flex-direction: column; align-items: stretch; }
+            .controls button, .controls select, .controls .input-group { width: 100%; }
+            .info-grid { grid-template-columns: 1fr; gap: 8px; padding: 10px; }
+            #map { height: 350px; }
+            .modal-box { padding: 20px 15px; width: 95%; }
+            .modal-action-row { position: relative; top: auto; right: auto; margin-bottom: 10px; justify-content: flex-end; }
+            .view-toggle-bar { position: relative; top: auto; right: auto; margin: 0 auto 10px auto; width: fit-content; }
+            .menu-options-container.grid-mode { grid-template-columns: 1fr; }
+            .menu-options-container.grid-mode .btn-full-width { grid-column: span 1; }
 
-            /* MOBILE: Step 1 Branch Select - Bigger */
-            #step1 {
-                max-width: 95% !important;
+            /* Mobile: Branch list single column */
+            .branch-list-container {
+                grid-template-columns: 1fr !important;
+                max-height: 320px !important;
             }
-            #modalBranchSelect {
-                height: 260px !important;
-                font-size: 14px !important;
-            }
-            #branchSearchInput {
-                padding: 12px 14px !important;
-                font-size: 14px !important;
-            }
-
-            /* MOBILE: Step 2 Target Location - Bigger */
-            #step2 {
-                max-width: 95% !important;
-            }
-            #step2 h2 {
-                font-size: 20px !important;
-            }
-            #step2 .btn-curr-loc {
-                padding: 14px !important;
-                font-size: 15px !important;
-            }
-            #modalDestCoords {
-                padding: 14px 16px !important;
-                font-size: 15px !important;
-            }
+            #step1 { max-width: 95% !important; }
+            #branchSearchInput { padding: 12px 14px !important; font-size: 14px !important; }
         }
 
-        /* PRINT STYLES */
         @media print {
             @page { size: A4; margin: 0; }
             .no-print, .status-bar, .modal-overlay, #distanceAlertModal, .header-btn-group { display: none !important; }
             body { background: #fff !important; margin: 0 !important; padding: 0 !important; }
 
-            /* MODE 1: 2W & 3W PRINT MODE */
             body.print-2w-3w .container {
                 width: 15cm !important;
                 height: 20.7cm !important;
@@ -863,19 +754,13 @@
                 border-radius: 0 !important;
                 box-sizing: border-box !important;
             }
-            body.print-2w-3w .header {
-                background: #fff !important;
-                color: #000 !important;
-                padding: 10px !important;
-                margin: 0 !important;
-            }
+            body.print-2w-3w .header { background: #fff !important; color: #000 !important; padding: 10px !important; margin: 0 !important; }
             body.print-2w-3w .header::before, body.print-2w-3w .header::after { display: none !important; }
             body.print-2w-3w .header h1 { font-size: 15pt !important; color: #000 !important; text-shadow: none !important; letter-spacing: 2px !important; }
             body.print-2w-3w #map { flex-grow: 1 !important; height: auto !important; border-top: 1pt solid #000 !important; border-bottom: 1pt solid #000 !important; }
             body.print-2w-3w #qrcode { border: 2pt solid #000 !important; padding: 6px !important; }
             body.print-2w-3w #qrcode img { width: 120px !important; height: 120px !important; }
 
-            /* MODE 2: AUTO PRINT MODE */
             body.print-auto .container {
                 position: absolute !important;
                 top: 4cm !important;
@@ -904,10 +789,7 @@
             body.print-auto #qrcode img { width: 80px !important; height: 80px !important; }
         }
     </style>
-    <!-- Leaflet Map JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-    <!-- FIREBASE SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
@@ -923,7 +805,6 @@
 <div class="container">
     <div class="header">
         <h1>HNB FINANCE</h1>
-        <!-- Header Button Group (HOME and IDEA & HELP) -->
         <div class="header-btn-group no-print">
             <button class="btn-home-floating" onclick="openWizard()">🏠 HOME</button>
             <button class="btn-help-floating" onclick="openHelpLink()">💡 Idea & Help</button>
@@ -935,12 +816,10 @@
         <div class="input-group"><input type="text" id="destCoords" placeholder="Click map or paste coordinates"></div>
         <button class="btn-live" id="lBtn">📍 My Loc</button>
         <button class="btn-route" id="rBtn">🚀 Generate</button>
-        
         <select id="printOption">
             <option value="2w_3w">2W & 3W Mode</option>
             <option value="auto">Auto Mode</option>
         </select>
-        
         <button class="btn-print" id="pBtn">🖨️ Print</button>
         <button class="btn-save" id="saveBtn" onclick="savePdfWithCustomName()">📱 Save PDF / Mobile Print</button>
     </div>
@@ -958,20 +837,14 @@
 <div class="modal-overlay no-print" id="wizardModal">
     <!-- STEP 0: MAIN MENU POPUP -->
     <div class="modal-box" id="step0">
-        <!-- GRID / LIST VIEW TOGGLE SWITCHER (TOP-RIGHT CORNER) -->
         <div class="view-toggle-bar">
-            <button class="toggle-btn active" id="btnGrid" onclick="switchMenuView('grid')">
-                <span>🔲</span> Grid
-            </button>
-            <button class="toggle-btn" id="btnList" onclick="switchMenuView('list')">
-                <span>☰</span> List
-            </button>
+            <button class="toggle-btn active" id="btnGrid" onclick="switchMenuView('grid')"><span>🔲</span> Grid</button>
+            <button class="toggle-btn" id="btnList" onclick="switchMenuView('list')"><span>☰</span> List</button>
         </div>
 
         <span class="menu-badge">MAIN MENU</span>
         <h2>HNB FINANCE</h2>
         
-        <!-- REALTIME FIREBASE LIVE USER COUNTER UI -->
         <div class="live-status-box">
             <div class="green-led"></div>
             <span class="live-text">LIVE USERS:</span>
@@ -981,79 +854,47 @@
         <p style="color:#666; font-size:12px; margin-bottom: 8px;">Select an option to proceed:</p>
         
         <div class="menu-options-container grid-mode" id="menuContainer">
-            <!-- OPTION 1: DRAW MAP -->
             <button class="menu-item-btn btn-opt-map btn-full-width" onclick="goToStep(1)">
-                <span class="btn-icon">🗺️</span>
-                <span>Draw the Map</span>
+                <span class="btn-icon">🗺️</span><span>Draw the Map</span>
             </button>
-            
-            <!-- OPTION 2: LESING CAL -->
             <a href="https://gmaphnbf.github.io/LESINGCAL/" target="_blank" class="menu-item-btn btn-opt-lesing-cal">
-                <span class="btn-icon">🧮</span>
-                <span>LESING CAL</span>
+                <span class="btn-icon">🧮</span><span>LESING CAL</span>
             </a>
-
-            <!-- OPTION 3: EDIT PDF -->
             <a href="https://gmaphnbf.github.io/pdf-editor/" target="_blank" class="menu-item-btn btn-opt-pdf">
-                <span class="btn-icon">📝</span>
-                <span>Edit PDF</span>
+                <span class="btn-icon">📝</span><span>Edit PDF</span>
             </a>
-
-            <!-- OPTION 4: THREE WHEEL PRICE LIST -->
             <a href="https://gmaphnbf.github.io/3WH3/" target="_blank" class="menu-item-btn btn-opt-3w">
-                <span class="btn-icon">🛺</span>
-                <span>3W Price List</span>
+                <span class="btn-icon">🛺</span><span>3W Price List</span>
             </a>
-
-            <!-- OPTION 5: NIC TO DOB -->
             <a href="https://gmaphnbf.github.io/NICTODOB/" target="_blank" class="menu-item-btn btn-opt-nic">
-                <span class="btn-icon">🪪</span>
-                <span>NIC TO DOB</span>
+                <span class="btn-icon">🪪</span><span>NIC TO DOB</span>
             </a>
-
-            <!-- OPTION 6: FIXED DEPOSIT -->
             <a href="https://gmaphnbf.github.io/HNBFFD/" target="_blank" class="menu-item-btn btn-opt-fixed-deposit">
-                <span class="btn-icon">🏦</span>
-                <span>FIXED DEPOSIT</span>
+                <span class="btn-icon">🏦</span><span>FIXED DEPOSIT</span>
             </a>
-
-            <!-- 🥇 OPTION 7: GOLD LOAN (NEW) -->
             <a href="https://gmaphnbf.github.io/gold/" target="_blank" class="menu-item-btn btn-opt-gold">
-                <span class="btn-icon">🥇</span>
-                <span>GOLD LOAN</span>
+                <span class="btn-icon">🥇</span><span>GOLD LOAN</span>
             </a>
-
-            <!-- 🏍️ OPTION 8: REG BIKE -->
             <a href="https://gmaphnbf.github.io/regbike/" target="_blank" class="menu-item-btn btn-opt-regbike">
-                <span class="btn-icon">🏍️</span>
-                <span>REG BIKE</span>
+                <span class="btn-icon">🏍️</span><span>REG BIKE</span>
             </a>
-
-            <!-- 💰 OPTION 9: LKR TO WORDS -->
             <a href="https://gmaphnbf.github.io/-LKR-to-Words/" target="_blank" class="menu-item-btn btn-opt-lkr">
-                <span class="btn-icon">💰</span>
-                <span>LKR TO WORDS</span>
+                <span class="btn-icon">💰</span><span>LKR TO WORDS</span>
             </a>
-
-            <!-- 🔗 OPTION 10: HNBF LINK (NEW) -->
             <a href="https://gmaphnbf.github.io/link/" target="_blank" class="menu-item-btn btn-opt-hnbf-link">
-                <span class="btn-icon">🔗</span>
-                <span>HNBF LINK</span>
+                <span class="btn-icon">🔗</span><span>HNBF LINK</span>
             </a>
         </div>
 
-        <!-- 💬 SEPARATED GLOWING COMMENT BUTTON AT THE BOTTOM -->
         <div class="comment-section-wrapper">
             <a href="https://gmaphnbf.github.io/COMMENT/" target="_blank" class="btn-opt-comment-glowing">
-                <span style="font-size:20px;">💬</span>
-                <span>LEAVE A COMMENT</span>
+                <span style="font-size:20px;">💬</span><span>LEAVE A COMMENT</span>
             </a>
         </div>
     </div>
 
-    <!-- STEP 1: SELECT BRANCH -->
+    <!-- STEP 1: SELECT BRANCH (NEW CARD-STYLE UI) -->
     <div class="modal-box" id="step1" style="display:none;">
-        <!-- TOP RIGHT BUTTONS -->
         <div class="modal-action-row">
             <button class="modal-btn btn-nav-secondary" onclick="goToStep(0)">⬅️ Back</button>
             <button class="modal-btn" onclick="goToStep(2)">OK / Next ➡️</button>
@@ -1062,36 +903,17 @@
         <h2>Step 1: Select Your Branch</h2>
         <label>Search / Select relevant HNB Finance Branch:</label>
         
-        <!-- SEARCH BOX FOR BRANCHES -->
+        <!-- SEARCH BOX -->
         <input type="text" id="branchSearchInput" placeholder="🔍 Type branch name to search..." onkeyup="filterBranches()">
         
-        <select id="modalBranchSelect" size="8">
-            <option value="8.335351,80.411615|HNBF Anuradhapura" selected>HNBF Anuradhapura</option>
-            <option value="8.003788259137602,80.27115376074129|HNBF Galgamuwa">HNBF Galgamuwa</option>
-            <option value="6.9373977982193304,79.9770854504675|HNBF Kaduwela">HNBF Kaduwela</option>
-            <option value="7.577366674604863,79.79526423466038|HNBF Chilaw">HNBF Chilaw</option>
-            <option value="8.262481044460486,80.20736562695471|HNBF Nochchiyagama">HNBF Nochchiyagama</option>
-            <option value="8.048322,79.737257|HNBF Norachcholai">HNBF Norachcholai</option>
-            <option value="8.832094454675605,80.77298497765483|HNBF Padaviya">HNBF Padaviya</option>
-            <option value="6.990035205448142,79.89295039174291|HNBF Wattala">HNBF Wattala</option>
-            <option value="8.02633538732535,79.83643853862367|HNBF Puttalam">HNBF Puttalam</option>
-            <option value="6.787665070989205,79.88512232810733|HNBF Moratuwa">HNBF Moratuwa</option>
-            <option value="8.290629351040467,80.71554546566082|HNBF Galenbidunuwewa">HNBF Galenbidunuwewa</option>
-            <option value="6.877532810992226,79.87818111024245|HNBF City">HNBF City</option>
-            <option value="8.538874,80.493198|HNBF Medawachchiya">HNBF Medawachchiya</option>
-            <option value="7.09175794868064,79.99863253605719|HNBF Gampaha">HNBF Gampaha</option>
-            <option value="7.094013021198048,79.99666153457918|HNBF Gampaha 2">HNBF Gampaha 2</option>
-            <option value="9.666994044122607,80.00904600854417|HNBF JAFFNA">HNBF JAFFNA</option>
-            <option value="7.882830645880901,80.64995468509856|HNBF DAMBULLA">HNBF DAMBULLA</option>
-            <option value="7.083000701591264,79.8908642441365|HNBF JA-ELA">HNBF JA-ELA</option>
-            <option value="6.882545578276103,79.88789225396044|HNBF Head Office">HNBF Head Office</option>
-            <option value="6.853397131519146,79.86560362737843|HNBF Dehiwala">HNBF Dehiwala</option>
-        </select>
+        <!-- BRANCH LIST CONTAINER (CARD STYLE) -->
+        <div class="branch-list-container" id="branchListContainer">
+            <!-- Branch items will be generated here by JS -->
+        </div>
     </div>
 
-    <!-- STEP 2: TARGET LOCATION - iOS සඳහා වැඩි දියුණු කළා -->
+    <!-- STEP 2: TARGET LOCATION -->
     <div class="modal-box" id="step2" style="display:none;">
-        <!-- TOP RIGHT BUTTONS -->
         <div class="modal-action-row">
             <button class="modal-btn btn-nav-secondary" onclick="goToStep(0)">🏠 Home</button>
             <button class="modal-btn modal-btn-draw" onclick="executeDrawAndPrint()">🚀 Draw Map</button>
@@ -1099,10 +921,8 @@
 
         <h2>Step 2: Enter Target Location</h2>
         
-        <!-- USE CURRENT LOCATION BUTTON - iOS සඳහා වැඩි දියුණු කළා -->
         <button class="btn-curr-loc" onclick="fillCurrentLocationToStep2()" id="currLocBtn">📍 Use Current Location</button>
         
-        <!-- iOS Fallback Message - location access denied විට display වේ -->
         <div class="ios-fallback-msg" id="iosFallbackMsg">
             ⚠️ <b>Location access required</b><br>
             Please allow location access or enter coordinates manually below.
@@ -1114,7 +934,7 @@
     </div>
 </div>
 
-<!-- 100 KM+ DISTANCE APPROVAL REMINDER MODAL POPUP -->
+<!-- 100 KM+ DISTANCE ALERT -->
 <div class="modal-overlay no-print" id="distanceAlertModal" style="display: none;">
     <div class="modal-box alert-box">
         <div class="alert-icon">⚠️</div>
@@ -1128,18 +948,104 @@
 </div>
 
 <script>
-    // LAYOUT SWITCHER FUNCTION
+    // ============================================================
+    // BRANCH DATA ARRAY
+    // ============================================================
+    const BRANCHES = [
+        { coords: "8.335351,80.411615", name: "HNBF Anuradhapura" },
+        { coords: "8.003788259137602,80.27115376074129", name: "HNBF Galgamuwa" },
+        { coords: "6.9373977982193304,79.9770854504675", name: "HNBF Kaduwela" },
+        { coords: "7.577366674604863,79.79526423466038", name: "HNBF Chilaw" },
+        { coords: "8.262481044460486,80.20736562695471", name: "HNBF Nochchiyagama" },
+        { coords: "8.048322,79.737257", name: "HNBF Norachcholai" },
+        { coords: "8.832094454675605,80.77298497765483", name: "HNBF Padaviya" },
+        { coords: "6.990035205448142,79.89295039174291", name: "HNBF Wattala" },
+        { coords: "8.02633538732535,79.83643853862367", name: "HNBF Puttalam" },
+        { coords: "6.787665070989205,79.88512232810733", name: "HNBF Moratuwa" },
+        { coords: "8.290629351040467,80.71554546566082", name: "HNBF Galenbidunuwewa" },
+        { coords: "6.877532810992226,79.87818111024245", name: "HNBF City" },
+        { coords: "8.538874,80.493198", name: "HNBF Medawachchiya" },
+        { coords: "7.09175794868064,79.99863253605719", name: "HNBF Gampaha" },
+        { coords: "7.094013021198048,79.99666153457918", name: "HNBF Gampaha 2" },
+        { coords: "9.666994044122607,80.00904600854417", name: "HNBF JAFFNA" },
+        { coords: "7.882830645880901,80.64995468509856", name: "HNBF DAMBULLA" },
+        { coords: "7.083000701591264,79.8908642441365", name: "HNBF JA-ELA" },
+        { coords: "6.882545578276103,79.88789225396044", name: "HNBF Head Office" },
+        { coords: "6.853397131519146,79.86560362737843", name: "HNBF Dehiwala" }
+    ];
+
+    let selectedBranchCoords = "8.335351,80.411615";
+    let selectedBranchName = "HNBF Anuradhapura";
+
+    // ============================================================
+    // RENDER BRANCH LIST AS CARDS
+    // ============================================================
+    function renderBranchList(filterText = "") {
+        const container = document.getElementById('branchListContainer');
+        if (!container) return;
+        
+        const filter = filterText.toUpperCase().trim();
+        container.innerHTML = "";
+
+        const filtered = BRANCHES.filter(b => 
+            b.name.toUpperCase().includes(filter)
+        );
+
+        if (filtered.length === 0) {
+            container.innerHTML = `<div class="no-results"><span>🔍</span>No branches found</div>`;
+            return;
+        }
+
+        filtered.forEach(branch => {
+            const item = document.createElement('div');
+            item.className = 'branch-item';
+            if (branch.name === selectedBranchName) {
+                item.classList.add('selected');
+            }
+            item.innerHTML = `
+                <div class="branch-icon">🏦</div>
+                <div class="branch-name">${branch.name}</div>
+            `;
+            item.onclick = () => selectBranch(branch);
+            container.appendChild(item);
+        });
+    }
+
+    // ============================================================
+    // SELECT A BRANCH
+    // ============================================================
+    function selectBranch(branch) {
+        selectedBranchCoords = branch.coords;
+        selectedBranchName = branch.name;
+        
+        // Update UI selection
+        document.querySelectorAll('.branch-item').forEach(el => {
+            el.classList.remove('selected');
+        });
+        event.currentTarget.classList.add('selected');
+    }
+
+    // ============================================================
+    // FILTER BRANCHES (Called by search box)
+    // ============================================================
+    function filterBranches() {
+        const input = document.getElementById('branchSearchInput');
+        renderBranchList(input.value);
+    }
+
+    // ============================================================
+    // LAYOUT SWITCHER
+    // ============================================================
     function switchMenuView(mode) {
         const container = document.getElementById('menuContainer');
         const btnGrid = document.getElementById('btnGrid');
         const btnList = document.getElementById('btnList');
         const items = document.querySelectorAll('.menu-item-btn');
-
         if (!container) return;
 
         items.forEach(item => {
             item.style.animation = 'none';
-            item.offsetHeight; // Reflow trigger
+            item.offsetHeight;
             item.style.animation = 'switchAnim 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards';
         });
 
@@ -1156,7 +1062,7 @@
         }
     }
 
-    // FIREBASE CONFIGURATION
+    // FIREBASE
     const firebaseConfig = {
         apiKey: "AIzaSyDKkMovF3OWweyQSveA8KUKk63b-i5cqUg",
         authDomain: "gmap-e4d9c.firebaseapp.com",
@@ -1172,7 +1078,6 @@
     firebase.analytics();
     const db = firebase.database();
 
-    // REALTIME LIVE PRESENCE TRACKER
     function setupRealtimePresence() {
         const mySessionRef = db.ref('status/' + Date.now() + "_" + Math.random().toString(36).substr(2, 5));
         const connectedRef = db.ref('.info/connected');
@@ -1187,17 +1092,12 @@
         db.ref('status').on('value', (snap) => {
             const activeCount = snap.numChildren();
             const countEl = document.getElementById('liveUserCount');
-            if (countEl) {
-                countEl.innerText = activeCount || 1;
-            }
+            if (countEl) countEl.innerText = activeCount || 1;
         });
     }
 
     var helpLink = "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=Xqpfvj37g0mkFC1mBArnbxYIJwbXtbVCsCZt4u4BQp1UNzdGMUVBUFhWSTlHUEFaS05aMFYxSUxXTC4u";
-
-    function openHelpLink() {
-        window.open(helpLink, '_blank');
-    }
+    function openHelpLink() { window.open(helpLink, '_blank'); }
 
     var currentStartLoc = [8.335351, 80.411615];
     var currentBranchName = "HNBF Anuradhapura";
@@ -1213,37 +1113,27 @@
         document.getElementById('step1').style.display = 'none';
         document.getElementById('step2').style.display = 'none';
         document.getElementById('step' + stepNum).style.display = 'block';
+        
+        // Render branch list when entering Step 1
+        if (stepNum === 1) {
+            renderBranchList("");
+            document.getElementById('branchSearchInput').value = "";
+        }
     }
 
-    /* ============================================================
-       iOS සඳහා වැඩි දියුණු කළ fillCurrentLocationToStep2() function
-       ============================================================ */
     function fillCurrentLocationToStep2() {
         const btn = document.getElementById('currLocBtn');
         const fallbackMsg = document.getElementById('iosFallbackMsg');
-        
-        // iOS device check (User Agent)
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
                       (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
         
-        // Already displaying fallback? then hide and retry
-        if (fallbackMsg.style.display === 'block') {
-            fallbackMsg.style.display = 'none';
-        }
+        if (fallbackMsg.style.display === 'block') fallbackMsg.style.display = 'none';
         
         if (navigator.geolocation) {
             btn.textContent = '⏳ Fetching location...';
             btn.disabled = true;
             
-            // iOS සඳහා timeout එක වැඩි කරනවා (10s)
-            const geoOptions = {
-                enableHighAccuracy: true,
-                timeout: 10000,
-                maximumAge: 0
-            };
-            
             navigator.geolocation.getCurrentPosition(
-                // Success callback
                 function(position) {
                     var lat = position.coords.latitude.toFixed(6);
                     var lng = position.coords.longitude.toFixed(6);
@@ -1251,72 +1141,26 @@
                     btn.textContent = '📍 Use Current Location';
                     btn.disabled = false;
                     fallbackMsg.style.display = 'none';
-                    // Success උනාම fallback message reset
-                    fallbackMsg.innerHTML = '⚠️ <b>Location access required</b><br>Please allow location access or enter coordinates manually below.';
                 },
-                // Error callback - iOS සඳහා විශේෂ හැසිරවීම
                 function(error) {
-                    console.warn('Geolocation error:', error.code, error.message);
                     btn.textContent = '📍 Use Current Location';
                     btn.disabled = false;
-                    
-                    // iOS specific error handling
                     if (isIOS) {
                         fallbackMsg.style.display = 'block';
-                        fallbackMsg.innerHTML = `
-                            ⚠️ <b>iOS Location Access Required</b><br>
-                            Please allow location access:<br>
-                            1. Go to <b>Settings → Privacy → Location Services</b><br>
-                            2. Enable location for <b>Safari</b><br>
-                            3. Or enter coordinates manually below.
-                        `;
-                    } else if (error.code === 1) { // PERMISSION_DENIED
+                        fallbackMsg.innerHTML = `⚠️ <b>iOS Location Access Required</b><br>1. Go to <b>Settings → Privacy → Location Services</b><br>2. Enable location for <b>Safari</b><br>3. Or enter coordinates manually below.`;
+                    } else if (error.code === 1) {
                         fallbackMsg.style.display = 'block';
-                        fallbackMsg.innerHTML = `
-                            ⚠️ <b>Location permission denied</b><br>
-                            Please allow location access in your browser settings, or enter coordinates manually below.
-                        `;
+                        fallbackMsg.innerHTML = `⚠️ <b>Location permission denied</b><br>Please allow location access or enter coordinates manually below.`;
                     } else {
-                        alert("Unable to fetch location. Please enter coordinates manually.");
                         fallbackMsg.style.display = 'block';
-                        fallbackMsg.innerHTML = `
-                            ⚠️ <b>Location unavailable</b><br>
-                            Please enter target coordinates manually in the field below.
-                        `;
+                        fallbackMsg.innerHTML = `⚠️ <b>Location unavailable</b><br>Please enter target coordinates manually.`;
                     }
                 },
-                geoOptions
+                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
             );
         } else {
-            alert("Geolocation is not supported by your device/browser. Please enter coordinates manually.");
             fallbackMsg.style.display = 'block';
-            fallbackMsg.innerHTML = `
-                ⚠️ <b>Geolocation not supported</b><br>
-                Please enter target coordinates manually in the field below.
-            `;
-        }
-    }
-
-    /* BRANCH SEARCH FILTER FUNCTION */
-    function filterBranches() {
-        var input = document.getElementById("branchSearchInput");
-        var filter = input.value.toUpperCase();
-        var select = document.getElementById("modalBranchSelect");
-        var options = select.getElementsByTagName("option");
-
-        var firstMatchFound = false;
-        for (var i = 0; i < options.length; i++) {
-            var txtValue = options[i].text || options[i].innerText;
-            if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                options[i].style.display = "";
-                if (!firstMatchFound) {
-                    options[i].selected = true;
-                    firstMatchFound = true;
-                }
-            } else {
-                options[i].style.display = "none";
-                options[i].selected = false;
-            }
+            fallbackMsg.innerHTML = `⚠️ <b>Geolocation not supported</b><br>Please enter target coordinates manually.`;
         }
     }
 
@@ -1332,27 +1176,11 @@
     }
 
     function executeDrawAndPrint() {
-        var selectEl = document.getElementById('modalBranchSelect');
-        var bVal = selectEl.value;
-        
-        if (!bVal && selectEl.options.length > 0) {
-            for (var i = 0; i < selectEl.options.length; i++) {
-                if (selectEl.options[i].style.display !== "none") {
-                    bVal = selectEl.options[i].value;
-                    break;
-                }
-            }
-        }
-
-        if(bVal) {
-            var parts = bVal.split('|');
-            var bCoords = parts[0].split(',');
-            currentStartLoc = [parseFloat(bCoords[0]), parseFloat(bCoords[1])];
-            currentBranchName = parts[1];
-            document.getElementById('currentBranchName').innerText = currentBranchName;
-
-            updateBranchMarker();
-        }
+        // Use selected branch from card UI
+        currentStartLoc = selectedBranchCoords.split(',').map(s => parseFloat(s.trim()));
+        currentBranchName = selectedBranchName;
+        document.getElementById('currentBranchName').innerText = currentBranchName;
+        updateBranchMarker();
 
         var destVal = document.getElementById('modalDestCoords').value;
         document.getElementById('wizardModal').style.display = 'none';
@@ -1367,15 +1195,12 @@
     }
 
     function refreshMapSize() {
-        if(map) {
-            setTimeout(() => { map.invalidateSize(); }, 300);
-        }
+        if(map) setTimeout(() => { map.invalidateSize(); }, 300);
     }
 
     function preparePrintLayout() {
         var selectedOption = document.getElementById('printOption').value;
         document.body.classList.remove('print-auto', 'print-2w-3w');
-        
         if (selectedOption === 'auto') {
             document.body.classList.add('print-auto');
         } else {
@@ -1389,17 +1214,13 @@
         setTimeout(() => { window.print(); }, 400);
     }
 
-    // NEW FUNCTION: SAVE PDF WITH CUSTOM FILE NAME
     function savePdfWithCustomName() {
         var defaultFileName = "HNB_Finance_Map_" + currentBranchName.replace(/\s+/g, '_');
         var userFileName = prompt("Enter File Name to Save / Print PDF:", defaultFileName);
-
         if (userFileName !== null && userFileName.trim() !== "") {
             var originalTitle = document.title;
             document.title = userFileName.trim();
-
             preparePrintLayout();
-            
             setTimeout(() => { 
                 window.print();
                 setTimeout(() => { document.title = originalTitle; }, 1000);
@@ -1427,28 +1248,22 @@
     setInterval(updateSpeed, 3000);
     updateSpeed();
 
-    // GOOGLE MAPS TILE INITIALIZATION
     function initMap() {
         map = L.map('map', { zoomControl: false }).setView(currentStartLoc, 13);
-        
         L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
             maxZoom: 20,
             subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
             attribution: '© Google Maps'
         }).addTo(map);
-
         updateBranchMarker();
-
         map.on('click', function(e) { 
             generateRoute(e.latlng.lat.toFixed(6), e.latlng.lng.toFixed(6)); 
         });
-
         refreshMapSize();
     }
 
     function updateBranchMarker() {
         if(hnbfMarker) map.removeLayer(hnbfMarker);
-        
         var hnbfIcon = L.divIcon({ 
             className: 'hnbf-marker-container', 
             html: `<div class="hnbf-label">${currentBranchName.toUpperCase()}</div><div class="hnbf-arrow"></div>`, 
@@ -1476,7 +1291,6 @@
         
         if(targetMarker) map.removeLayer(targetMarker);
         if(currentRouteLine) map.removeLayer(currentRouteLine);
-
         targetMarker = L.marker([destLat, destLng]).addTo(map);
 
         fetch(`https://router.project-osrm.org/route/v1/driving/${currentStartLoc[1]},${currentStartLoc[0]};${destLng},${destLat}?overview=full&geometries=geojson`)
@@ -1488,28 +1302,22 @@
                 document.getElementById('distLabel').innerText = distKm.toFixed(2) + " KM";
                 currentRouteLine = L.polyline(routeCoords, {color: '#d32f2f', weight: 5}).addTo(map);
                 map.fitBounds(currentRouteLine.getBounds(), {padding: [50, 50]});
-                
                 checkDistanceAndAlert(distKm);
             } else {
                 fallbackDirectLine(destLat, destLng);
             }
         })
-        .catch(e => {
-            fallbackDirectLine(destLat, destLng);
-        });
+        .catch(e => { fallbackDirectLine(destLat, destLng); });
 
         var qrContainer = document.getElementById('qrcode');
         qrContainer.innerHTML = "";
-        
         var liveNavUrl = "https://www.google.com/maps/dir/?api=1&destination=" + destLat + "," + destLng;
-        
         var img = document.createElement('img');
         img.src = "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodeURIComponent(liveNavUrl) + "&ecc=M&margin=2";
         img.alt = "Scan Direction QR";
         img.style.width = "100px";
         img.style.height = "100px";
         qrContainer.appendChild(img);
-
         refreshMapSize();
     }
 
@@ -1518,14 +1326,13 @@
         document.getElementById('distLabel').innerText = dist.toFixed(2) + " KM";
         currentRouteLine = L.polyline([currentStartLoc, [destLat, destLng]], {color: '#d32f2f', weight: 4, dashArray: '6, 6'}).addTo(map);
         map.fitBounds(currentRouteLine.getBounds(), {padding: [50, 50]});
-        
         checkDistanceAndAlert(dist);
     }
 
     window.onload = function() {
         initMap();
         setupRealtimePresence();
-        
+        renderBranchList("");
         openWizard();
 
         document.getElementById('rBtn').onclick = function() {
