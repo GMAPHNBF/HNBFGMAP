@@ -1461,7 +1461,7 @@
 
 <script>
     // ============================================================
-    // LOADING SCREEN ANIMATION - REUSABLE FUNCTION
+    // LOADING SCREEN ANIMATION - ONLY ON FIRST PAGE LOAD
     // ============================================================
     const loadingScreen = document.getElementById('loadingScreen');
     const textContainer = document.getElementById('loaderBrandText');
@@ -1526,21 +1526,10 @@
     }
 
     // ============================================================
-    // EXTERNAL LINK HANDLER WITH INLINE + FULL LOADING ANIMATION
+    // EXTERNAL LINK HANDLER - NO LOADER, DIRECT OPEN
     // ============================================================
     function openExternalLink(url, element) {
-        // Add loading state to the clicked button (shows inline loader below name)
-        if (element) {
-            element.classList.add('loading');
-        }
-        
-        // Show full loading screen, then open link
-        showLoader(function() {
-            if (element) {
-                element.classList.remove('loading');
-            }
-            window.open(url, '_blank');
-        });
+        window.open(url, '_blank');
     }
 
     // Attach click handlers to all external links
@@ -1558,23 +1547,11 @@
     });
 
     // ============================================================
-    // OPEN MAP WITH ANIMATION (Draw the Map button)
+    // OPEN MAP - NO LOADER, DIRECT STEP 1
     // ============================================================
     function openMapWithAnimation(event) {
-        // Show inline loader on the button
-        const mapBtn = event ? event.currentTarget : document.querySelector('.btn-opt-map');
-        if (mapBtn) {
-            mapBtn.classList.add('loading');
-        }
-        
-        // Show full loading screen, then open wizard step 1
-        showLoader(function() {
-            if (mapBtn) {
-                mapBtn.classList.remove('loading');
-            }
-            document.getElementById('wizardModal').style.display = 'flex';
-            goToStep(1);
-        });
+        document.getElementById('wizardModal').style.display = 'flex';
+        goToStep(1);
     }
 
     // ============================================================
@@ -1726,18 +1703,7 @@
 
     var helpLink = "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=Xqpfvj37g0mkFC1mBArnbxYIJwbXtbVCsCZt4u4BQp1UNzdGMUVBUFhWSTlHUEFaS05aMFYxSUxXTC4u";
     function openHelpLink() { 
-        const helpBtn = document.querySelector('.btn-help-floating');
-        if (helpBtn) {
-            helpBtn.style.pointerEvents = 'none';
-            helpBtn.innerHTML = '⏳ Loading...';
-        }
-        showLoader(function() {
-            if (helpBtn) {
-                helpBtn.style.pointerEvents = 'auto';
-                helpBtn.innerHTML = '💡 Idea & Help';
-            }
-            window.open(helpLink, '_blank');
-        });
+        window.open(helpLink, '_blank');
     }
 
     var currentStartLoc = [8.335351, 80.411615];
@@ -1745,19 +1711,8 @@
     var map, hnbfMarker, currentRouteLine, targetMarker;
 
     function openWizard() {
-        const homeBtn = document.querySelector('.btn-home-floating');
-        if (homeBtn) {
-            homeBtn.style.pointerEvents = 'none';
-            homeBtn.innerHTML = '⏳ Loading...';
-        }
-        showLoader(function() {
-            if (homeBtn) {
-                homeBtn.style.pointerEvents = 'auto';
-                homeBtn.innerHTML = '🏠 HOME';
-            }
-            document.getElementById('wizardModal').style.display = 'flex';
-            goToStep(0);
-        });
+        document.getElementById('wizardModal').style.display = 'flex';
+        goToStep(0);
     }
 
     function goToStep(stepNum) {
@@ -1827,24 +1782,21 @@
     }
 
     function executeDrawAndPrint() {
-        // Show full loader when drawing the map
-        showLoader(function() {
-            currentStartLoc = selectedBranchCoords.split(',').map(s => parseFloat(s.trim()));
-            currentBranchName = selectedBranchName;
-            document.getElementById('currentBranchName').innerText = currentBranchName;
-            updateBranchMarker();
+        currentStartLoc = selectedBranchCoords.split(',').map(s => parseFloat(s.trim()));
+        currentBranchName = selectedBranchName;
+        document.getElementById('currentBranchName').innerText = currentBranchName;
+        updateBranchMarker();
 
-            var destVal = document.getElementById('modalDestCoords').value;
-            document.getElementById('wizardModal').style.display = 'none';
+        var destVal = document.getElementById('modalDestCoords').value;
+        document.getElementById('wizardModal').style.display = 'none';
 
-            setTimeout(() => {
-                if(map) map.invalidateSize();
-                if (destVal && destVal.includes(',')) {
-                    var parts = destVal.split(',');
-                    generateRoute(parseFloat(parts[0].trim()), parseFloat(parts[1].trim()));
-                }
-            }, 300);
-        });
+        setTimeout(() => {
+            if(map) map.invalidateSize();
+            if (destVal && destVal.includes(',')) {
+                var parts = destVal.split(',');
+                generateRoute(parseFloat(parts[0].trim()), parseFloat(parts[1].trim()));
+            }
+        }, 300);
     }
 
     function refreshMapSize() {
@@ -1987,12 +1939,12 @@
         setupRealtimePresence();
         renderBranchList("");
         
-        // Initial load - show loader, then open wizard
+        // ============================================================
+        // ONLY SHOW LOADING ANIMATION ON FIRST PAGE LOAD
+        // ============================================================
         showLoader(function() {
-            setTimeout(() => {
-                document.getElementById('wizardModal').style.display = 'flex';
-                goToStep(0);
-            }, 300);
+            document.getElementById('wizardModal').style.display = 'flex';
+            goToStep(0);
         });
 
         document.getElementById('rBtn').onclick = function() {
