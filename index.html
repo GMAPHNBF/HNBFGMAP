@@ -729,6 +729,29 @@
             background: linear-gradient(135deg, #00a6e0, #0077cc, #004a99);
         }
 
+        /* ============================================
+           NEW: FILE TRACKING BUTTON STYLE
+           ============================================ */
+        .btn-opt-filetrack {
+            background: linear-gradient(135deg, #7c3aed, #a855f7, #c084fc);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-opt-filetrack::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+            transition: left 0.6s ease;
+        }
+        .btn-opt-filetrack:hover::before { left: 100%; }
+        .btn-opt-filetrack:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(168, 85, 247, 0.6);
+            background: linear-gradient(135deg, #c084fc, #a855f7, #7c3aed);
+        }
+
         .comment-section-wrapper {
             margin-top: 15px;
             padding-top: 12px;
@@ -1394,6 +1417,16 @@
                     <span class="mini-spinner"></span> Opening...
                 </span>
             </a>
+
+            <!-- ✅ NEW: FILE TRACKING BUTTON -->
+            <a href="https://gmaphnbf.github.io/filetrack/" target="_blank" class="menu-item-btn btn-opt-filetrack external-link">
+                <span class="btn-content">
+                    <span class="btn-icon">📁</span><span>FILE TRACKING</span>
+                </span>
+                <span class="btn-inline-loader">
+                    <span class="mini-spinner"></span> Opening...
+                </span>
+            </a>
         </div>
 
         <div class="comment-section-wrapper">
@@ -1468,7 +1501,6 @@
     const percentEl = document.getElementById('loaderPercent');
 
     function showLoader(callback) {
-        // Reset loader elements
         textContainer.innerHTML = '';
         percentEl.textContent = '0%';
         loadingScreen.classList.remove('hidden');
@@ -1476,13 +1508,11 @@
         loadingScreen.style.opacity = '1';
         loadingScreen.style.visibility = 'visible';
 
-        // Reset progress bar animation
         const progressBar = loadingScreen.querySelector('.loader-progress-bar');
         progressBar.style.animation = 'none';
         progressBar.offsetHeight;
         progressBar.style.animation = 'progressFill 2.8s ease forwards, progressShimmer 1.5s linear infinite';
 
-        // Reset particles
         const particles = loadingScreen.querySelectorAll('.particle');
         particles.forEach(p => {
             p.style.animation = 'none';
@@ -1490,7 +1520,6 @@
             p.style.animation = 'floatParticle 4s linear infinite';
         });
 
-        // Create animated letters
         const brandName = "HNB FINANCE";
         brandName.split('').forEach((char, i) => {
             const span = document.createElement('span');
@@ -1501,7 +1530,6 @@
             textContainer.appendChild(span);
         });
 
-        // Animate percentage counter
         let percent = 0;
         const percentInterval = setInterval(() => {
             percent += Math.floor(Math.random() * 8) + 2;
@@ -1512,7 +1540,6 @@
             percentEl.textContent = percent + '%';
         }, 60);
 
-        // Hide loading screen after animation completes
         setTimeout(() => {
             percentEl.textContent = '100%';
             loadingScreen.classList.add('hidden');
@@ -1526,13 +1553,12 @@
     }
 
     // ============================================================
-    // EXTERNAL LINK HANDLER - NO LOADER, DIRECT OPEN
+    // EXTERNAL LINK HANDLER
     // ============================================================
     function openExternalLink(url, element) {
         window.open(url, '_blank');
     }
 
-    // Attach click handlers to all external links
     document.addEventListener('DOMContentLoaded', function() {
         const externalLinks = document.querySelectorAll('.external-link');
         externalLinks.forEach(link => {
@@ -1547,7 +1573,7 @@
     });
 
     // ============================================================
-    // OPEN MAP - NO LOADER, DIRECT STEP 1
+    // OPEN MAP
     // ============================================================
     function openMapWithAnimation(event) {
         document.getElementById('wizardModal').style.display = 'flex';
@@ -1584,7 +1610,7 @@
     let selectedBranchName = "HNBF Anuradhapura";
 
     // ============================================================
-    // RENDER BRANCH LIST AS CARDS
+    // RENDER BRANCH LIST
     // ============================================================
     function renderBranchList(filterText = "") {
         const container = document.getElementById('branchListContainer');
@@ -1939,9 +1965,6 @@
         setupRealtimePresence();
         renderBranchList("");
         
-        // ============================================================
-        // ONLY SHOW LOADING ANIMATION ON FIRST PAGE LOAD
-        // ============================================================
         showLoader(function() {
             document.getElementById('wizardModal').style.display = 'flex';
             goToStep(0);
