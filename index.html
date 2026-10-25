@@ -629,14 +629,6 @@
             100% { transform: rotate(360deg); }
         }
 
-        .btn-opt-gold .mini-spinner {
-            border-color: rgba(26, 18, 0, 0.3);
-            border-top-color: #1a1200;
-        }
-        .btn-opt-gold .btn-inline-loader {
-            color: #1a1200;
-        }
-
         .menu-options-container.list-mode .menu-item-btn {
             flex-direction: row;
             justify-content: flex-start;
@@ -655,125 +647,35 @@
             100% { opacity: 1; transform: scale(1) translateY(0); }
         }
 
-        .btn-opt-map { background: linear-gradient(135deg, #004a99, #00f2ff); }
-        .btn-opt-map:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(0, 242, 255, 0.5); background: linear-gradient(135deg, #00f2ff, #004a99); }
-
-        .btn-opt-lesing-cal { background: linear-gradient(135deg, #FF6600, #FFD100); }
-        .btn-opt-lesing-cal:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(255, 102, 0, 0.5); background: linear-gradient(135deg, #FFD100, #FF6600); }
-
-        .btn-opt-pdf { background: linear-gradient(135deg, #7928ca, #ff007f); }
-        .btn-opt-pdf:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(255, 0, 127, 0.5); background: linear-gradient(135deg, #ff007f, #7928ca); }
-
-        .btn-opt-3w { background: linear-gradient(135deg, #ff9900, #ff5500); }
-        .btn-opt-3w:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(255, 153, 0, 0.5); background: linear-gradient(135deg, #ff5500, #ff9900); }
-
-        .btn-opt-nic { background: linear-gradient(135deg, #10b981, #059669); }
-        .btn-opt-nic:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(16, 185, 129, 0.5); background: linear-gradient(135deg, #059669, #10b981); }
-
-        .btn-opt-fixed-deposit { background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460); }
-        .btn-opt-fixed-deposit:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(15, 52, 96, 0.6); background: linear-gradient(135deg, #0f3460, #16213e, #1a1a2e); }
-
-        .btn-opt-gold {
-            background: linear-gradient(135deg, #8a6a0a, #D4A017, #FFC94D, #D4A017);
-            background-size: 200% 200%;
-            animation: goldShimmer 4s ease infinite;
-            color: #1a1200 !important;
-            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
-            position: relative;
+        /* Classic look: solid blue buttons, thin border, soft bevel */
+        .menu-item-btn {
+            background: var(--c);
+            border: 1px solid rgba(0, 0, 0, 0.35);
+            border-radius: 8px;
+            font-weight: 600;
+            letter-spacing: 0.4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.25);
             overflow: hidden;
         }
-        .btn-opt-gold::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
-            transition: left 0.6s ease;
+        .menu-item-btn .btn-icon { border-radius: 6px; background: rgba(255, 255, 255, 0.15); }
+        .menu-item-btn:hover {
+            transform: none;
+            filter: brightness(1.15);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3);
         }
-        .btn-opt-gold:hover::before { left: 100%; }
-        .btn-opt-gold:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 22px rgba(212, 160, 23, 0.7), 0 0 30px rgba(255, 201, 77, 0.5);
-            background: linear-gradient(135deg, #FFC94D, #D4A017, #8a6a0a, #D4A017);
-        }
-        .btn-opt-gold .btn-icon { background: rgba(26, 18, 0, 0.15) !important; }
-        @keyframes goldShimmer {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .btn-opt-regbike { background: linear-gradient(135deg, #0284c7, #06b6d4, #38bdf8); }
-        .btn-opt-regbike:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(6, 182, 212, 0.6); background: linear-gradient(135deg, #38bdf8, #06b6d4, #0284c7); }
-
-        .btn-opt-lkr { background: linear-gradient(135deg, #00a6b5, #004a99); }
-        .btn-opt-lkr:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(0, 166, 181, 0.5); background: linear-gradient(135deg, #004a99, #00a6b5); }
-
-        .btn-opt-hnbf-link {
-            background: linear-gradient(135deg, #004a99, #0077cc, #00a6e0);
-            position: relative;
-            overflow: hidden;
-        }
-        .btn-opt-hnbf-link::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
-            transition: left 0.6s ease;
-        }
-        .btn-opt-hnbf-link:hover::before { left: 100%; }
-        .btn-opt-hnbf-link:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 22px rgba(0, 166, 224, 0.6);
-            background: linear-gradient(135deg, #00a6e0, #0077cc, #004a99);
-        }
-
-        /* ============================================
-           NEW: FILE TRACKING BUTTON STYLE
-           ============================================ */
-        .btn-opt-filetrack {
-            background: linear-gradient(135deg, #7c3aed, #a855f7, #c084fc);
-            position: relative;
-            overflow: hidden;
-        }
-        .btn-opt-filetrack::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
-            transition: left 0.6s ease;
-        }
-        .btn-opt-filetrack:hover::before { left: 100%; }
-        .btn-opt-filetrack:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 22px rgba(168, 85, 247, 0.6);
-            background: linear-gradient(135deg, #c084fc, #a855f7, #7c3aed);
-        }
-
-        /* ============================================
-           NEW: MY REPORT BUTTON STYLE
-           ============================================ */
-        .btn-opt-myreport {
-            background: linear-gradient(135deg, #0f766e, #14b8a6, #2dd4bf);
-            position: relative;
-            overflow: hidden;
-        }
-        .btn-opt-myreport::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
-            transition: left 0.6s ease;
-        }
-        .btn-opt-myreport:hover::before { left: 100%; }
-        .btn-opt-myreport:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 22px rgba(20, 184, 166, 0.6);
-            background: linear-gradient(135deg, #2dd4bf, #14b8a6, #0f766e);
-        }
+        .menu-item-btn:active { transform: translateY(1px); box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.35); }
+        .btn-opt-map { --c: #0a3d7a; }
+        .btn-opt-lesing-cal { --c: #1d4f91; }
+        .btn-opt-pdf { --c: #2563a8; }
+        .btn-opt-3w { --c: #1e6fb5; }
+        .btn-opt-nic { --c: #0f5c8a; }
+        .btn-opt-fixed-deposit { --c: #0b2a52; }
+        .btn-opt-gold { --c: #2f6fbf; }
+        .btn-opt-regbike { --c: #1a7aa8; }
+        .btn-opt-lkr { --c: #3a5f8f; }
+        .btn-opt-hnbf-link { --c: #14508f; }
+        .btn-opt-filetrack { --c: #4a78b5; }
+        .btn-opt-myreport { --c: #0e6a8f; }
 
         .comment-section-wrapper {
             margin-top: 15px;
@@ -1260,7 +1162,26 @@
             body.print-auto #qrcode { border: 2pt solid #000 !important; padding: 3px !important; }
             body.print-auto #qrcode img { width: 80px !important; height: 80px !important; }
         }
-    </style>
+    
+        /* Classic comment button (overrides neon style) */
+        .btn-opt-comment-glowing {
+            background: #0b2a52;
+            border: 1px solid rgba(0, 0, 0, 0.45);
+            border-radius: 8px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            animation: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+        }
+        .btn-opt-comment-glowing::before { display: none; }
+        .btn-opt-comment-glowing:hover {
+            transform: none;
+            border-color: rgba(0, 0, 0, 0.45);
+            background: #0b2a52;
+            filter: brightness(1.15);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+</style>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js"></script>
