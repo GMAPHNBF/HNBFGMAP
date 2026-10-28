@@ -8,220 +8,6 @@
     <style>
         :root { --hnb: #004a99; --accent: #00f2ff; --bg: #f4f7f9; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; background: var(--bg); -webkit-user-select: none; user-select: none; }
-        
-        /* ============================================
-           LOADING ANIMATION - HNB FINANCE
-           ============================================ */
-        #loadingScreen {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #050508;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 99999;
-            overflow: hidden;
-            transition: opacity 0.6s ease, visibility 0.6s ease;
-        }
-
-        #loadingScreen.hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
-
-        #loadingScreen::before {
-            content: '';
-            position: absolute;
-            top: -50%; left: -50%;
-            width: 200%; height: 200%;
-            background: conic-gradient(transparent, transparent, rgba(0, 242, 255, 0.08), rgba(255, 0, 127, 0.08), transparent);
-            animation: rotateBg 6s linear infinite;
-            z-index: 0;
-        }
-
-        @keyframes rotateBg {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .loader-ring {
-            position: relative;
-            width: 160px;
-            height: 160px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2;
-        }
-
-        .loader-ring::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 50%;
-            border: 3px solid transparent;
-            border-top-color: var(--accent);
-            border-right-color: var(--accent);
-            animation: spinRing 1.2s linear infinite;
-            box-shadow: 0 0 20px var(--accent), inset 0 0 20px rgba(0, 242, 255, 0.3);
-        }
-
-        .loader-ring::after {
-            content: '';
-            position: absolute;
-            inset: 12px;
-            border-radius: 50%;
-            border: 3px solid transparent;
-            border-bottom-color: #ff007f;
-            border-left-color: #ff007f;
-            animation: spinRingReverse 1.6s linear infinite;
-            box-shadow: 0 0 20px #ff007f, inset 0 0 20px rgba(255, 0, 127, 0.3);
-        }
-
-        @keyframes spinRing {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        @keyframes spinRingReverse {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(-360deg); }
-        }
-
-        .loader-logo {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #004a99, #00f2ff);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            font-weight: 900;
-            color: #fff;
-            box-shadow: 0 0 30px rgba(0, 242, 255, 0.8), 0 0 60px rgba(0, 74, 153, 0.6);
-            z-index: 3;
-            animation: logoPulse 2s ease-in-out infinite;
-            position: relative;
-        }
-
-        @keyframes logoPulse {
-            0%, 100% { transform: scale(1); box-shadow: 0 0 30px rgba(0, 242, 255, 0.8), 0 0 60px rgba(0, 74, 153, 0.6); }
-            50% { transform: scale(1.08); box-shadow: 0 0 45px rgba(0, 242, 255, 1), 0 0 80px rgba(0, 74, 153, 0.9); }
-        }
-
-        .loader-text {
-            margin-top: 30px;
-            font-size: 26px;
-            font-weight: 900;
-            letter-spacing: 6px;
-            color: #fff;
-            text-transform: uppercase;
-            z-index: 2;
-            text-shadow: 0 0 10px var(--accent), 0 0 25px var(--accent), 0 0 40px rgba(0, 242, 255, 0.6);
-            animation: textGlow 2s ease-in-out infinite alternate;
-            display: flex;
-            gap: 2px;
-        }
-
-        @keyframes textGlow {
-            0% { text-shadow: 0 0 10px var(--accent), 0 0 25px var(--accent), 0 0 40px rgba(0, 242, 255, 0.6); }
-            100% { text-shadow: 0 0 15px #fff, 0 0 35px var(--accent), 0 0 60px #ff007f; }
-        }
-
-        .loader-text span {
-            display: inline-block;
-            opacity: 0;
-            animation: letterFadeIn 0.5s ease forwards;
-        }
-
-        @keyframes letterFadeIn {
-            0% { opacity: 0; transform: translateY(20px) scale(0.5); }
-            100% { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        .loader-subtitle {
-            margin-top: 12px;
-            font-size: 11px;
-            letter-spacing: 4px;
-            color: var(--accent);
-            text-transform: uppercase;
-            z-index: 2;
-            opacity: 0;
-            animation: fadeInSubtitle 1s ease 1.2s forwards;
-            font-family: monospace;
-        }
-
-        @keyframes fadeInSubtitle {
-            0% { opacity: 0; transform: translateY(10px); }
-            100% { opacity: 0.8; transform: translateY(0); }
-        }
-
-        .loader-progress {
-            margin-top: 35px;
-            width: 220px;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            overflow: hidden;
-            z-index: 2;
-            position: relative;
-            box-shadow: 0 0 10px rgba(0, 242, 255, 0.2);
-        }
-
-        .loader-progress-bar {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #004a99, #00f2ff, #ff007f, #00f2ff);
-            background-size: 200% 100%;
-            border-radius: 10px;
-            animation: progressFill 2.8s ease forwards, progressShimmer 1.5s linear infinite;
-            box-shadow: 0 0 15px var(--accent);
-        }
-
-        @keyframes progressFill {
-            0% { width: 0%; }
-            40% { width: 45%; }
-            70% { width: 75%; }
-            100% { width: 100%; }
-        }
-
-        @keyframes progressShimmer {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 200% 50%; }
-        }
-
-        .particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: var(--accent);
-            border-radius: 50%;
-            box-shadow: 0 0 10px var(--accent);
-            opacity: 0;
-            z-index: 1;
-            animation: floatParticle 4s linear infinite;
-        }
-
-        @keyframes floatParticle {
-            0% { opacity: 0; transform: translateY(100vh) scale(0); }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { opacity: 0; transform: translateY(-100px) scale(1.5); }
-        }
-
-        .loader-percent {
-            margin-top: 15px;
-            font-size: 14px;
-            font-weight: 800;
-            color: var(--accent);
-            font-family: monospace;
-            letter-spacing: 2px;
-            z-index: 2;
-            text-shadow: 0 0 10px var(--accent);
-        }
 
         /* ============================================
            ORIGINAL STYLES
@@ -581,7 +367,6 @@
             flex-shrink: 0;
         }
 
-        /* Inline loader inside buttons */
         .menu-item-btn .btn-inline-loader {
             display: none;
             align-items: center;
@@ -1076,11 +861,6 @@
             #step1 { max-width: 95% !important; }
             #branchSearchInput { padding: 12px 14px !important; font-size: 14px !important; }
 
-            .loader-ring { width: 130px; height: 130px; }
-            .loader-logo { width: 75px; height: 75px; font-size: 26px; }
-            .loader-text { font-size: 20px; letter-spacing: 4px; }
-            .loader-progress { width: 180px; }
-
             /* Step 2 buttons - full width on mobile */
             #step2 {
                 padding-top: 20px !important;
@@ -1114,7 +894,7 @@
 
         @media print {
             @page { size: A4; margin: 0; }
-            .no-print, .status-bar, .modal-overlay, #distanceAlertModal, .header-btn-group, #loadingScreen { display: none !important; }
+            .no-print, .status-bar, .modal-overlay, #distanceAlertModal, .header-btn-group { display: none !important; }
             body { background: #fff !important; margin: 0 !important; padding: 0 !important; }
 
             body.print-2w-3w .container {
@@ -1188,31 +968,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 </head>
 <body>
-
-<!-- ============================================
-     HNB FINANCE LOADING ANIMATION
-     ============================================ -->
-<div id="loadingScreen">
-    <div class="particle" style="left: 15%; animation-delay: 0s;"></div>
-    <div class="particle" style="left: 35%; animation-delay: 0.8s; background: #ff007f; box-shadow: 0 0 10px #ff007f;"></div>
-    <div class="particle" style="left: 55%; animation-delay: 1.6s;"></div>
-    <div class="particle" style="left: 75%; animation-delay: 2.4s; background: #ff007f; box-shadow: 0 0 10px #ff007f;"></div>
-    <div class="particle" style="left: 90%; animation-delay: 3.2s;"></div>
-    <div class="particle" style="left: 5%; animation-delay: 1.2s;"></div>
-
-    <div class="loader-ring">
-        <div class="loader-logo">HNB</div>
-    </div>
-
-    <div class="loader-text" id="loaderBrandText"></div>
-    <div class="loader-subtitle">GEO-TRACKER PRO</div>
-
-    <div class="loader-progress">
-        <div class="loader-progress-bar"></div>
-    </div>
-
-    <div class="loader-percent" id="loaderPercent">0%</div>
-</div>
 
 <div class="status-bar no-print">
     <div class="status-item">SPEED: <span id="netSpeed">0.00 Mbps</span></div>
@@ -1362,7 +1117,6 @@
                 </span>
             </a>
 
-            <!-- ✅ NEW: FILE TRACKING BUTTON -->
             <a href="https://gmaphnbf.github.io/filetrack/" target="_blank" class="menu-item-btn btn-opt-filetrack external-link">
                 <span class="btn-content">
                     <span class="btn-icon">📁</span><span>FILE TRACKING</span>
@@ -1372,7 +1126,6 @@
                 </span>
             </a>
 
-            <!-- ✅ NEW: MY REPORT BUTTON -->
             <a href="https://gmaphnbf.github.io/myreport/" target="_blank" class="menu-item-btn btn-opt-myreport external-link">
                 <span class="btn-content">
                     <span class="btn-icon">📊</span><span>MY REPORT</span>
@@ -1447,65 +1200,6 @@
 </div>
 
 <script>
-    // ============================================================
-    // LOADING SCREEN ANIMATION - ONLY ON FIRST PAGE LOAD
-    // ============================================================
-    const loadingScreen = document.getElementById('loadingScreen');
-    const textContainer = document.getElementById('loaderBrandText');
-    const percentEl = document.getElementById('loaderPercent');
-
-    function showLoader(callback) {
-        textContainer.innerHTML = '';
-        percentEl.textContent = '0%';
-        loadingScreen.classList.remove('hidden');
-        loadingScreen.style.display = 'flex';
-        loadingScreen.style.opacity = '1';
-        loadingScreen.style.visibility = 'visible';
-
-        const progressBar = loadingScreen.querySelector('.loader-progress-bar');
-        progressBar.style.animation = 'none';
-        progressBar.offsetHeight;
-        progressBar.style.animation = 'progressFill 2.8s ease forwards, progressShimmer 1.5s linear infinite';
-
-        const particles = loadingScreen.querySelectorAll('.particle');
-        particles.forEach(p => {
-            p.style.animation = 'none';
-            p.offsetHeight;
-            p.style.animation = 'floatParticle 4s linear infinite';
-        });
-
-        const brandName = "HNB FINANCE";
-        brandName.split('').forEach((char, i) => {
-            const span = document.createElement('span');
-            span.textContent = char === ' ' ? '\u00A0' : char;
-            span.style.animation = 'none';
-            span.style.animationDelay = (i * 0.08) + 's';
-            span.style.animation = 'letterFadeIn 0.5s ease forwards';
-            textContainer.appendChild(span);
-        });
-
-        let percent = 0;
-        const percentInterval = setInterval(() => {
-            percent += Math.floor(Math.random() * 8) + 2;
-            if (percent >= 100) {
-                percent = 100;
-                clearInterval(percentInterval);
-            }
-            percentEl.textContent = percent + '%';
-        }, 60);
-
-        setTimeout(() => {
-            percentEl.textContent = '100%';
-            loadingScreen.classList.add('hidden');
-            setTimeout(() => {
-                loadingScreen.style.display = 'none';
-                if (typeof callback === 'function') {
-                    callback();
-                }
-            }, 700);
-        }, 3200);
-    }
-
     // ============================================================
     // EXTERNAL LINK HANDLER
     // ============================================================
@@ -1918,11 +1612,10 @@
         initMap();
         setupRealtimePresence();
         renderBranchList("");
-        
-        showLoader(function() {
-            document.getElementById('wizardModal').style.display = 'flex';
-            goToStep(0);
-        });
+
+        // Open main menu directly — no loading animation
+        document.getElementById('wizardModal').style.display = 'flex';
+        goToStep(0);
 
         document.getElementById('rBtn').onclick = function() {
             var val = document.getElementById('destCoords').value.split(',');
