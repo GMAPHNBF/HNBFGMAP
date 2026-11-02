@@ -458,6 +458,8 @@
         .btn-opt-filetrack { --c: #4a78b5; }
         .btn-opt-myreport { --c: #0e6a8f; }
         .btn-opt-tin { --c: #2e7d5b; }
+        /* new brand new bike button color */
+        .btn-opt-bike { --c: #0b5e7a; }
 
         .comment-section-wrapper {
             margin-top: 15px;
@@ -1131,6 +1133,16 @@
                     <span class="mini-spinner"></span> Opening...
                 </span>
             </a>
+
+            <!-- NEW: Brand New Bike button (URBIKE link) -->
+            <a href="https://gmaphnbf.github.io/URBIKE/" target="_blank" class="menu-item-btn btn-opt-bike external-link">
+                <span class="btn-content">
+                    <span class="btn-icon">🏍️</span><span>Brand New Bike</span>
+                </span>
+                <span class="btn-inline-loader">
+                    <span class="mini-spinner"></span> Opening...
+                </span>
+            </a>
         </div>
 
         <div class="comment-section-wrapper">
@@ -1223,7 +1235,7 @@
     }
 
     // ============================================================
-    // BRANCH DATA ARRAY (FIXED - added missing comma after Dehiwala)
+    // BRANCH DATA ARRAY
     // ============================================================
     const BRANCHES = [
         { coords: "8.335351,80.411615", name: "HNBF Anuradhapura" },
@@ -1281,14 +1293,13 @@
                 <div class="branch-icon">🏦</div>
                 <div class="branch-name">${branch.name}</div>
             `;
-            // FIXED: pass the element directly instead of relying on global event
             item.onclick = () => selectBranch(branch, item);
             container.appendChild(item);
         });
     }
 
     // ============================================================
-    // SELECT A BRANCH (FIXED - uses element parameter)
+    // SELECT A BRANCH
     // ============================================================
     function selectBranch(branch, element) {
         selectedBranchCoords = branch.coords;
@@ -1407,7 +1418,6 @@
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
                       (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
         
-        // FIXED: null safety check
         if (fallbackMsg && fallbackMsg.style.display === 'block') fallbackMsg.style.display = 'none';
         
         if (navigator.geolocation) {
