@@ -9,9 +9,6 @@
         :root { --hnb: #004a99; --accent: #00f2ff; --bg: #f4f7f9; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; background: var(--bg); -webkit-user-select: none; user-select: none; }
 
-        /* ============================================
-           ORIGINAL STYLES
-           ============================================ */
         .status-bar {
             background: #111;
             color: #888;
@@ -432,7 +429,6 @@
             100% { opacity: 1; transform: scale(1) translateY(0); }
         }
 
-        /* Classic look: solid blue buttons, thin border, soft bevel */
         .menu-item-btn {
             background: var(--c);
             border: 1px solid rgba(0, 0, 0, 0.35);
@@ -571,12 +567,7 @@
         .btn-nav-secondary { background: #64748b; }
         .modal-btn-draw { background: #059669; }
 
-        /* ============================================
-           STEP 2 - LARGER ACTION BUTTONS + FIXED HEADLINE
-           ============================================ */
-        #step2 {
-            padding-top: 20px !important;
-        }
+        #step2 { padding-top: 20px !important; }
 
         #step2 .modal-action-row {
             position: relative;
@@ -862,7 +853,6 @@
             #step1 { max-width: 95% !important; }
             #branchSearchInput { padding: 12px 14px !important; font-size: 14px !important; }
 
-            /* Step 2 buttons - full width on mobile */
             #step2 {
                 padding-top: 20px !important;
             }
@@ -944,7 +934,6 @@
             body.print-auto #qrcode img { width: 80px !important; height: 80px !important; }
         }
     
-        /* Classic comment button (overrides neon style) */
         .btn-opt-comment-glowing {
             background: #0b2a52;
             border: 1px solid rgba(0, 0, 0, 0.45);
@@ -1009,7 +998,6 @@
 
 <!-- STEP-BY-STEP POPUP WIZARD -->
 <div class="modal-overlay no-print" id="wizardModal">
-    <!-- STEP 0: MAIN MENU POPUP -->
     <div class="modal-box" id="step0">
         <div class="view-toggle-bar">
             <button class="toggle-btn active" id="btnGrid" onclick="switchMenuView('grid')"><span>🔲</span> Grid</button>
@@ -1157,7 +1145,6 @@
         </div>
     </div>
 
-    <!-- STEP 1: SELECT BRANCH -->
     <div class="modal-box" id="step1" style="display:none;">
         <div class="modal-action-row">
             <button class="modal-btn btn-nav-secondary" onclick="goToStep(0)">⬅️ Back</button>
@@ -1173,7 +1160,6 @@
         </div>
     </div>
 
-    <!-- STEP 2: TARGET LOCATION -->
     <div class="modal-box" id="step2" style="display:none;">
         <div class="modal-action-row">
             <button class="modal-btn btn-nav-secondary" onclick="goToStep(0)">🏠 Home</button>
@@ -1195,7 +1181,6 @@
     </div>
 </div>
 
-<!-- 100 KM+ DISTANCE ALERT -->
 <div class="modal-overlay no-print" id="distanceAlertModal" style="display: none;">
     <div class="modal-box alert-box">
         <div class="alert-icon">⚠️</div>
@@ -1238,7 +1223,7 @@
     }
 
     // ============================================================
-    // BRANCH DATA ARRAY
+    // BRANCH DATA ARRAY (FIXED - added missing comma after Dehiwala)
     // ============================================================
     const BRANCHES = [
         { coords: "8.335351,80.411615", name: "HNBF Anuradhapura" },
@@ -1260,7 +1245,7 @@
         { coords: "7.882830645880901,80.64995468509856", name: "HNBF DAMBULLA" },
         { coords: "7.083000701591264,79.8908642441365", name: "HNBF JA-ELA" },
         { coords: "6.882545578276103,79.88789225396044", name: "HNBF Head Office" },
-        { coords: "6.853397131519146,79.86560362737843", name: "HNBF Dehiwala" }
+        { coords: "6.853397131519146,79.86560362737843", name: "HNBF Dehiwala" },
         { coords: "8.578355915648626, 81.23146576393206", name: "HNBF Trincomalee" }
     ];
 
@@ -1296,22 +1281,23 @@
                 <div class="branch-icon">🏦</div>
                 <div class="branch-name">${branch.name}</div>
             `;
-            item.onclick = () => selectBranch(branch);
+            // FIXED: pass the element directly instead of relying on global event
+            item.onclick = () => selectBranch(branch, item);
             container.appendChild(item);
         });
     }
 
     // ============================================================
-    // SELECT A BRANCH
+    // SELECT A BRANCH (FIXED - uses element parameter)
     // ============================================================
-    function selectBranch(branch) {
+    function selectBranch(branch, element) {
         selectedBranchCoords = branch.coords;
         selectedBranchName = branch.name;
         
         document.querySelectorAll('.branch-item').forEach(el => {
             el.classList.remove('selected');
         });
-        event.currentTarget.classList.add('selected');
+        element.classList.add('selected');
     }
 
     // ============================================================
@@ -1363,11 +1349,15 @@
         measurementId: "G-PCH9WKCTLD"
     };
 
-    firebase.initializeApp(firebaseConfig);
-    firebase.analytics();
-    const db = firebase.database();
+    var db = null;
+    try {
+        firebase.initializeApp(firebaseConfig);
+        try { firebase.analytics(); } catch(e) { console.warn('Analytics unavailable:', e); }
+        db = firebase.database();
+    } catch(e) { console.warn('Firebase unavailable:', e); }
 
     function setupRealtimePresence() {
+        if (!db) return;
         const mySessionRef = db.ref('status/' + Date.now() + "_" + Math.random().toString(36).substr(2, 5));
         const connectedRef = db.ref('.info/connected');
 
@@ -1417,7 +1407,8 @@
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
                       (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
         
-        if (fallbackMsg.style.display === 'block') fallbackMsg.style.display = 'none';
+        // FIXED: null safety check
+        if (fallbackMsg && fallbackMsg.style.display === 'block') fallbackMsg.style.display = 'none';
         
         if (navigator.geolocation) {
             btn.textContent = '⏳ Fetching location...';
@@ -1430,27 +1421,29 @@
                     document.getElementById('modalDestCoords').value = lat + ", " + lng;
                     btn.textContent = '📍 Use Current Location';
                     btn.disabled = false;
-                    fallbackMsg.style.display = 'none';
+                    if (fallbackMsg) fallbackMsg.style.display = 'none';
                 },
                 function(error) {
                     btn.textContent = '📍 Use Current Location';
                     btn.disabled = false;
-                    if (isIOS) {
+                    if (fallbackMsg) {
                         fallbackMsg.style.display = 'block';
-                        fallbackMsg.innerHTML = `⚠️ <b>iOS Location Access Required</b><br>1. Go to <b>Settings → Privacy → Location Services</b><br>2. Enable location for <b>Safari</b><br>3. Or enter coordinates manually below.`;
-                    } else if (error.code === 1) {
-                        fallbackMsg.style.display = 'block';
-                        fallbackMsg.innerHTML = `⚠️ <b>Location permission denied</b><br>Please allow location access or enter coordinates manually below.`;
-                    } else {
-                        fallbackMsg.style.display = 'block';
-                        fallbackMsg.innerHTML = `⚠️ <b>Location unavailable</b><br>Please enter target coordinates manually.`;
+                        if (isIOS) {
+                            fallbackMsg.innerHTML = `⚠️ <b>iOS Location Access Required</b><br>1. Go to <b>Settings → Privacy → Location Services</b><br>2. Enable location for <b>Safari</b><br>3. Or enter coordinates manually below.`;
+                        } else if (error.code === 1) {
+                            fallbackMsg.innerHTML = `⚠️ <b>Location permission denied</b><br>Please allow location access or enter coordinates manually below.`;
+                        } else {
+                            fallbackMsg.innerHTML = `⚠️ <b>Location unavailable</b><br>Please enter target coordinates manually.`;
+                        }
                     }
                 },
                 { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
             );
         } else {
-            fallbackMsg.style.display = 'block';
-            fallbackMsg.innerHTML = `⚠️ <b>Geolocation not supported</b><br>Please enter target coordinates manually.`;
+            if (fallbackMsg) {
+                fallbackMsg.style.display = 'block';
+                fallbackMsg.innerHTML = `⚠️ <b>Geolocation not supported</b><br>Please enter target coordinates manually.`;
+            }
         }
     }
 
@@ -1619,11 +1612,10 @@
     }
 
     window.onload = function() {
-        initMap();
-        setupRealtimePresence();
+        try { initMap(); } catch(e) { console.error('Map init failed:', e); }
+        try { setupRealtimePresence(); } catch(e) { console.warn(e); }
         renderBranchList("");
 
-        // Open main menu directly — no loading animation
         document.getElementById('wizardModal').style.display = 'flex';
         goToStep(0);
 
