@@ -990,7 +990,7 @@
     </div>
     
     <div class="info-grid">
-        <div class="info-box"><b>Branch</b><span id="currentBranchName">HNBF Anuradhapura</span></div>
+        <div class="info-box"><b>Branch</b><span id="currentBranchName">Anuradhapura Branch</span></div>
         <div class="info-box"><b>CUSTOMER LOCATION</b><span id="targetLabel">--</span></div>
         <div class="info-box"><b>Distance</b><span id="distLabel">--</span></div>
     </div>
@@ -1238,33 +1238,33 @@
     // BRANCH DATA ARRAY
     // ============================================================
     const BRANCHES = [
-        { coords: "8.335351,80.411615", name: "HNBF Anuradhapura" },
-        { coords: "8.003788259137602,80.27115376074129", name: "HNBF Galgamuwa" },
-        { coords: "6.9373977982193304,79.9770854504675", name: "HNBF Kaduwela" },
-        { coords: "7.577366674604863,79.79526423466038", name: "HNBF Chilaw" },
-        { coords: "8.262481044460486,80.20736562695471", name: "HNBF Nochchiyagama" },
-        { coords: "8.048322,79.737257", name: "HNBF Norachcholai" },
-        { coords: "8.832094454675605,80.77298497765483", name: "HNBF Padaviya" },
-        { coords: "6.990035205448142,79.89295039174291", name: "HNBF Wattala" },
-        { coords: "8.02633538732535,79.83643853862367", name: "HNBF Puttalam" },
-        { coords: "6.787665070989205,79.88512232810733", name: "HNBF Moratuwa" },
-        { coords: "8.290629351040467,80.71554546566082", name: "HNBF Galenbidunuwewa" },
-        { coords: "6.877532810992226,79.87818111024245", name: "HNBF City" },
-        { coords: "8.538874,80.493198", name: "HNBF Medawachchiya" },
-        { coords: "7.09175794868064,79.99863253605719", name: "HNBF Gampaha" },
-        { coords: "7.094013021198048,79.99666153457918", name: "HNBF Gampaha 2" },
-        { coords: "9.666994044122607,80.00904600854417", name: "HNBF JAFFNA" },
-        { coords: "7.882830645880901,80.64995468509856", name: "HNBF DAMBULLA" },
-        { coords: "7.083000701591264,79.8908642441365", name: "HNBF JA-ELA" },
-        { coords: "6.882545578276103,79.88789225396044", name: "HNBF Head Office" },
-        { coords: "6.853397131519146,79.86560362737843", name: "HNBF Dehiwala" },
-        { coords: "8.578355915648626, 81.23146576393206", name: "HNBF Trincomalee" },
-        { coords: "7.33953779820128, 80.99764596416615", name: "HNBF Mahiyanganaya" },
-        { coords: "7.941634644241745, 81.00467699508937", name: "HNBF Polonnaruwa" }
+        { coords: "8.335351,80.411615", name: "Anuradhapura Branch" },
+        { coords: "8.003788259137602,80.27115376074129", name: "Galgamuwa Branch" },
+        { coords: "6.9373977982193304,79.9770854504675", name: "Kaduwela Branch" },
+        { coords: "7.577366674604863,79.79526423466038", name: "Chilaw Branch" },
+        { coords: "8.262481044460486,80.20736562695471", name: "Nochchiyagama Branch" },
+        { coords: "8.048322,79.737257", name: "Norachcholai Branch" },
+        { coords: "8.832094454675605,80.77298497765483", name: "Padaviya Branch" },
+        { coords: "6.990035205448142,79.89295039174291", name: "Wattala Branch" },
+        { coords: "8.02633538732535,79.83643853862367", name: "Puttalam Branch" },
+        { coords: "6.787665070989205,79.88512232810733", name: "Moratuwa Branch" },
+        { coords: "8.290629351040467,80.71554546566082", name: "Galenbidunuwewa Branch" },
+        { coords: "6.877532810992226,79.87818111024245", name: "City Branch" },
+        { coords: "8.538874,80.493198", name: "Medawachchiya Branch" },
+        { coords: "7.09175794868064,79.99863253605719", name: "Gampaha Branch" },
+        { coords: "7.094013021198048,79.99666153457918", name: "Gampaha 2 Branch" },
+        { coords: "9.666994044122607,80.00904600854417", name: "JAFFNA Branch" },
+        { coords: "7.882830645880901,80.64995468509856", name: "DAMBULLA Branch" },
+        { coords: "7.083000701591264,79.8908642441365", name: "JA-ELA Branch" },
+        { coords: "6.882545578276103,79.88789225396044", name: "Head Office Branch" },
+        { coords: "6.853397131519146,79.86560362737843", name: "Dehiwala Branch" },
+        { coords: "8.578355915648626, 81.23146576393206", name: "Trincomalee Branch" },
+        { coords: "7.33953779820128, 80.99764596416615", name: "Mahiyanganaya Branch" },
+        { coords: "7.941634644241745, 81.00467699508937", name: "Polonnaruwa Branch" }
     ];
 
     let selectedBranchCoords = "8.335351,80.411615";
-    let selectedBranchName = "HNBF Anuradhapura";
+    let selectedBranchName = "Anuradhapura Branch";
 
     // ============================================================
     // RENDER BRANCH LIST
@@ -1394,7 +1394,7 @@
     }
 
     var currentStartLoc = [8.335351, 80.411615];
-    var currentBranchName = "HNBF Anuradhapura";
+    var currentBranchName = "Anuradhapura Branch";
     var map, hnbfMarker, currentRouteLine, targetMarker;
 
     function openWizard() {
