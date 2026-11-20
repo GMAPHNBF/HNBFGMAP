@@ -955,6 +955,114 @@
             filter: brightness(1.15);
             box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3);
         }
+
+        /* ===== PREMIUM 3D HOME BUTTONS ===== */
+        .menu-options-container { gap: 14px 12px; padding-bottom: 8px; }
+
+        .menu-item-btn,
+        .btn-opt-comment-glowing {
+            --c-light: color-mix(in srgb, var(--c, #0b2a52) 72%, #ffffff);
+            --c-dark: color-mix(in srgb, var(--c, #0b2a52) 55%, #000000);
+            --c-edge: color-mix(in srgb, var(--c, #0b2a52) 38%, #000000);
+            position: relative;
+            overflow: hidden;
+            isolation: isolate;
+            border: 1px solid var(--c-edge);
+            border-radius: 14px;
+            background:
+                linear-gradient(180deg, var(--c-light) 0%, var(--c, #0b2a52) 48%, var(--c-dark) 100%);
+            color: #fff;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+            box-shadow:
+                0 6px 0 var(--c-edge),
+                0 12px 18px -4px rgba(0, 0, 0, 0.38),
+                inset 0 1px 0 rgba(255, 255, 255, 0.55),
+                inset 0 -3px 6px rgba(0, 0, 0, 0.22);
+            transform: translateY(0);
+            transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.2s ease;
+            animation-fill-mode: backwards;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* glossy top highlight */
+        .menu-item-btn::before,
+        .btn-opt-comment-glowing::before {
+            content: '';
+            display: block !important;
+            position: absolute;
+            inset: 0 0 50% 0;
+            width: auto; height: auto;
+            top: 0; left: 0;
+            transform: none;
+            background: linear-gradient(180deg, rgba(255,255,255,0.32), rgba(255,255,255,0.04));
+            border-radius: 14px 14px 40% 40% / 14px 14px 18px 18px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* light sweep on hover */
+        .menu-item-btn::after,
+        .btn-opt-comment-glowing::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -80%;
+            width: 50%; height: 100%;
+            background: linear-gradient(100deg, transparent, rgba(255,255,255,0.35), transparent);
+            transform: skewX(-20deg);
+            pointer-events: none;
+            z-index: -1;
+            transition: left 0.6s ease;
+        }
+        .menu-item-btn:hover::after,
+        .btn-opt-comment-glowing:hover::after { left: 130%; }
+
+        .menu-item-btn:hover,
+        .btn-opt-comment-glowing:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1) saturate(1.1);
+            background: linear-gradient(180deg, var(--c-light) 0%, var(--c, #0b2a52) 48%, var(--c-dark) 100%);
+            border-color: var(--c-edge);
+            box-shadow:
+                0 8px 0 var(--c-edge),
+                0 16px 22px -4px rgba(0, 0, 0, 0.42),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6),
+                inset 0 -3px 6px rgba(0, 0, 0, 0.22);
+        }
+
+        /* pressed-down effect */
+        .menu-item-btn:active,
+        .btn-opt-comment-glowing:active {
+            transform: translateY(5px);
+            filter: brightness(0.97);
+            box-shadow:
+                0 1px 0 var(--c-edge),
+                0 3px 6px -2px rgba(0, 0, 0, 0.4),
+                inset 0 2px 6px rgba(0, 0, 0, 0.35);
+        }
+
+        .menu-item-btn .btn-icon {
+            background: linear-gradient(145deg, rgba(255,255,255,0.32), rgba(255,255,255,0.08));
+            border: 1px solid rgba(255,255,255,0.28);
+            border-radius: 9px;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), 0 2px 4px rgba(0,0,0,0.25);
+            text-shadow: none;
+        }
+
+        /* comment button – deep navy with gold trim */
+        .btn-opt-comment-glowing {
+            --c: #0b2a52;
+            border: 1px solid #d4af37;
+            animation: none;
+        }
+        .btn-opt-comment-glowing:hover { border-color: #f1d36b; }
+
+        /* grid/list toggle */
+        .toggle-btn.active {
+            background: linear-gradient(180deg, #2f7de0, #004a99);
+            box-shadow: 0 2px 0 #00316b, 0 4px 8px rgba(0,74,153,0.4), inset 0 1px 0 rgba(255,255,255,0.45);
+        }
 </style>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
