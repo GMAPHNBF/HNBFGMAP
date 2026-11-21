@@ -1869,6 +1869,206 @@
             pointer-events: none; z-index: -1;
         }
         #wizardModal .btn-curr-loc:disabled { opacity: 0.6; }
+
+        /* ===== MAP PAGE HEADER: glass logo, no rotating light border ===== */
+        .header::before, .header::after { display: none !important; }   /* removes the running light border */
+        .header {
+            background:
+                radial-gradient(420px 160px at 12% 0%, rgba(37,170,225,0.20), transparent 70%),
+                radial-gradient(420px 160px at 88% 0%, rgba(127,182,63,0.18), transparent 70%),
+                #ffffff;
+            color: var(--hnb);
+            margin: 0;
+            border-radius: 0;
+            border-bottom: 1px solid rgba(14,88,128,0.10);
+            padding: 16px 15px;
+        }
+        .hdr-logo-wrap {
+            position: relative;
+            z-index: 3;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            isolation: isolate;
+            overflow: hidden;
+            padding: 8px 26px;
+            border-radius: 22px;
+            background:
+                linear-gradient(120deg, rgba(37,170,225,0.22), rgba(255,255,255,0.55) 45%, rgba(127,182,63,0.22)),
+                rgba(255,255,255,0.6);
+            -webkit-backdrop-filter: blur(12px) saturate(160%);
+            backdrop-filter: blur(12px) saturate(160%);
+            border: 1.5px solid rgba(255,255,255,0.95);
+            box-shadow:
+                0 0 0 1px rgba(15,23,42,0.08),
+                0 12px 30px rgba(37,150,200,0.28),
+                0 2px 6px rgba(15,23,42,0.12),
+                inset 0 1px 0 #fff,
+                inset 0 -12px 22px rgba(255,255,255,0.45);
+        }
+        .hdr-logo-wrap::before {
+            content: "";
+            position: absolute; inset: 0 0 50% 0;
+            background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0));
+            border-radius: 22px 22px 0 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .hdr-logo-wrap::after {
+            content: "";
+            position: absolute; top: -20%; bottom: -20%; left: -40%;
+            width: 28%;
+            background: linear-gradient(100deg, rgba(255,255,255,0), rgba(255,255,255,0.55), rgba(255,255,255,0));
+            transform: skewX(-20deg);
+            animation: logoShine 4.5s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 3;
+        }
+        .hdr-logo { position: relative; z-index: 1; height: 56px; width: auto; display: block; filter: drop-shadow(0 2px 3px rgba(15,23,42,0.18)); }
+        @media screen and (min-width: 768px) { .hdr-logo { height: 68px; } .hdr-logo-wrap { padding: 8px 32px; } }
+        @media screen and (max-width: 600px) {
+            .hdr-logo { height: 44px; }
+            .hdr-logo-wrap { padding: 6px 20px; }
+            .header { padding: 14px 10px 14px 10px; }
+        }
+        /* the plain-text title is only used when printing */
+        @media screen { .header h1.print-title { display: none; } }
+        @media print  { .hdr-logo-wrap { display: none !important; } }
+
+        /* ===== DESKTOP: text + icon always fit inside the button, whatever the screen height ===== */
+        @media screen and (min-width: 768px) {
+            #step0 #menuContainer.grid-mode .menu-item-btn.btn-square-2cm {
+                container-type: size;
+                padding: 0 8px;
+            }
+            #step0 #menuContainer.grid-mode .menu-item-btn.btn-square-2cm .btn-content {
+                font-size: clamp(11px, 22cqh, 27px);
+                gap: clamp(2px, 4cqh, 10px);
+                line-height: 1.05;
+                max-height: 100cqh;
+            }
+            #step0 #menuContainer.grid-mode .menu-item-btn.btn-square-2cm .btn-content span:last-child {
+                font-size: inherit;
+                line-height: 1.05;
+            }
+            #step0 #menuContainer.grid-mode .menu-item-btn.btn-square-2cm .btn-icon {
+                width: clamp(18px, 42cqh, 54px);
+                height: clamp(18px, 42cqh, 54px);
+                font-size: clamp(12px, 27cqh, 36px);
+                border-radius: clamp(6px, 8cqh, 12px);
+            }
+            #step0 #menuContainer.grid-mode .menu-item-btn .new-badge {
+                font-size: clamp(9px, 14cqh, 15px);
+                padding: 2px clamp(6px, 1vw, 10px);
+            }
+        }
+
+        /* ===== LOGO HOVER POPUP: website + hotline ===== */
+        .menu-logo-wrap, .hdr-logo-wrap { cursor: pointer; }
+        .menu-logo-wrap:focus-visible, .hdr-logo-wrap:focus-visible { outline: 3px solid rgba(37,170,225,0.6); outline-offset: 3px; }
+        .logo-pop {
+            position: fixed;
+            z-index: 100000;
+            width: 310px;
+            max-width: calc(100vw - 20px);
+            padding: 14px 14px 12px 14px;
+            border-radius: 22px;
+            background: linear-gradient(150deg, rgba(255,255,255,0.90), rgba(232,243,252,0.74));
+            -webkit-backdrop-filter: blur(18px) saturate(170%);
+            backdrop-filter: blur(18px) saturate(170%);
+            border: 1.5px solid rgba(255,255,255,0.95);
+            box-shadow: 0 22px 54px rgba(14,88,128,0.32), 0 4px 12px rgba(15,23,42,0.12), inset 0 1px 0 #fff;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform: translateY(-8px) scale(0.96);
+            transform-origin: top center;
+            transition: opacity .2s ease, transform .22s cubic-bezier(.2,.9,.3,1.2), visibility 0s linear .22s;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            -webkit-user-select: none; user-select: none;
+        }
+        .logo-pop.show {
+            opacity: 1; visibility: visible; pointer-events: auto;
+            transform: translateY(0) scale(1);
+            transition: opacity .2s ease, transform .22s cubic-bezier(.2,.9,.3,1.2), visibility 0s;
+        }
+        .logo-pop::before {            /* little arrow pointing at the logo */
+            content: "";
+            position: absolute;
+            top: -7px; left: var(--ax, 50%);
+            width: 14px; height: 14px;
+            margin-left: -7px;
+            background: rgba(255,255,255,0.95);
+            border-left: 1.5px solid rgba(255,255,255,0.95);
+            border-top: 1.5px solid rgba(255,255,255,0.95);
+            transform: rotate(45deg);
+            border-radius: 3px 0 0 0;
+        }
+        .logo-pop.above { transform-origin: bottom center; }
+        .logo-pop.above::before { top: auto; bottom: -7px; transform: rotate(225deg); }
+        .lp-head {
+            text-align: center;
+            font-size: 11px; font-weight: 800; letter-spacing: 2px;
+            color: #0a5480; text-transform: uppercase;
+            margin: 0 0 10px 0;
+        }
+        .lp-head span { color: #6fa83a; }
+        .lp-opt {
+            position: relative;
+            isolation: isolate;
+            overflow: hidden;
+            display: flex; align-items: center; gap: 12px;
+            padding: 11px 14px;
+            border-radius: 16px;
+            text-decoration: none;
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.35);
+            border: 1.5px solid rgba(255,255,255,0.65);
+            box-shadow: 0 8px 20px rgba(14,88,128,0.28), inset 0 1.5px 0 rgba(255,255,255,0.75), inset 0 -10px 16px rgba(255,255,255,0.08);
+            transition: transform .18s ease, filter .18s ease, box-shadow .18s ease;
+            cursor: pointer;
+        }
+        .lp-opt + .lp-opt { margin-top: 10px; }
+        .lp-opt::before {
+            content: ""; position: absolute; left: 0; right: 0; top: 0; height: 50%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.32), rgba(255,255,255,0.03));
+            border-radius: inherit;
+            border-bottom-left-radius: 60% 28%; border-bottom-right-radius: 60% 28%;
+            pointer-events: none; z-index: -1;
+        }
+        .lp-web {
+            background: linear-gradient(150deg, rgba(255,255,255,0.24), rgba(255,255,255,0) 60%), linear-gradient(160deg, rgba(22,118,170,0.96), rgba(10,84,128,0.92));
+        }
+        .lp-call {
+            background: linear-gradient(150deg, rgba(255,255,255,0.26), rgba(255,255,255,0) 60%), linear-gradient(160deg, rgba(122,184,62,0.97), rgba(70,128,36,0.94));
+            box-shadow: 0 8px 20px rgba(70,128,36,0.32), inset 0 1.5px 0 rgba(255,255,255,0.75), inset 0 -10px 16px rgba(255,255,255,0.08);
+        }
+        .lp-opt:hover { transform: translateY(-2px); filter: brightness(1.08) saturate(1.1); }
+        .lp-opt:active { transform: translateY(0); filter: brightness(0.97); }
+        .lp-ico {
+            position: relative;
+            flex: 0 0 42px; width: 42px; height: 42px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px;
+            border-radius: 13px;
+            background: rgba(255,255,255,0.24);
+            border: 1px solid rgba(255,255,255,0.55);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.65);
+        }
+        .lp-call .lp-ico::after {          /* pulsing ring on the phone */
+            content: ""; position: absolute; inset: -2px; border-radius: 15px;
+            border: 2px solid rgba(255,255,255,0.7);
+            animation: lpRing 1.6s ease-out infinite;
+        }
+        @keyframes lpRing { 0% { transform: scale(1); opacity: .9; } 100% { transform: scale(1.45); opacity: 0; } }
+        .lp-call .lp-ico span { display: inline-block; animation: lpWiggle 2.2s ease-in-out infinite; transform-origin: 50% 60%; }
+        @keyframes lpWiggle { 0%, 70%, 100% { transform: rotate(0); } 75% { transform: rotate(-14deg); } 80% { transform: rotate(12deg); } 85% { transform: rotate(-10deg); } 90% { transform: rotate(8deg); } }
+        .lp-txt { display: flex; flex-direction: column; min-width: 0; line-height: 1.15; }
+        .lp-lbl { font-size: 10px; font-weight: 800; letter-spacing: 1.6px; text-transform: uppercase; opacity: .92; }
+        .lp-main { font-size: 18px; font-weight: 800; letter-spacing: .3px; margin-top: 3px; white-space: nowrap; }
+        .lp-go { margin-left: auto; font-size: 22px; font-weight: 800; opacity: .9; transition: transform .18s ease; }
+        .lp-opt:hover .lp-go { transform: translateX(3px); }
+        @media print { .logo-pop { display: none !important; } }
 </style>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -1885,7 +2085,8 @@
 
 <div class="container">
     <div class="header">
-        <h1>HNB FINANCE</h1>
+        <div class="hdr-logo-wrap no-copy"><img class="hdr-logo" id="hdrLogo" alt="HNB Finance" src="data:image/gif;base64,R0lGODlhAQABAAAAACw="></div>
+        <h1 class="print-title">HNB FINANCE</h1>
         <div class="header-btn-group no-print">
             <button class="btn-home-floating" onclick="openWizard()">🏠 HOME</button>
             <button class="btn-help-floating" onclick="openHelpLink()">💡 Idea & Help</button>
@@ -2599,6 +2800,92 @@
             }
         };
     };
+</script>
+
+<script>
+(function(){
+    try {
+        var src = document.querySelector('.menu-logo');
+        var dst = document.getElementById('hdrLogo');
+        if (src && dst && src.getAttribute('src')) dst.src = src.getAttribute('src');
+    } catch (e) {}
+})();
+</script>
+
+<div class="logo-pop" id="logoPop" role="dialog" aria-label="Contact HNB Finance">
+    <div class="lp-head">HNB <span>FINANCE</span> &middot; How can we help?</div>
+    <a class="lp-opt lp-web" href="https://www.hnbfinance.lk" target="_blank" rel="noopener noreferrer">
+        <span class="lp-ico"><span>🌐</span></span>
+        <span class="lp-txt"><span class="lp-lbl">Visit our website</span><span class="lp-main">hnbfinance.lk</span></span>
+        <span class="lp-go">&rsaquo;</span>
+    </a>
+    <a class="lp-opt lp-call" href="tel:+94112024848">
+        <span class="lp-ico"><span>📞</span></span>
+        <span class="lp-txt"><span class="lp-lbl">Hotline &middot; tap to call</span><span class="lp-main">011 202 4848</span></span>
+        <span class="lp-go">&rsaquo;</span>
+    </a>
+</div>
+<script>
+(function () {
+    var pop = document.getElementById('logoPop');
+    if (!pop) return;
+    var hideTimer = null, current = null, shownAt = 0, touchAt = 0;
+    function touchy() { return Date.now() - touchAt < 1500; }
+    document.addEventListener('touchstart', function () { touchAt = Date.now(); }, { passive: true, capture: true });
+
+    function place(target) {
+        var r = target.getBoundingClientRect();
+        var vw = document.documentElement.clientWidth, vh = document.documentElement.clientHeight;
+        var w = pop.offsetWidth, h = pop.offsetHeight;
+        var cx = r.left + r.width / 2;
+        var left = Math.max(10, Math.min(cx - w / 2, vw - w - 10));
+        var top = r.bottom + 12, above = false;
+        if (top + h > vh - 8 && r.top - h - 12 > 8) { top = r.top - h - 12; above = true; }
+        pop.style.left = left + 'px';
+        pop.style.top = Math.max(8, top) + 'px';
+        pop.style.setProperty('--ax', Math.max(24, Math.min(cx - left, w - 24)) + 'px');
+        pop.classList.toggle('above', above);
+    }
+    function show(target) {
+        clearTimeout(hideTimer);
+        current = target;
+        place(target);
+        if (!pop.classList.contains('show')) shownAt = Date.now();
+        pop.classList.add('show');
+    }
+    function hide() { pop.classList.remove('show'); current = null; }
+    function hideSoon() { clearTimeout(hideTimer); hideTimer = setTimeout(hide, 280); }
+
+    function bind(el) {
+        if (!el || el.dataset.lpBound) return;
+        el.dataset.lpBound = '1';
+        el.setAttribute('tabindex', '0');
+        el.setAttribute('role', 'button');
+        el.setAttribute('aria-label', 'HNB Finance contact options');
+        el.addEventListener('mouseenter', function () { if (!touchy()) show(el); });
+        el.addEventListener('mouseleave', function () { if (!touchy()) hideSoon(); });
+        el.addEventListener('focus', function () { if (!touchy()) show(el); });
+        el.addEventListener('click', function (e) {          // touch screens: tap the logo to open/close
+            e.stopPropagation();
+            if (pop.classList.contains('show') && current === el && Date.now() - shownAt > 600) hide(); else show(el);
+        });
+        el.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); show(el); }
+        });
+    }
+    function bindAll() {
+        document.querySelectorAll('.menu-logo-wrap, .hdr-logo-wrap').forEach(bind);
+    }
+    bindAll();
+    window.addEventListener('load', bindAll);
+
+    pop.addEventListener('mouseenter', function () { clearTimeout(hideTimer); });
+    pop.addEventListener('mouseleave', function () { if (!touchy()) hideSoon(); });
+    document.addEventListener('click', function (e) { if (!pop.contains(e.target)) hide(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') hide(); });
+    window.addEventListener('resize', function () { if (current && pop.classList.contains('show')) place(current); });
+    window.addEventListener('scroll', hide, true);
+})();
 </script>
 </body>
 </html>
