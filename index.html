@@ -729,6 +729,494 @@
         .live-status-box { flex: 0 0 auto; white-space: nowrap; width: auto; }
         .live-status-box .live-text, .live-status-box .live-count-num { white-space: nowrap; }
 
+
+        /* ===== DESKTOP v3: tidy, uniform tiles in a centered column ===== */
+        @media screen and (min-width: 768px) {
+            #step0 .menu-options-container.grid-mode {
+                display: flex !important;
+                flex-wrap: wrap;
+                justify-content: center;
+                align-content: center;
+                align-items: stretch;
+                gap: clamp(8px, 1.5vh, 16px);
+                width: 100%;
+                max-width: 1280px;
+                margin: 0 auto;
+                overflow-y: auto;
+            }
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-square-2cm {
+                flex: 0 0 calc((100% - 5 * clamp(8px, 1.5vh, 16px)) / 6);
+                width: calc((100% - 5 * clamp(8px, 1.5vh, 16px)) / 6);
+                height: clamp(60px, 14vh, 150px);
+                min-height: 0;
+                grid-column: auto;
+                border-radius: 14px;
+                font-size: clamp(12px, 1.15vw, 17px);
+                letter-spacing: 0.2px;
+            }
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-opt-map.btn-square-2cm {
+                flex: 0 0 100%;
+                width: 100%;
+                height: clamp(56px, 12vh, 130px);
+                font-size: clamp(16px, 1.7vw, 26px);
+                border-radius: 16px;
+            }
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-opt-tin.btn-square-2cm {
+                grid-column: auto;
+            }
+            #step0 .menu-item-btn.btn-square-2cm .btn-icon {
+                width: clamp(24px, 2.4vw, 40px);
+                height: clamp(24px, 2.4vw, 40px);
+                font-size: clamp(16px, 1.6vw, 26px);
+            }
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-square-2cm .btn-content {
+                gap: clamp(3px, 0.6vh, 8px);
+            }
+            #step0 .comment-section-wrapper { width: 100%; max-width: 1280px; margin-left: auto; margin-right: auto; }
+        }
+
+
+        /* lower the logo a little so it is not hugging the top edge */
+        @media screen and (min-width: 768px) {
+            #step0 .menu-logo-wrap { margin-top: clamp(10px, 2.8vh, 32px); }
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-square-2cm { height: clamp(56px, 13.4vh, 148px); }
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-opt-map.btn-square-2cm { height: clamp(52px, 11.4vh, 128px); }
+        }
+
+
+        /* logo lowered by ~5 cm; tiles now shrink to the space that is left */
+        @media screen and (min-width: 768px) {
+            #step0 { overflow-y: auto; }
+            #step0 .menu-logo-wrap { margin-top: calc(clamp(10px, 2.8vh, 32px) + min(5cm, 22vh)); }
+
+            #step0 .menu-options-container.grid-mode {
+                display: grid !important;
+                grid-template-columns: repeat(12, 1fr) !important;
+                grid-template-rows: minmax(0, 128px) repeat(3, minmax(0, 150px));
+                align-content: center;
+                justify-content: stretch;
+                min-height: 300px;
+                overflow: visible;
+            }
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-square-2cm {
+                grid-column: span 2;
+                flex: none;
+                width: 100%;
+                height: 100%;
+                min-height: 0;
+            }
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-opt-map.btn-square-2cm { grid-column: 1 / -1; }
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-opt-tin.btn-square-2cm { grid-column: 6 / span 2; }
+            #step0 .menu-options-container.grid-mode .menu-break { display: none; }
+        }
+
+
+        /* buttons sit right under the logo (no gap) */
+        @media screen and (min-width: 768px) {
+            #step0 .menu-logo-wrap { margin-bottom: 6px; }
+            #step0 .menu-meta-row { gap: 12px; }
+            #step0 > p { margin: 4px 0 0 0 !important; }
+            #step0 .menu-options-container.grid-mode {
+                align-content: start;
+                margin-top: 8px;
+            }
+        }
+
+
+        /* live pill: live now | today total */
+        .live-sep { width: 1px; height: 16px; background: rgba(16,185,129,0.55); margin: 0 4px; }
+
+        @media screen and (min-width: 768px) {
+            /* MAIN MENU label on top, live pill right under it */
+            #step0 .menu-meta-row { flex-direction: column; gap: 6px; }
+
+            /* smaller buttons (about two steps down) */
+            #step0 .menu-options-container.grid-mode {
+                max-width: 1000px;
+                grid-template-rows: minmax(0, 88px) repeat(3, minmax(0, 104px));
+            }
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-square-2cm {
+                font-size: clamp(11px, 0.95vw, 14px);
+                border-radius: 12px;
+            }
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-opt-map.btn-square-2cm {
+                font-size: clamp(14px, 1.4vw, 20px);
+            }
+            #step0 .menu-item-btn.btn-square-2cm .btn-icon {
+                width: clamp(22px, 2vw, 32px);
+                height: clamp(22px, 2vw, 32px);
+                font-size: clamp(14px, 1.3vw, 21px);
+            }
+            #step0 .comment-section-wrapper { max-width: 1000px; }
+            /* every tile (incl. Draw the Map) fills exactly its grid row, so rows never overlap */
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-opt-map.btn-square-2cm,
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-square-2cm { height: 100%; }
+        }
+
+
+        /* DESKTOP: Draw the Map is exactly 2x the height of every other button */
+        @media screen and (min-width: 768px) {
+            #step0 .menu-options-container.grid-mode {
+                grid-template-rows: minmax(0, 2fr) repeat(3, minmax(0, 1fr));
+                max-height: calc(520px + 3 * clamp(8px, 1.5vh, 16px));
+            }
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-opt-map.btn-square-2cm {
+                font-size: clamp(18px, 2vw, 28px);
+            }
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-opt-map.btn-square-2cm .btn-icon {
+                width: clamp(32px, 3.4vw, 52px);
+                height: clamp(32px, 3.4vw, 52px);
+                font-size: clamp(20px, 2.2vw, 34px);
+            }
+        }
+
+
+        /* DESKTOP: Draw the Map = 2x the width AND 2x the height of a normal button (a 2x2 block, centered) */
+        @media screen and (min-width: 768px) {
+            #step0 .menu-options-container.grid-mode {
+                grid-template-rows: repeat(5, minmax(0, 1fr));
+                max-height: calc(520px + 4 * clamp(8px, 1.5vh, 16px));
+            }
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-opt-map.btn-square-2cm {
+                grid-column: 5 / span 4;
+                grid-row: 1 / span 2;
+            }
+            /* normal buttons start on row 3 */
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-opt-regbike.btn-square-2cm {
+                grid-column: 1 / span 2;
+                grid-row: 3;
+            }
+        }
+
+
+        /* keep the cells beside the 2x2 Draw the Map block empty, so the other buttons start on row 3 in order */
+        @media screen and (min-width: 768px) {
+            #step0 .menu-options-container.grid-mode::before,
+            #step0 .menu-options-container.grid-mode::after {
+                content: "";
+                grid-row: 1 / span 2;
+                pointer-events: none;
+            }
+            #step0 .menu-options-container.grid-mode::before { grid-column: 1 / span 4; }
+            #step0 .menu-options-container.grid-mode::after  { grid-column: 9 / span 4; }
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-opt-regbike.btn-square-2cm {
+                grid-column: span 2;
+                grid-row: auto;
+            }
+        }
+
+
+        /* DESKTOP: Draw the Map has the SAME width as the other buttons, 2x the height, centered */
+        @media screen and (min-width: 768px) {
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-opt-map.btn-square-2cm {
+                grid-column: 6 / span 2;
+                grid-row: 1 / span 2;
+            }
+            #step0 .menu-options-container.grid-mode::before { grid-column: 1 / span 5; }
+            #step0 .menu-options-container.grid-mode::after  { grid-column: 8 / span 5; }
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-opt-map.btn-square-2cm .btn-content {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+
+
+        @media screen and (min-width: 768px) {
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-opt-map.btn-square-2cm {
+                font-size: clamp(13px, 1.2vw, 19px);
+                padding: 6px 8px;
+                text-align: center;
+            }
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-opt-map.btn-square-2cm .btn-content span:last-child {
+                white-space: normal;
+                line-height: 1.15;
+            }
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-opt-map.btn-square-2cm .btn-icon {
+                width: clamp(30px, 2.8vw, 46px);
+                height: clamp(30px, 2.8vw, 46px);
+                font-size: clamp(18px, 1.9vw, 30px);
+            }
+        }
+
+
+        /* DESKTOP: Draw the Map = 2x the width, SAME height as the other buttons (centered on its own row) */
+        @media screen and (min-width: 768px) {
+            #step0 .menu-options-container.grid-mode {
+                grid-template-rows: repeat(4, minmax(0, 1fr));
+                max-height: calc(416px + 3 * clamp(8px, 1.5vh, 16px));
+            }
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-opt-map.btn-square-2cm {
+                grid-column: 5 / span 4;
+                grid-row: 1;
+                font-size: clamp(14px, 1.3vw, 20px);
+            }
+            #step0 .menu-options-container.grid-mode::before,
+            #step0 .menu-options-container.grid-mode::after { grid-row: 1; }
+            #step0 .menu-options-container.grid-mode::before { grid-column: 1 / span 4; }
+            #step0 .menu-options-container.grid-mode::after  { grid-column: 9 / span 4; }
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-opt-map.btn-square-2cm .btn-content {
+                flex-direction: row;
+                gap: 12px;
+            }
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-opt-map.btn-square-2cm .btn-icon {
+                width: clamp(24px, 2.2vw, 36px);
+                height: clamp(24px, 2.2vw, 36px);
+                font-size: clamp(15px, 1.5vw, 24px);
+            }
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-opt-map.btn-square-2cm .btn-content span:last-child {
+                white-space: nowrap;
+            }
+        }
+
+
+        /* DESKTOP: Draw the Map = 1.5x the width of the other buttons, same height, centered */
+        @media screen and (min-width: 768px) {
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-opt-map.btn-square-2cm {
+                grid-column: 5 / span 4;
+                justify-self: center;
+                width: calc((100% - clamp(8px, 1.5vh, 16px)) * 0.75);
+                font-size: clamp(13px, 1.15vw, 18px);
+            }
+        }
+
+
+        /* all menu buttons use the REG BIKE colour */
+        #menuContainer .menu-item-btn { --c: #1a7aa8; }
+
+
+        /* DESKTOP: logo frame = 2x taller and 1.5x wider than before; the logo scales evenly inside it (no stretching) */
+        @media screen and (min-width: 768px) {
+            #step0 .menu-logo-wrap {
+                --lh: clamp(46px, 9vh, 104px);
+                box-sizing: border-box;
+                width: calc(1.5 * (var(--lh) * 2.738 + 56px));
+                max-width: 90%;
+                height: calc(2 * (var(--lh) + 16px));
+                padding: 8px 28px;
+            }
+            #step0 .menu-logo {
+                height: 100%;
+                width: auto;
+                max-width: 100%;
+                object-fit: contain;
+            }
+        }
+
+
+        /* the 5cm drop only uses space that is really free, so the bigger logo never pushes the buttons off screen */
+        @media screen and (min-width: 768px) {
+            #step0 .menu-logo-wrap { margin-top: calc(clamp(10px, 2.8vh, 32px) + min(5cm, max(0px, calc(100vh - 720px)))); }
+        }
+
+
+        /* DESKTOP: every button is as big as Draw the Map (5 per row), all the same size */
+        @media screen and (min-width: 768px) {
+            #step0 .menu-options-container.grid-mode {
+                grid-template-columns: repeat(10, 1fr) !important;
+                grid-template-rows: repeat(4, minmax(0, 1fr));
+                max-width: 1280px;
+                max-height: calc(416px + 3 * clamp(8px, 1.5vh, 16px));
+            }
+            #step0 .menu-options-container.grid-mode::before { grid-column: 1 / span 4; grid-row: 1; }
+            #step0 .menu-options-container.grid-mode::after  { grid-column: 7 / span 4; grid-row: 1; }
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-square-2cm {
+                grid-column: span 2;
+                grid-row: auto;
+                width: 100%;
+                justify-self: stretch;
+                font-size: clamp(13px, 1.15vw, 18px);
+            }
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-opt-map.btn-square-2cm {
+                grid-column: 5 / span 2;
+                grid-row: 1;
+                width: 100%;
+            }
+            /* last row: FILE TRACKING | GET THE TIN NO | MY REPORT, centered */
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-opt-filetrack.btn-square-2cm { grid-column: 3 / span 2; }
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-opt-tin.btn-square-2cm { grid-column: span 2; }
+            #step0 .menu-item-btn.btn-square-2cm .btn-icon {
+                width: clamp(24px, 2.2vw, 36px);
+                height: clamp(24px, 2.2vw, 36px);
+                font-size: clamp(15px, 1.5vw, 24px);
+            }
+            #step0 .comment-section-wrapper { max-width: 1280px; }
+        }
+
+
+        /* DESKTOP: menu scaled up another x1.5 (wider column, taller rows, bigger text and icons) */
+        @media screen and (min-width: 768px) {
+            #step0 { --rowh: clamp(56px, 12.5vh, 156px); }
+            #step0 .menu-options-container.grid-mode {
+                max-width: 1920px;
+                grid-template-rows: repeat(4, minmax(0, var(--rowh)));
+                max-height: calc(4 * 156px + 3 * clamp(8px, 1.5vh, 16px));
+            }
+            #step0 .comment-section-wrapper { max-width: 1920px; }
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-square-2cm {
+                font-size: clamp(16px, 1.7vw, 27px);
+                border-radius: 16px;
+            }
+            #step0 .menu-item-btn.btn-square-2cm .btn-icon {
+                width: clamp(34px, 3.2vw, 54px);
+                height: clamp(34px, 3.2vw, 54px);
+                font-size: clamp(22px, 2.3vw, 36px);
+            }
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-square-2cm .btn-content {
+                gap: clamp(4px, 0.8vh, 10px);
+            }
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-opt-map.btn-square-2cm .btn-content { gap: 14px; }
+            #step0 .menu-item-btn .new-badge { font-size: clamp(11px, 1vw, 15px); padding: 4px 10px; }
+            /* the 5cm drop only uses leftover space */
+            #step0 .menu-logo-wrap { margin-top: calc(clamp(10px, 2.8vh, 32px) + min(5cm, max(0px, calc(100vh - 1150px)))); }
+        }
+
+
+        @media screen and (min-width: 768px) {
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-opt-map.btn-square-2cm { font-size: clamp(16px, 1.7vw, 27px); }
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-opt-map.btn-square-2cm .btn-icon {
+                width: clamp(34px, 3.2vw, 54px);
+                height: clamp(34px, 3.2vw, 54px);
+                font-size: clamp(22px, 2.3vw, 36px);
+            }
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-opt-map.btn-square-2cm .btn-content {
+                flex-direction: column;
+                gap: clamp(4px, 0.8vh, 10px);
+            }
+        }
+
+
+        /* ===== GLASSY BUTTONS ===== */
+        #step0 {
+            background-color: #ffffff;
+            background-image:
+                radial-gradient(520px 360px at 12% 18%, rgba(37,170,225,0.22), transparent 70%),
+                radial-gradient(560px 380px at 88% 24%, rgba(127,182,63,0.20), transparent 70%),
+                radial-gradient(620px 420px at 50% 96%, rgba(37,170,225,0.16), transparent 70%);
+        }
+        #menuContainer .menu-item-btn {
+            position: relative;
+            isolation: isolate;
+            background:
+                linear-gradient(150deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.06) 42%, rgba(255,255,255,0) 100%),
+                linear-gradient(160deg, rgba(26,122,168,0.88), rgba(14,88,128,0.78));
+            -webkit-backdrop-filter: blur(14px) saturate(170%);
+            backdrop-filter: blur(14px) saturate(170%);
+            border: 1.5px solid rgba(255,255,255,0.62);
+            box-shadow:
+                0 10px 26px rgba(14,88,128,0.30),
+                0 2px 6px rgba(15,23,42,0.16),
+                inset 0 1.5px 0 rgba(255,255,255,0.75),
+                inset 0 -14px 22px rgba(255,255,255,0.08);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.35);
+            transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+        }
+        /* glossy highlight across the top half */
+        #menuContainer .menu-item-btn::before {
+            content: "";
+            position: absolute;
+            left: 0; right: 0; top: 0; height: 52%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.42), rgba(255,255,255,0.04));
+            border-radius: inherit;
+            border-bottom-left-radius: 60% 28%;
+            border-bottom-right-radius: 60% 28%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        #menuContainer .menu-item-btn .btn-content,
+        #menuContainer .menu-item-btn .btn-inline-loader { position: relative; z-index: 1; }
+        #menuContainer .menu-item-btn .btn-icon {
+            background: rgba(255,255,255,0.22);
+            border: 1px solid rgba(255,255,255,0.45);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+        }
+        #menuContainer .menu-item-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.08) saturate(1.1);
+            box-shadow:
+                0 16px 34px rgba(14,88,128,0.38),
+                0 3px 8px rgba(15,23,42,0.18),
+                inset 0 1.5px 0 rgba(255,255,255,0.85),
+                inset 0 -14px 22px rgba(255,255,255,0.10);
+        }
+        #menuContainer .menu-item-btn:active { transform: translateY(0); filter: brightness(0.97); }
+        /* Draw the Map keeps its gold rim */
+        #menuContainer .menu-item-btn.btn-opt-map {
+            border: 2px solid rgba(212,175,55,0.95);
+            box-shadow:
+                0 0 0 1px rgba(245,215,110,0.9),
+                0 0 16px rgba(212,175,55,0.65),
+                0 10px 26px rgba(14,88,128,0.30),
+                inset 0 1.5px 0 rgba(255,255,255,0.8),
+                inset 0 -14px 22px rgba(255,255,255,0.08);
+        }
+        #menuContainer .menu-item-btn .new-badge { z-index: 3; }
+
+
+        /* richer glass colour + nothing clipped on narrow desktop windows */
+        #menuContainer .menu-item-btn {
+            background:
+                linear-gradient(150deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.05) 42%, rgba(255,255,255,0) 100%),
+                linear-gradient(160deg, rgba(22,118,170,0.95), rgba(10,84,128,0.90));
+        }
+        #menuContainer .menu-item-btn::before { background: linear-gradient(180deg, rgba(255,255,255,0.30), rgba(255,255,255,0.03)); }
+        @media screen and (min-width: 768px) {
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-square-2cm,
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-opt-map.btn-square-2cm { font-size: clamp(10px, 1.7vw, 27px); }
+            #step0 .menu-options-container.grid-mode .menu-item-btn.btn-square-2cm .btn-content span:last-child {
+                white-space: normal;
+                text-align: center;
+                line-height: 1.1;
+            }
+            #step0 .menu-item-btn.btn-square-2cm .btn-icon {
+                width: clamp(24px, 3.2vw, 54px);
+                height: clamp(24px, 3.2vw, 54px);
+                font-size: clamp(15px, 2.3vw, 36px);
+            }
+        }
+
+
+        /* MAIN MENU label + LIVE USERS pill: same glass look as the buttons */
+        #step0 .menu-badge,
+        #step0 .live-status-box {
+            position: relative;
+            isolation: isolate;
+            overflow: hidden;
+            background:
+                linear-gradient(150deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.05) 42%, rgba(255,255,255,0) 100%),
+                linear-gradient(160deg, rgba(22,118,170,0.95), rgba(10,84,128,0.90));
+            -webkit-backdrop-filter: blur(14px) saturate(170%);
+            backdrop-filter: blur(14px) saturate(170%);
+            border: 1.5px solid rgba(255,255,255,0.62);
+            box-shadow:
+                0 8px 20px rgba(14,88,128,0.28),
+                0 2px 5px rgba(15,23,42,0.14),
+                inset 0 1.5px 0 rgba(255,255,255,0.75),
+                inset 0 -10px 16px rgba(255,255,255,0.08);
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.35);
+        }
+        #step0 .menu-badge::before,
+        #step0 .live-status-box::before {
+            content: "";
+            position: absolute;
+            left: 0; right: 0; top: 0; height: 52%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.30), rgba(255,255,255,0.03));
+            border-radius: inherit;
+            pointer-events: none;
+            z-index: 0;
+        }
+        #step0 .menu-badge { padding: 5px 18px; border-radius: 22px; }
+        #step0 .live-status-box > * { position: relative; z-index: 1; }
+        #step0 .live-status-box .live-text { color: #fff; }
+        #step0 .live-status-box .live-count-num {
+            background: rgba(255,255,255,0.22);
+            border: 1px solid rgba(255,255,255,0.5);
+            color: #fff;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.55);
+        }
+        #step0 .live-status-box .live-sep { background: rgba(255,255,255,0.55); }
+        #step0 .live-status-box .green-led { box-shadow: 0 0 8px 2px rgba(74,222,128,0.9); background-color: #4ade80; }
+
         .comment-section-wrapper {
             margin-top: 15px;
             padding-top: 12px;
@@ -1221,6 +1709,166 @@
             filter: brightness(1.15);
             box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3);
         }
+
+        /* LEAVE A COMMENT: same glass look as the menu buttons */
+        #step0 .btn-opt-comment-glowing {
+            position: relative;
+            isolation: isolate;
+            overflow: hidden;
+            background:
+                linear-gradient(150deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.05) 42%, rgba(255,255,255,0) 100%),
+                linear-gradient(160deg, rgba(22,118,170,0.95), rgba(10,84,128,0.90));
+            -webkit-backdrop-filter: blur(14px) saturate(170%);
+            backdrop-filter: blur(14px) saturate(170%);
+            border: 1.5px solid rgba(255,255,255,0.62);
+            border-radius: 16px;
+            box-shadow:
+                0 10px 26px rgba(14,88,128,0.30),
+                0 2px 6px rgba(15,23,42,0.16),
+                inset 0 1.5px 0 rgba(255,255,255,0.75),
+                inset 0 -14px 22px rgba(255,255,255,0.08);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.35);
+            animation: none;
+            transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+        }
+        #step0 .btn-opt-comment-glowing::before {
+            display: block;
+            content: "";
+            position: absolute;
+            left: 0; right: 0; top: 0; height: 52%;
+            width: auto;
+            background: linear-gradient(180deg, rgba(255,255,255,0.30), rgba(255,255,255,0.03));
+            border-radius: inherit;
+            border-bottom-left-radius: 60% 28%;
+            border-bottom-right-radius: 60% 28%;
+            pointer-events: none;
+            z-index: 0;
+            transform: none;
+            animation: none;
+        }
+        #step0 .btn-opt-comment-glowing .btn-content,
+        #step0 .btn-opt-comment-glowing .btn-inline-loader { position: relative; z-index: 1; }
+        #step0 .btn-opt-comment-glowing:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255,255,255,0.8);
+            background:
+                linear-gradient(150deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.05) 42%, rgba(255,255,255,0) 100%),
+                linear-gradient(160deg, rgba(22,118,170,0.95), rgba(10,84,128,0.90));
+            filter: brightness(1.08) saturate(1.1);
+            box-shadow:
+                0 16px 34px rgba(14,88,128,0.38),
+                0 3px 8px rgba(15,23,42,0.18),
+                inset 0 1.5px 0 rgba(255,255,255,0.85),
+                inset 0 -14px 22px rgba(255,255,255,0.10);
+        }
+        #step0 .btn-opt-comment-glowing:active { transform: translateY(0); filter: brightness(0.97); }
+
+        /* ===== GLASS LOOK for every button inside the Draw-the-Map screens (map page + wizard steps) ===== */
+        .container .controls .btn-start,
+        .container .controls .btn-live,
+        .container .controls .btn-route,
+        .container .controls .btn-print,
+        .container .controls .btn-save,
+        .container .header-btn-group .btn-home-floating,
+        .container .header-btn-group .btn-help-floating,
+        #wizardModal .modal-btn,
+        #wizardModal .btn-curr-loc {
+            position: relative;
+            isolation: isolate;
+            overflow: hidden;
+            color: #fff;
+            background:
+                linear-gradient(150deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.05) 42%, rgba(255,255,255,0) 100%),
+                linear-gradient(160deg, rgba(22,118,170,0.95), rgba(10,84,128,0.90));
+            -webkit-backdrop-filter: blur(14px) saturate(170%);
+            backdrop-filter: blur(14px) saturate(170%);
+            border: 1.5px solid rgba(255,255,255,0.62);
+            box-shadow:
+                0 8px 20px rgba(14,88,128,0.30),
+                0 2px 5px rgba(15,23,42,0.16),
+                inset 0 1.5px 0 rgba(255,255,255,0.75),
+                inset 0 -10px 16px rgba(255,255,255,0.08);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.35);
+            animation: none;
+            transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+        }
+        /* glossy highlight (sits under the text) */
+        .container .controls .btn-start::before,
+        .container .controls .btn-live::before,
+        .container .controls .btn-route::before,
+        .container .controls .btn-print::before,
+        .container .controls .btn-save::before,
+        .container .header-btn-group .btn-home-floating::before,
+        .container .header-btn-group .btn-help-floating::before,
+        #wizardModal .modal-btn::before,
+        #wizardModal .btn-curr-loc::before {
+            content: "";
+            position: absolute;
+            left: 0; right: 0; top: 0; height: 52%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.32), rgba(255,255,255,0.03));
+            border-radius: inherit;
+            border-bottom-left-radius: 60% 28%;
+            border-bottom-right-radius: 60% 28%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .container .controls .btn-start:hover,
+        .container .controls .btn-live:hover,
+        .container .controls .btn-route:hover,
+        .container .controls .btn-print:hover,
+        .container .controls .btn-save:hover,
+        .container .header-btn-group .btn-home-floating:hover,
+        .container .header-btn-group .btn-help-floating:hover,
+        #wizardModal .modal-btn:hover,
+        #wizardModal .btn-curr-loc:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.08) saturate(1.1);
+            color: #fff;
+            background:
+                linear-gradient(150deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.05) 42%, rgba(255,255,255,0) 100%),
+                linear-gradient(160deg, rgba(22,118,170,0.95), rgba(10,84,128,0.90));
+            box-shadow:
+                0 14px 30px rgba(14,88,128,0.38),
+                0 3px 8px rgba(15,23,42,0.18),
+                inset 0 1.5px 0 rgba(255,255,255,0.85),
+                inset 0 -10px 16px rgba(255,255,255,0.10);
+        }
+        .container .controls .btn-start:active,
+        .container .controls .btn-live:active,
+        .container .controls .btn-route:active,
+        .container .controls .btn-print:active,
+        .container .controls .btn-save:active,
+        .container .header-btn-group .btn-home-floating:active,
+        .container .header-btn-group .btn-help-floating:active,
+        #wizardModal .modal-btn:active,
+        #wizardModal .btn-curr-loc:active { transform: translateY(0); filter: brightness(0.97); }
+
+        /* secondary buttons (Back / Home) a little lighter and greyer */
+        #wizardModal .modal-btn.btn-nav-secondary {
+            background:
+                linear-gradient(150deg, rgba(255,255,255,0.26) 0%, rgba(255,255,255,0.05) 42%, rgba(255,255,255,0) 100%),
+                linear-gradient(160deg, rgba(100,128,160,0.92), rgba(62,86,116,0.90));
+        }
+        /* warning confirm button keeps its red meaning */
+        #distanceAlertModal .btn-alert-ok {
+            position: relative; isolation: isolate; overflow: hidden;
+            color: #fff;
+            background:
+                linear-gradient(150deg, rgba(255,255,255,0.26) 0%, rgba(255,255,255,0.05) 42%, rgba(255,255,255,0) 100%),
+                linear-gradient(160deg, rgba(225,29,72,0.95), rgba(159,18,57,0.92));
+            -webkit-backdrop-filter: blur(14px) saturate(170%);
+            backdrop-filter: blur(14px) saturate(170%);
+            border: 1.5px solid rgba(255,255,255,0.62);
+            box-shadow: 0 8px 20px rgba(159,18,57,0.32), inset 0 1.5px 0 rgba(255,255,255,0.75), inset 0 -10px 16px rgba(255,255,255,0.08);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.35);
+        }
+        #distanceAlertModal .btn-alert-ok::before {
+            content: ""; position: absolute; left: 0; right: 0; top: 0; height: 52%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.32), rgba(255,255,255,0.03));
+            border-radius: inherit; border-bottom-left-radius: 60% 28%; border-bottom-right-radius: 60% 28%;
+            pointer-events: none; z-index: -1;
+        }
+        #wizardModal .btn-curr-loc:disabled { opacity: 0.6; }
 </style>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -1284,6 +1932,9 @@
             <div class="green-led"></div>
             <span class="live-text">LIVE USERS:</span>
             <span class="live-count-num" id="liveUserCount">1</span>
+            <span class="live-sep"></span>
+            <span class="live-text">TODAY TOTAL:</span>
+            <span class="live-count-num" id="todayTotalCount">--</span>
         </div>
         </div>
 
@@ -1402,14 +2053,6 @@
                 </span>
             </a>
 
-            <a href="https://gmaphnbf.github.io/myreport/" target="_blank" class="menu-item-btn btn-opt-myreport btn-square-2cm external-link">
-                <span class="btn-content">
-                    <span class="btn-icon">📊</span><span>MY REPORT</span>
-                </span>
-                <span class="btn-inline-loader">
-                    <span class="mini-spinner"></span> Opening...
-                </span>
-            </a>
             <a href="https://eservices.ird.gov.lk/Registration/verifyirdinformation/index" target="_blank" class="menu-item-btn btn-opt-tin btn-square-2cm external-link">
                 <span class="btn-content">
                     <span class="btn-icon">🪪</span><span>GET THE TIN NO</span>
@@ -1418,6 +2061,16 @@
                     <span class="mini-spinner"></span> Opening...
                 </span>
             </a>
+
+            <a href="https://gmaphnbf.github.io/myreport/" target="_blank" class="menu-item-btn btn-opt-myreport btn-square-2cm external-link">
+                <span class="btn-content">
+                    <span class="btn-icon">📊</span><span>MY REPORT</span>
+                </span>
+                <span class="btn-inline-loader">
+                    <span class="mini-spinner"></span> Opening...
+                </span>
+            </a>
+
 
         </div>
 
@@ -1648,6 +2301,30 @@
         db = firebase.database();
     } catch(e) { console.warn('Firebase unavailable:', e); }
 
+    // Today's total visitors (each browser is counted once per day)
+    function setupDailyTotal() {
+        if (!db) return;
+        const d = new Date();
+        const key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        const ref = db.ref('daily/' + key);
+        const el = document.getElementById('todayTotalCount');
+
+        let alreadyCounted = false;
+        try { alreadyCounted = localStorage.getItem('hnbf_counted_day') === key; } catch (e) {}
+
+        if (!alreadyCounted) {
+            ref.transaction((n) => (n || 0) + 1, (err, committed) => {
+                if (!err && committed) {
+                    try { localStorage.setItem('hnbf_counted_day', key); } catch (e) {}
+                }
+            });
+        }
+
+        ref.on('value', (snap) => {
+            if (el) el.innerText = snap.val() || 0;
+        }, () => { if (el) el.innerText = '--'; });
+    }
+
     function setupRealtimePresence() {
         if (!db) return;
         const mySessionRef = db.ref('status/' + Date.now() + "_" + Math.random().toString(36).substr(2, 5));
@@ -1659,6 +2336,8 @@
                 mySessionRef.onDisconnect().remove();
             }
         });
+
+        setupDailyTotal();
 
         db.ref('status').on('value', (snap) => {
             const activeCount = snap.numChildren();
