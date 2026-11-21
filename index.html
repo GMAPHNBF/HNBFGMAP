@@ -546,6 +546,56 @@
         }
         .menu-item-btn.loading .new-badge { display: none; }
 
+
+        /* ===== DESKTOP: menu fills the full view ===== */
+        @media screen and (min-width: 768px) {
+            #step0 { width: 96%; max-width: 1200px; }
+
+            /* grid mode: 6 equal buttons per row, full width; last row stays centered */
+            .menu-options-container.grid-mode { gap: 12px; }
+            .menu-options-container.grid-mode .menu-item-btn.btn-square-2cm {
+                flex: 0 0 calc((100% - 5 * 12px) / 6);
+                width: calc((100% - 5 * 12px) / 6);
+                min-width: 0;
+                height: 2cm;
+                font-size: 14px;
+                padding: 6px 10px;
+            }
+            /* Draw the Map: full-width bar on top */
+            .menu-options-container.grid-mode .menu-item-btn.btn-opt-map.btn-square-2cm {
+                flex: 0 0 100%;
+                width: 100%;
+                font-size: 18px;
+                margin-bottom: 0;
+            }
+            .menu-options-container.grid-mode .menu-item-btn.btn-square-2cm .btn-content {
+                flex-direction: column;
+                gap: 6px;
+            }
+            .menu-options-container.grid-mode .menu-item-btn.btn-opt-map.btn-square-2cm .btn-content {
+                flex-direction: row;
+                gap: 12px;
+            }
+            .menu-options-container.grid-mode .menu-item-btn.btn-square-2cm .btn-icon {
+                width: 32px; height: 32px; font-size: 22px;
+            }
+            .menu-item-btn .new-badge { font-size: 10px; padding: 3px 8px; }
+
+            /* list mode: one full-width row per button */
+            .menu-options-container.list-mode .menu-item-btn.btn-square-2cm {
+                width: 100%;
+                min-width: 0;
+                height: auto;
+                min-height: 1.4cm;
+                font-size: 14px;
+            }
+            .menu-options-container.list-mode .menu-item-btn.btn-square-2cm .btn-content {
+                flex-direction: row;
+                justify-content: flex-start;
+                gap: 12px;
+            }
+        }
+
         .comment-section-wrapper {
             margin-top: 15px;
             padding-top: 12px;
