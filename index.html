@@ -463,6 +463,89 @@
         /* new brand new bike button color */
         .btn-opt-bike { --c: #0b5e7a; }
 
+
+        /* REG BIKE & UR BIKE: 2cm x 2cm square buttons */
+        .menu-item-btn.btn-square-2cm,
+        .menu-options-container.list-mode .menu-item-btn.btn-square-2cm {
+            width: 2cm;
+            height: 2cm;
+            min-width: 2cm;
+            min-height: 2cm;
+            padding: 4px;
+            justify-self: center;
+            font-size: 10px;
+            line-height: 1.1;
+            text-align: center;
+        }
+        .menu-item-btn.btn-square-2cm .btn-content,
+        .menu-options-container.list-mode .menu-item-btn.btn-square-2cm .btn-content {
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 3px;
+            width: 100%;
+        }
+        .menu-item-btn.btn-square-2cm .btn-icon { height: 24px; width: 24px; font-size: 16px; }
+
+
+        /* all menu buttons: 2cm squares, packed in a wrapping grid */
+        .menu-options-container.grid-mode {
+            grid-template-columns: repeat(auto-fill, 2cm) !important;
+            justify-content: center;
+        }
+        .menu-item-btn.btn-square-2cm { word-break: break-word; overflow-wrap: anywhere; }
+
+
+        /* Draw the Map: gold border, alone on the top row */
+        .menu-item-btn.btn-opt-map.btn-square-2cm {
+            border: 2px solid #d4af37;
+            box-shadow: 0 0 0 1px #f5d76e, 0 0 10px rgba(212, 175, 55, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            grid-column: 1 / -1;
+            justify-self: center;
+            margin-bottom: 4px;
+        }
+        .menu-options-container.grid-mode { align-content: start; gap: 10px; }
+
+
+        /* balanced layout: Draw the Map alone on top, other rows centered (last button sits in the middle) */
+        .menu-options-container.grid-mode {
+            display: flex !important;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+        .menu-break { display: none; }
+        .menu-options-container.grid-mode .menu-break { display: block; flex-basis: 100%; height: 0; margin: 0; }
+        .menu-item-btn.btn-square-2cm { flex: 0 0 2cm; }
+        .menu-item-btn .btn-update {
+            display: block;
+            font-size: 7px;
+            font-weight: 600;
+            line-height: 1.05;
+            opacity: 0.9;
+            margin-top: 1px;
+        }
+
+
+        /* "New" badge: top-right corner of REG BIKE */
+        .menu-item-btn.btn-square-2cm { position: relative; }
+        .menu-item-btn .new-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #e11d48;
+            color: #fff;
+            font-size: 8px;
+            font-weight: 800;
+            line-height: 1;
+            padding: 2px 5px;
+            border-radius: 0 12px 0 8px;
+            letter-spacing: 0.3px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.35);
+            z-index: 2;
+        }
+        .menu-item-btn.loading .new-badge { display: none; }
+
         .comment-section-wrapper {
             margin-top: 15px;
             padding-top: 12px;
@@ -1020,7 +1103,7 @@
         <p style="color:#666; font-size:12px; margin-bottom: 8px;">Select an option to proceed:</p>
         
         <div class="menu-options-container grid-mode" id="menuContainer">
-            <button class="menu-item-btn btn-opt-map btn-full-width" onclick="openMapWithAnimation(event)">
+            <button class="menu-item-btn btn-opt-map btn-square-2cm" onclick="openMapWithAnimation(event)">
                 <span class="btn-content">
                     <span class="btn-icon">🗺️</span><span>Draw the Map</span>
                 </span>
@@ -1028,8 +1111,29 @@
                     <span class="mini-spinner"></span> Loading...
                 </span>
             </button>
+            <div class="menu-break"></div>
+
+            <a href="https://gmaphnbf.github.io/regbike/" target="_blank" class="menu-item-btn btn-opt-regbike btn-square-2cm external-link">
+                <span class="new-badge">New</span>
+                <span class="btn-content">
+                    <span class="btn-icon">🏍️</span><span>REG BIKE</span>
+                </span>
+                <span class="btn-inline-loader">
+                    <span class="mini-spinner"></span> Opening...
+                </span>
+            </a>
+
             
-            <a href="https://gmaphnbf.github.io/LESINGCAL/" target="_blank" class="menu-item-btn btn-opt-lesing-cal external-link">
+            <a href="https://gmaphnbf.github.io/URBIKE/" target="_blank" class="menu-item-btn btn-opt-bike btn-square-2cm external-link">
+                <span class="btn-content">
+                    <span class="btn-icon">🏍️</span><span>UR BIKE</span>
+                </span>
+                <span class="btn-inline-loader">
+                    <span class="mini-spinner"></span> Opening...
+                </span>
+            </a>
+            
+            <a href="https://gmaphnbf.github.io/LESINGCAL/" target="_blank" class="menu-item-btn btn-opt-lesing-cal btn-square-2cm external-link">
                 <span class="btn-content">
                     <span class="btn-icon">🧮</span><span>LESING CAL</span>
                 </span>
@@ -1038,7 +1142,7 @@
                 </span>
             </a>
             
-            <a href="https://gmaphnbf.github.io/pdf-editor/" target="_blank" class="menu-item-btn btn-opt-pdf external-link">
+            <a href="https://gmaphnbf.github.io/pdf-editor/" target="_blank" class="menu-item-btn btn-opt-pdf btn-square-2cm external-link">
                 <span class="btn-content">
                     <span class="btn-icon">📝</span><span>Edit PDF</span>
                 </span>
@@ -1047,7 +1151,7 @@
                 </span>
             </a>
             
-            <a href="https://gmaphnbf.github.io/3WH3/" target="_blank" class="menu-item-btn btn-opt-3w external-link">
+            <a href="https://gmaphnbf.github.io/3WH3/" target="_blank" class="menu-item-btn btn-opt-3w btn-square-2cm external-link">
                 <span class="btn-content">
                     <span class="btn-icon">🛺</span><span>3W Price List</span>
                 </span>
@@ -1056,7 +1160,7 @@
                 </span>
             </a>
             
-            <a href="https://gmaphnbf.github.io/NICTODOB/" target="_blank" class="menu-item-btn btn-opt-nic external-link">
+            <a href="https://gmaphnbf.github.io/NICTODOB/" target="_blank" class="menu-item-btn btn-opt-nic btn-square-2cm external-link">
                 <span class="btn-content">
                     <span class="btn-icon">🪪</span><span>NIC TO DOB</span>
                 </span>
@@ -1065,7 +1169,7 @@
                 </span>
             </a>
             
-            <a href="https://gmaphnbf.github.io/HNBFFD/" target="_blank" class="menu-item-btn btn-opt-fixed-deposit external-link">
+            <a href="https://gmaphnbf.github.io/HNBFFD/" target="_blank" class="menu-item-btn btn-opt-fixed-deposit btn-square-2cm external-link">
                 <span class="btn-content">
                     <span class="btn-icon">🏦</span><span>FIXED DEPOSIT</span>
                 </span>
@@ -1074,7 +1178,7 @@
                 </span>
             </a>
             
-            <a href="https://gmaphnbf.github.io/gold/" target="_blank" class="menu-item-btn btn-opt-gold external-link">
+            <a href="https://gmaphnbf.github.io/gold/" target="_blank" class="menu-item-btn btn-opt-gold btn-square-2cm external-link">
                 <span class="btn-content">
                     <span class="btn-icon">🥇</span><span>GOLD LOAN</span>
                 </span>
@@ -1083,16 +1187,8 @@
                 </span>
             </a>
             
-            <a href="https://gmaphnbf.github.io/regbike/" target="_blank" class="menu-item-btn btn-opt-regbike external-link">
-                <span class="btn-content">
-                    <span class="btn-icon">🏍️</span><span>REG BIKE</span>
-                </span>
-                <span class="btn-inline-loader">
-                    <span class="mini-spinner"></span> Opening...
-                </span>
-            </a>
             
-            <a href="https://gmaphnbf.github.io/-LKR-to-Words/" target="_blank" class="menu-item-btn btn-opt-lkr external-link">
+            <a href="https://gmaphnbf.github.io/-LKR-to-Words/" target="_blank" class="menu-item-btn btn-opt-lkr btn-square-2cm external-link">
                 <span class="btn-content">
                     <span class="btn-icon">💰</span><span>LKR TO WORDS</span>
                 </span>
@@ -1101,7 +1197,7 @@
                 </span>
             </a>
             
-            <a href="https://gmaphnbf.github.io/link/" target="_blank" class="menu-item-btn btn-opt-hnbf-link external-link">
+            <a href="https://gmaphnbf.github.io/link/" target="_blank" class="menu-item-btn btn-opt-hnbf-link btn-square-2cm external-link">
                 <span class="btn-content">
                     <span class="btn-icon">🔗</span><span>HNBF LINK</span>
                 </span>
@@ -1110,7 +1206,7 @@
                 </span>
             </a>
 
-            <a href="https://gmaphnbf.github.io/filetrack/" target="_blank" class="menu-item-btn btn-opt-filetrack external-link">
+            <a href="https://gmaphnbf.github.io/filetrack/" target="_blank" class="menu-item-btn btn-opt-filetrack btn-square-2cm external-link">
                 <span class="btn-content">
                     <span class="btn-icon">📁</span><span>FILE TRACKING</span>
                 </span>
@@ -1119,7 +1215,7 @@
                 </span>
             </a>
 
-            <a href="https://gmaphnbf.github.io/myreport/" target="_blank" class="menu-item-btn btn-opt-myreport external-link">
+            <a href="https://gmaphnbf.github.io/myreport/" target="_blank" class="menu-item-btn btn-opt-myreport btn-square-2cm external-link">
                 <span class="btn-content">
                     <span class="btn-icon">📊</span><span>MY REPORT</span>
                 </span>
@@ -1127,7 +1223,7 @@
                     <span class="mini-spinner"></span> Opening...
                 </span>
             </a>
-            <a href="https://eservices.ird.gov.lk/Registration/verifyirdinformation/index" target="_blank" class="menu-item-btn btn-opt-tin external-link">
+            <a href="https://eservices.ird.gov.lk/Registration/verifyirdinformation/index" target="_blank" class="menu-item-btn btn-opt-tin btn-square-2cm external-link">
                 <span class="btn-content">
                     <span class="btn-icon">🪪</span><span>GET THE TIN NO</span>
                 </span>
@@ -1136,15 +1232,6 @@
                 </span>
             </a>
 
-            <!-- NEW: Brand New Bike button (URBIKE link) -->
-            <a href="https://gmaphnbf.github.io/URBIKE/" target="_blank" class="menu-item-btn btn-opt-bike external-link">
-                <span class="btn-content">
-                    <span class="btn-icon">🏍️</span><span>Brand New Bike</span>
-                </span>
-                <span class="btn-inline-loader">
-                    <span class="mini-spinner"></span> Opening...
-                </span>
-            </a>
         </div>
 
         <div class="comment-section-wrapper">
