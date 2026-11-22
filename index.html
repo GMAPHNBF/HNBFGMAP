@@ -2502,23 +2502,44 @@
         db = firebase.database();
     } catch(e) { console.warn('Firebase unavailable:', e); }
 
-    // Today's total visitors (each browser is counted once per day)
+    // ===== LIVE USERS + TODAY TOTAL (fixed) =====
+    // Day key uses Sri Lanka time so everyone shares the same "day"
+    function todayKeyLK() {
+        try {
+            // en-CA gives YYYY-MM-DD
+            return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Colombo', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+        } catch (e) {
+            const d = new Date(Date.now() + (5.5 * 3600 + new Date().getTimezoneOffset() * 60) * 1000);
+            return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        }
+    }
+    function getFlag(k) {
+        try { if (localStorage.getItem(k)) return localStorage.getItem(k); } catch (e) {}
+        try { if (sessionStorage.getItem(k)) return sessionStorage.getItem(k); } catch (e) {}
+        const m = document.cookie.match(new RegExp('(?:^|; )' + k + '=([^;]*)'));
+        return m ? decodeURIComponent(m[1]) : null;
+    }
+    function setFlag(k, v) {
+        try { localStorage.setItem(k, v); } catch (e) {}
+        try { sessionStorage.setItem(k, v); } catch (e) {}
+        try { document.cookie = k + '=' + encodeURIComponent(v) + '; max-age=172800; path=/; SameSite=Lax'; } catch (e) {}
+    }
+
+    // Today's total visitors (each browser counted once per Sri Lanka day)
+    var _dailyStarted = false;
     function setupDailyTotal() {
-        if (!db) return;
-        const d = new Date();
-        const key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        if (!db || _dailyStarted) return;
+        _dailyStarted = true;
+        const key = todayKeyLK();
         const ref = db.ref('daily/' + key);
         const el = document.getElementById('todayTotalCount');
 
-        let alreadyCounted = false;
-        try { alreadyCounted = localStorage.getItem('hnbf_counted_day') === key; } catch (e) {}
-
-        if (!alreadyCounted) {
+        if (getFlag('hnbf_counted_day') !== key) {
+            // mark first so a fast reload cannot double count
+            setFlag('hnbf_counted_day', key);
             ref.transaction((n) => (n || 0) + 1, (err, committed) => {
-                if (!err && committed) {
-                    try { localStorage.setItem('hnbf_counted_day', key); } catch (e) {}
-                }
-            });
+                if (err || !committed) setFlag('hnbf_counted_day', ''); // retry next load
+            }, false);
         }
 
         ref.on('value', (snap) => {
@@ -2526,25 +2547,50 @@
         }, () => { if (el) el.innerText = '--'; });
     }
 
+    // Live users: heartbeat + stale filter, so closed/killed tabs never stay counted
+    var HEARTBEAT_MS = 20000;
+    var STALE_MS = 60000;
     function setupRealtimePresence() {
         if (!db) return;
-        const mySessionRef = db.ref('status/' + Date.now() + "_" + Math.random().toString(36).substr(2, 5));
+        const mySessionRef = db.ref('status/' + Date.now() + "_" + Math.random().toString(36).substr(2, 8));
         const connectedRef = db.ref('.info/connected');
+        let serverOffset = 0;
+        let hbTimer = null;
+        const countEl = document.getElementById('liveUserCount');
+
+        db.ref('.info/serverTimeOffset').on('value', (s) => { serverOffset = s.val() || 0; render(); });
+
+        function beat() { mySessionRef.set({ t: firebase.database.ServerValue.TIMESTAMP }).catch(() => {}); }
 
         connectedRef.on('value', (snap) => {
             if (snap.val() === true) {
-                mySessionRef.set(true);
                 mySessionRef.onDisconnect().remove();
+                beat();
+                clearInterval(hbTimer);
+                hbTimer = setInterval(() => { if (!document.hidden) beat(); }, HEARTBEAT_MS);
             }
         });
+        document.addEventListener('visibilitychange', () => { if (!document.hidden) beat(); });
+        window.addEventListener('pagehide', () => { try { mySessionRef.remove(); } catch (e) {} });
+        window.addEventListener('pageshow', (e) => { if (e.persisted) beat(); });
+
+        let lastSnap = null;
+        function render() {
+            if (!lastSnap || !countEl) return;
+            const now = Date.now() + serverOffset;
+            let n = 0;
+            lastSnap.forEach((c) => {
+                const v = c.val();
+                const t = (v && typeof v === 'object') ? v.t : null;
+                if (t && (now - t) < STALE_MS) n++;
+                else if (t && (now - t) >= STALE_MS * 3) { try { c.ref.remove(); } catch (e) {} } // clean ghosts
+            });
+            countEl.innerText = n || 1;
+        }
+        db.ref('status').on('value', (snap) => { lastSnap = snap; render(); });
+        setInterval(render, 15000); // re-evaluate so idle/hidden tabs expire
 
         setupDailyTotal();
-
-        db.ref('status').on('value', (snap) => {
-            const activeCount = snap.numChildren();
-            const countEl = document.getElementById('liveUserCount');
-            if (countEl) countEl.innerText = activeCount || 1;
-        });
     }
 
     var helpLink = "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=Xqpfvj37g0mkFC1mBArnbxYIJwbXtbVCsCZt4u4BQp1UNzdGMUVBUFhWSTlHUEFaS05aMFYxSUxXTC4u";
