@@ -2068,6 +2068,31 @@
         .lp-main { font-size: 18px; font-weight: 800; letter-spacing: .3px; margin-top: 3px; white-space: nowrap; }
         .lp-go { margin-left: auto; font-size: 22px; font-weight: 800; opacity: .9; transition: transform .18s ease; }
         .lp-opt:hover .lp-go { transform: translateX(3px); }
+
+        /* ===== compact popup buttons + Branch Network button ===== */
+        .logo-pop { width: 250px; padding: 11px 11px 10px 11px; border-radius: 18px; }
+        .lp-head { font-size: 10px; margin-bottom: 8px; }
+        .lp-opt { padding: 6px 10px; gap: 9px; border-radius: 13px; width: 100%; box-sizing: border-box; font-family: inherit; text-align: left; }
+        .lp-opt + .lp-opt { margin-top: 7px; }
+        .lp-ico { flex: 0 0 30px; width: 30px; height: 30px; font-size: 16px; border-radius: 10px; }
+        .lp-lbl { font-size: 8.5px; letter-spacing: 1.2px; }
+        .lp-main { font-size: 14px; margin-top: 2px; }
+        .lp-go { font-size: 18px; }
+        button.lp-opt { appearance: none; -webkit-appearance: none; }
+        .lp-net {
+            background: linear-gradient(150deg, rgba(255,255,255,0.26), rgba(255,255,255,0) 60%), linear-gradient(160deg, rgba(240,150,40,0.97), rgba(200,100,10,0.94));
+            box-shadow: 0 8px 20px rgba(200,100,10,0.30), inset 0 1.5px 0 rgba(255,255,255,0.75), inset 0 -10px 16px rgba(255,255,255,0.08);
+        }
+
+        /* ===== popup buttons: 2cm x 2cm squares in a row ===== */
+        .logo-pop { width: auto; max-width: calc(100vw - 20px); box-sizing: border-box; }
+        .logo-pop .lp-btns { display: flex; justify-content: center; gap: 8px; }
+        .logo-pop .lp-opt { width: 2cm; height: 2cm; padding: 4px; margin: 0 !important; flex-direction: column; justify-content: center; align-items: center; gap: 3px; text-align: center; border-radius: 14px; }
+        .logo-pop .lp-ico { flex: 0 0 auto; width: 28px; height: 28px; font-size: 16px; }
+        .logo-pop .lp-txt { align-items: center; text-align: center; }
+        .logo-pop .lp-lbl { display: none; }
+        .logo-pop .lp-main { font-size: 10px; margin-top: 0; white-space: normal; line-height: 1.1; }
+        .logo-pop .lp-go { display: none; }
         @media print { .logo-pop { display: none !important; } }
 </style>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -2393,7 +2418,61 @@
         { coords: "7.941634644241745, 81.00467699508937", name: "Polonnaruwa Branch" },
          { coords: "8.041077127686375, 80.59573852804351", name: "Kekirawa Branch" },
         { coords: "8.752836592116736, 80.49977930613323", name: "Vavuniya Branch" },
-        { coords: "6.974354840865456, 80.767439222699983", name: "Nuwara Eliya Branch" }
+        { coords: "6.974354840865456, 80.767439222699983", name: "Nuwara Eliya Branch" },
+        { coords: "7.291991,81.675223", name: "Ampara Branch" },
+        { coords: "7.671389,81.045817", name: "Dehiattakandiya Branch" },
+        { coords: "7.41264,81.82708", name: "Kalmunai Branch" },
+        { coords: "6.873833,81.829991", name: "Pothuvil Branch" },
+        { coords: "6.9889891,81.0575151", name: "Badulla Branch" },
+        { coords: "6.834947,80.984194", name: "Bandarawela Branch" },
+        { coords: "6.905361,80.911091", name: "Welimada Branch" },
+        { coords: "7.712978,81.697387", name: "Batticaloa Branch" },
+        { coords: "6.948458,80.214369", name: "Avissawella Branch" },
+        { coords: "6.912686,79.877457", name: "Borella Branch" },
+        { coords: "6.841101,80.000516", name: "Homagama Branch" },
+        { coords: "6.978051,79.926337", name: "Kiribathgoda (Kandy Road) Branch" },
+        { coords: "6.8473819,79.9262808", name: "Maharagama Branch" },
+        { coords: "6.80054,79.92382", name: "Piliyandala Branch" },
+        { coords: "6.23857,80.05409", name: "Ambalangoda Branch" },
+        { coords: "6.035814,80.220424", name: "Galle Branch" },
+        { coords: "6.291256,80.16291", name: "Pitigala Branch" },
+        { coords: "7.207159,79.839858", name: "Negombo Branch" },
+        { coords: "7.148464,80.098805", name: "Nittambuwa Branch" },
+        { coords: "6.122625,81.024725", name: "Ambalantota Branch" },
+        { coords: "6.046663,80.733267", name: "Beliatta Branch" },
+        { coords: "6.274324,81.285401", name: "Thissamaharamaya Branch" },
+        { coords: "9.799675,80.195925", name: "Nelliyadi Branch" },
+        { coords: "6.714204,79.988745", name: "Bandaragama Branch" },
+        { coords: "6.718656,80.057925", name: "Horana Branch" },
+        { coords: "6.595392,79.95906", name: "Kalutara Branch" },
+        { coords: "6.522254,80.117955", name: "Mathugama Branch" },
+        { coords: "6.712463,79.908611", name: "Panadura Branch" },
+        { coords: "7.274194,80.612633", name: "Kandy Branch" },
+        { coords: "7.314015,80.632192", name: "Katugastota Branch" },
+        { coords: "7.055165,80.532945", name: "Nawalapitiya Branch" },
+        { coords: "7.145681,80.7841933", name: "Rikillagaskada Branch" },
+        { coords: "7.253504,80.35008", name: "Kegalle Branch" },
+        { coords: "9.383411,80.387242", name: "Kilinochchi Branch" },
+        { coords: "7.468245,80.036057", name: "Kuliyapitiya Branch" },
+        { coords: "7.485828,80.367058", name: "Kurunegala Branch" },
+        { coords: "7.48991,80.359706", name: "Kurunegala Metro Branch" },
+        { coords: "7.753197,80.114321", name: "Nikaweratiya Branch" },
+        { coords: "8.976725,79.914002", name: "Mannar Branch" },
+        { coords: "7.466007,80.623705", name: "Matale Branch" },
+        { coords: "5.946822,80.531458", name: "Matara Branch" },
+        { coords: "6.261636,80.491317", name: "Morawaka Branch" },
+        { coords: "6.864345,81.344866", name: "Moneragala Branch" },
+        { coords: "9.134886,80.311371", name: "Mallavi Branch" },
+        { coords: "9.269338,80.814979", name: "Mullaitivu Branch" },
+        { coords: "9.061649,80.661106", name: "Nedunkerni Branch" },
+        { coords: "6.894507,80.595823", name: "Hatton Branch" },
+        { coords: "7.1015525,80.8519721", name: "Walapane Branch" },
+        { coords: "7.411774,79.830987", name: "Marawila Branch" },
+        { coords: "7.328866,79.845168", name: "Wennappuwa Branch" },
+        { coords: "6.649213,80.698313", name: "Balangoda Branch" },
+        { coords: "6.331227,80.856887", name: "Embilipitiya Branch" },
+        { coords: "6.682706,80.41038", name: "Ratnapura Branch" },
+        { coords: "8.364787,81.003653", name: "Kantale Branch" }
     ];
 
     let selectedBranchCoords = "8.335351,80.411615";
@@ -2860,17 +2939,27 @@
 
 <div class="logo-pop" id="logoPop" role="dialog" aria-label="Contact HNB Finance">
     <div class="lp-head">HNB <span>FINANCE</span> &middot; How can we help?</div>
+    <div class="lp-btns">
     <a class="lp-opt lp-web" href="https://www.hnbfinance.lk" target="_blank" rel="noopener noreferrer">
         <span class="lp-ico"><span>🌐</span></span>
-        <span class="lp-txt"><span class="lp-lbl">Visit our website</span><span class="lp-main">hnbfinance.lk</span></span>
+        <span class="lp-txt"><span class="lp-lbl">Visit our website</span><span class="lp-main">Website</span></span>
         <span class="lp-go">&rsaquo;</span>
     </a>
     <a class="lp-opt lp-call" href="tel:+94112024848">
         <span class="lp-ico"><span>📞</span></span>
-        <span class="lp-txt"><span class="lp-lbl">Hotline &middot; tap to call</span><span class="lp-main">011 202 4848</span></span>
+        <span class="lp-txt"><span class="lp-lbl">Hotline &middot; tap to call</span><span class="lp-main">Call<br>011 202 4848</span></span>
         <span class="lp-go">&rsaquo;</span>
     </a>
+    <button type="button" class="lp-opt lp-net" id="lpBranchNet" aria-label="Branch Network">
+        <span class="lp-ico"><span>📍</span></span>
+        <span class="lp-txt"><span class="lp-lbl">Find us near you</span><span class="lp-main">Branch Network</span></span>
+        <span class="lp-go">&rsaquo;</span>
+    </button>
+    </div>
 </div>
+<script>
+(function(){var b=document.getElementById('lpBranchNet');if(b)b.addEventListener('click',function(){window.open(atob('aHR0cHM6Ly9nbWFwaG5iZi5naXRodWIuaW8vQlJBQ0gtTkVUV09SSy8='),'_blank','noopener');});})();
+</script>
 <script>
 (function () {
     var pop = document.getElementById('logoPop');
