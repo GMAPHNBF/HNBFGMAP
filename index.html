@@ -2094,7 +2094,41 @@
         .logo-pop .lp-main { font-size: 10px; margin-top: 0; white-space: normal; line-height: 1.1; }
         .logo-pop .lp-go { display: none; }
         @media print { .logo-pop { display: none !important; } }
-</style>
+
+        /* ===== USAGE STATS (clickable live pill + chart modal) ===== */
+        #step0 .live-status-box.has-stats { cursor: pointer; -webkit-tap-highlight-color: transparent; transition: transform .15s ease, filter .15s ease; }
+        #step0 .live-status-box.has-stats:hover { filter: brightness(1.08); }
+        #step0 .live-status-box.has-stats:active { transform: scale(0.97); }
+        .live-chart-ico { font-size: 13px; line-height: 1; }
+
+        #usageModal { z-index: 100500; display: none; }
+        #usageModal .usage-box {
+            width: min(94vw, 560px); max-height: 92vh; overflow-y: auto;
+            background: #fff; border-radius: 18px; padding: 18px 16px 16px;
+            box-shadow: 0 20px 50px rgba(15,23,42,0.35); position: relative;
+            font-family: inherit; color: #0f172a;
+        }
+        #usageModal .usage-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 4px; }
+        #usageModal .usage-title { font-size: 17px; font-weight: 800; margin: 0; color: #0a5480; }
+        #usageModal .usage-close { border: 0; background: #eef2f7; width: 32px; height: 32px; border-radius: 50%; font-size: 16px; cursor: pointer; color: #334155; }
+        #usageModal .usage-sub { font-size: 11.5px; color: #64748b; margin: 0 0 12px; }
+        #usageModal .usage-tabs { display: flex; gap: 6px; background: #eef2f7; padding: 4px; border-radius: 12px; margin-bottom: 12px; }
+        #usageModal .usage-tab {
+            flex: 1; border: 0; background: transparent; padding: 8px 4px; border-radius: 9px;
+            font-weight: 700; font-size: 13px; color: #475569; cursor: pointer; transition: all .15s ease;
+        }
+        #usageModal .usage-tab.active { background: linear-gradient(160deg, #1676aa, #0a5480); color: #fff; box-shadow: 0 3px 8px rgba(10,84,128,0.35); }
+        #usageModal .usage-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+        #usageModal .usage-stat { background: #f1f7fb; border: 1px solid #d8e8f2; border-radius: 12px; padding: 8px 6px; text-align: center; }
+        #usageModal .usage-stat b { display: block; font-size: 18px; color: #0a5480; font-family: monospace; }
+        #usageModal .usage-stat span { font-size: 10.5px; color: #64748b; text-transform: uppercase; letter-spacing: .5px; font-weight: 700; }
+        #usageModal .usage-chart-wrap { background: #fbfdff; border: 1px solid #e2ebf3; border-radius: 12px; padding: 8px 4px 4px; overflow-x: auto; }
+        #usageModal .usage-chart-wrap svg { display: block; width: 100%; height: auto; min-width: 360px; }
+        #usageModal .usage-msg { text-align: center; color: #64748b; font-size: 13px; padding: 40px 10px; }
+        #usageModal .usage-detail { margin-top: 10px; text-align: center; font-size: 13px; font-weight: 700; color: #0a5480; min-height: 18px; }
+        #usageModal .usage-bar { cursor: pointer; transition: opacity .15s ease; }
+        #usageModal .usage-bar:hover { opacity: .8; }
+    </style>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js"></script>
@@ -2345,6 +2379,30 @@
         <label>Enter target location coordinates (Lat, Lng):</label>
         <input type="text" id="modalDestCoords" placeholder="e.g. 8.3512, 80.4021">
         <p style="font-size: 11px; color: #888; margin-top: 15px;">(Or click directly on the map after selecting OK)</p>
+    </div>
+</div>
+
+
+<!-- USAGE STATS MODAL -->
+<div class="modal-overlay no-print" id="usageModal" onclick="if(event.target===this)closeUsageStats()">
+    <div class="usage-box" role="dialog" aria-modal="true" aria-label="Usage statistics">
+        <div class="usage-head">
+            <h3 class="usage-title">📊 Usage Statistics</h3>
+            <button class="usage-close" onclick="closeUsageStats()" aria-label="Close">✕</button>
+        </div>
+        <p class="usage-sub">Unique visitors per day, grouped by week / month / year (Sri Lanka time)</p>
+        <div class="usage-tabs">
+            <button class="usage-tab active" data-mode="weekly" onclick="setUsageMode('weekly')">Weekly</button>
+            <button class="usage-tab" data-mode="monthly" onclick="setUsageMode('monthly')">Monthly</button>
+            <button class="usage-tab" data-mode="yearly" onclick="setUsageMode('yearly')">Yearly</button>
+        </div>
+        <div class="usage-stats">
+            <div class="usage-stat"><b id="usTotal">--</b><span>Total</span></div>
+            <div class="usage-stat"><b id="usAvg">--</b><span>Average</span></div>
+            <div class="usage-stat"><b id="usPeak">--</b><span>Peak</span></div>
+        </div>
+        <div class="usage-chart-wrap" id="usageChart"><div class="usage-msg">Loading…</div></div>
+        <div class="usage-detail" id="usageDetail">Tap a bar to see details</div>
     </div>
 </div>
 
@@ -3020,6 +3078,168 @@
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') hide(); });
     window.addEventListener('resize', function () { if (current && pop.classList.contains('show')) place(current); });
     window.addEventListener('scroll', hide, true);
+})();
+</script>
+
+<script>
+// ===== USAGE STATISTICS (weekly / monthly / yearly) =====
+(function () {
+    var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var dailyData = null;       // { 'YYYY-MM-DD': count }
+    var mode = 'weekly';
+    var loading = false;
+
+    function pad(n) { return String(n).padStart(2, '0'); }
+    function ymd(d) { return d.getUTCFullYear() + '-' + pad(d.getUTCMonth() + 1) + '-' + pad(d.getUTCDate()); }
+    function parseKey(k) {
+        var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(k);
+        return m ? new Date(Date.UTC(+m[1], +m[2] - 1, +m[3])) : null;
+    }
+    function todayLK() { return parseKey(typeof todayKeyLK === 'function' ? todayKeyLK() : ymd(new Date())); }
+    function mondayOf(d) {
+        var x = new Date(d.getTime()), day = (x.getUTCDay() + 6) % 7; // Mon=0
+        x.setUTCDate(x.getUTCDate() - day);
+        return x;
+    }
+
+    function buildSeries() {
+        var today = todayLK(), out = [], i;
+        var entries = Object.keys(dailyData || {}).map(function (k) {
+            var d = parseKey(k); return d ? { d: d, v: Number(dailyData[k]) || 0 } : null;
+        }).filter(Boolean);
+
+        if (mode === 'weekly') {                       // last 12 weeks
+            var start = mondayOf(today);
+            for (i = 11; i >= 0; i--) {
+                var s = new Date(start.getTime()); s.setUTCDate(s.getUTCDate() - 7 * i);
+                var e = new Date(s.getTime()); e.setUTCDate(e.getUTCDate() + 6);
+                out.push({ s: s.getTime(), e: e.getTime(), v: 0,
+                    label: pad(s.getUTCDate()) + ' ' + MONTHS[s.getUTCMonth()],
+                    full: 'Week of ' + s.getUTCDate() + ' ' + MONTHS[s.getUTCMonth()] + ' – ' + e.getUTCDate() + ' ' + MONTHS[e.getUTCMonth()] + ' ' + e.getUTCFullYear() });
+            }
+            entries.forEach(function (x) { out.forEach(function (b) { if (x.d.getTime() >= b.s && x.d.getTime() <= b.e) b.v += x.v; }); });
+        } else if (mode === 'monthly') {               // last 12 months
+            for (i = 11; i >= 0; i--) {
+                var m = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() - i, 1));
+                out.push({ y: m.getUTCFullYear(), m: m.getUTCMonth(), v: 0,
+                    label: MONTHS[m.getUTCMonth()] + (m.getUTCMonth() === 0 || i === 11 ? " '" + String(m.getUTCFullYear()).slice(2) : ''),
+                    full: MONTHS[m.getUTCMonth()] + ' ' + m.getUTCFullYear() });
+            }
+            entries.forEach(function (x) { out.forEach(function (b) { if (x.d.getUTCFullYear() === b.y && x.d.getUTCMonth() === b.m) b.v += x.v; }); });
+        } else {                                       // yearly (at least last 4 years)
+            var first = today.getUTCFullYear() - 3;
+            entries.forEach(function (x) { if (x.d.getUTCFullYear() < first) first = x.d.getUTCFullYear(); });
+            for (var y = first; y <= today.getUTCFullYear(); y++) out.push({ y: y, v: 0, label: String(y), full: 'Year ' + y });
+            entries.forEach(function (x) { out.forEach(function (b) { if (x.d.getUTCFullYear() === b.y) b.v += x.v; }); });
+        }
+        return out;
+    }
+
+    function niceMax(v) {
+        if (v <= 5) return 5;
+        var p = Math.pow(10, Math.floor(Math.log10(v))), f = v / p;
+        return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p;
+    }
+
+    function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+    function render() {
+        var box = document.getElementById('usageChart');
+        var det = document.getElementById('usageDetail');
+        if (!box) return;
+        if (dailyData === null) return;
+        var series = buildSeries();
+        var total = series.reduce(function (a, b) { return a + b.v; }, 0);
+        var peak = series.reduce(function (a, b) { return Math.max(a, b.v); }, 0);
+        var avg = series.length ? Math.round(total / series.length) : 0;
+        document.getElementById('usTotal').textContent = total.toLocaleString();
+        document.getElementById('usAvg').textContent = avg.toLocaleString();
+        document.getElementById('usPeak').textContent = peak.toLocaleString();
+        det.textContent = 'Tap a bar to see details';
+
+        var W = 520, H = 280, L = 40, R = 10, T = 18, B = 40;
+        var cw = W - L - R, ch = H - T - B, max = niceMax(peak), n = series.length;
+        var slot = cw / n, bw = Math.min(40, slot * 0.62);
+        var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' + mode + ' usage chart">';
+        svg += '<defs><linearGradient id="usBar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2aa0d8"/><stop offset="1" stop-color="#0a5480"/></linearGradient></defs>';
+        for (var g = 0; g <= 4; g++) {
+            var gy = T + ch - (ch * g / 4), gv = Math.round(max * g / 4);
+            svg += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + gy + '" y2="' + gy + '" stroke="#e2e8f0" stroke-width="1"/>';
+            svg += '<text x="' + (L - 6) + '" y="' + (gy + 4) + '" text-anchor="end" font-size="10" fill="#64748b">' + gv + '</text>';
+        }
+        series.forEach(function (b, i) {
+            var h = max ? (b.v / max) * ch : 0, x = L + slot * i + (slot - bw) / 2, y = T + ch - h;
+            var isLast = i === n - 1;
+            svg += '<g class="usage-bar" data-i="' + i + '">';
+            svg += '<rect x="' + (L + slot * i) + '" y="' + T + '" width="' + slot + '" height="' + ch + '" fill="transparent"/>';
+            svg += '<rect x="' + x + '" y="' + (b.v ? y : T + ch - 1) + '" width="' + bw + '" height="' + (b.v ? h : 1) + '" rx="4" fill="' + (isLast ? 'url(#usBar)' : '#6bb8de') + '"/>';
+            if (b.v) svg += '<text x="' + (x + bw / 2) + '" y="' + (y - 4) + '" text-anchor="middle" font-size="10" font-weight="700" fill="#0a5480">' + b.v + '</text>';
+            svg += '<text x="' + (x + bw / 2) + '" y="' + (H - B + 16) + '" text-anchor="middle" font-size="9.5" fill="#475569"' + (n > 8 && mode !== 'yearly' ? ' transform="rotate(-35 ' + (x + bw / 2) + ' ' + (H - B + 16) + ')"' : '') + '>' + esc(b.label) + '</text>';
+            svg += '</g>';
+        });
+        svg += '</svg>';
+        box.innerHTML = svg;
+        Array.prototype.forEach.call(box.querySelectorAll('.usage-bar'), function (el) {
+            el.addEventListener('click', function () {
+                var b = series[+el.getAttribute('data-i')];
+                det.textContent = b.full + ': ' + b.v.toLocaleString() + ' visitors';
+            });
+        });
+    }
+
+    function showMsg(t) {
+        var box = document.getElementById('usageChart');
+        if (box) box.innerHTML = '<div class="usage-msg">' + t + '</div>';
+        ['usTotal','usAvg','usPeak'].forEach(function (id) { var e = document.getElementById(id); if (e) e.textContent = '--'; });
+    }
+
+    function load() {
+        if (loading) return;
+        if (typeof db === 'undefined' || !db) { showMsg('Database unavailable. Please check your connection.'); return; }
+        loading = true;
+        showMsg('Loading…');
+        db.ref('daily').once('value').then(function (snap) {
+            dailyData = snap.val() || {};
+            loading = false;
+            render();
+        }).catch(function (err) {
+            loading = false;
+            console.warn('Usage stats load failed:', err);
+            showMsg('Could not load statistics.<br><small>(Check Firebase read rules for the "daily" node.)</small>');
+        });
+    }
+
+    window.openUsageStats = function () {
+        var m = document.getElementById('usageModal');
+        if (!m) return;
+        m.style.display = 'flex';
+        dailyData = null;          // always refresh on open
+        load();
+    };
+    window.closeUsageStats = function () {
+        var m = document.getElementById('usageModal'); if (m) m.style.display = 'none';
+    };
+    window.setUsageMode = function (m) {
+        mode = m;
+        Array.prototype.forEach.call(document.querySelectorAll('#usageModal .usage-tab'), function (t) {
+            t.classList.toggle('active', t.getAttribute('data-mode') === m);
+        });
+        render();
+    };
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var pill = document.querySelector('#step0 .live-status-box');
+        if (!pill) return;
+        pill.classList.add('has-stats');
+        pill.setAttribute('role', 'button');
+        pill.setAttribute('tabindex', '0');
+        pill.setAttribute('title', 'View weekly / monthly / yearly usage');
+        var ico = document.createElement('span');
+        ico.className = 'live-chart-ico'; ico.textContent = '📊';
+        pill.appendChild(ico);
+        pill.addEventListener('click', window.openUsageStats);
+        pill.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); window.openUsageStats(); } });
+    });
 })();
 </script>
 </body>
