@@ -3151,7 +3151,10 @@
         var series = buildSeries();
         var total = series.reduce(function (a, b) { return a + b.v; }, 0);
         var peak = series.reduce(function (a, b) { return Math.max(a, b.v); }, 0);
-        var avg = series.length ? Math.round(total / series.length) : 0;
+        var firstIdx = 0;
+        while (firstIdx < series.length && series[firstIdx].v === 0) firstIdx++;
+        var active = series.slice(firstIdx);   // ignore empty periods before tracking started
+        var avg = active.length ? Math.round(total / active.length) : 0;
         document.getElementById('usTotal').textContent = total.toLocaleString();
         document.getElementById('usAvg').textContent = avg.toLocaleString();
         document.getElementById('usPeak').textContent = peak.toLocaleString();
