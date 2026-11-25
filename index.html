@@ -2128,6 +2128,21 @@
         #usageModal .usage-detail { margin-top: 10px; text-align: center; font-size: 13px; font-weight: 700; color: #0a5480; min-height: 18px; }
         #usageModal .usage-bar { cursor: pointer; transition: opacity .15s ease; }
         #usageModal .usage-bar:hover { opacity: .8; }
+    
+        #usageModal .usage-metrics { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
+        #usageModal .usage-metric { border:1px solid #cfe0ec; background:#fff; color:#0a5480; padding:6px 10px; border-radius:20px; font-size:12px; font-weight:700; cursor:pointer; }
+        #usageModal .usage-metric.active { background:#0a5480; color:#fff; border-color:#0a5480; }
+        #usageModal .usage-rank { padding:6px 8px; }
+        #usageModal .rank-row { display:flex; align-items:center; gap:8px; margin:6px 0; font-size:12px; }
+        #usageModal .rank-name { flex:0 0 38%; color:#334155; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        #usageModal .rank-track { flex:1; background:#e8f1f7; border-radius:6px; height:16px; overflow:hidden; }
+        #usageModal .rank-fill { height:100%; background:linear-gradient(90deg,#2aa0d8,#0a5480); border-radius:6px; }
+        #usageModal .rank-val { flex:0 0 38px; text-align:right; font-family:monospace; font-weight:800; color:#0a5480; }
+        #usageModal .usage-csv { margin-top:10px; width:100%; border:1px solid #cfe0ec; background:#f1f7fb; color:#0a5480; border-radius:10px; padding:8px; font-weight:700; cursor:pointer; }
+        #usageModal .pin-wrap { text-align:center; padding:18px 6px 8px; }
+        #usageModal .pin-wrap input { width:80%; max-width:260px; padding:10px 12px; border:1.5px solid #cfe0ec; border-radius:10px; font-size:15px; text-align:center; }
+        #usageModal .pin-wrap button { display:block; margin:12px auto 0; padding:10px 28px; border:0; border-radius:10px; background:linear-gradient(160deg,#1676aa,#0a5480); color:#fff; font-weight:800; cursor:pointer; }
+        #usageModal .pin-err { color:#dc2626; font-size:12px; min-height:16px; margin-top:8px; font-weight:700; }
     </style>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -2390,19 +2405,35 @@
             <h3 class="usage-title">📊 Usage Statistics</h3>
             <button class="usage-close" onclick="closeUsageStats()" aria-label="Close">✕</button>
         </div>
-        <p class="usage-sub">Unique visitors per day, grouped by week / month / year (Sri Lanka time)</p>
-        <div class="usage-tabs">
-            <button class="usage-tab active" data-mode="weekly" onclick="setUsageMode('weekly')">Weekly</button>
-            <button class="usage-tab" data-mode="monthly" onclick="setUsageMode('monthly')">Monthly</button>
-            <button class="usage-tab" data-mode="yearly" onclick="setUsageMode('yearly')">Yearly</button>
+        <div id="usagePin" class="pin-wrap" style="display:none">
+            <p class="usage-sub">🔒 Admin PIN required</p>
+            <input type="password" id="usagePinInput" placeholder="Enter PIN" autocomplete="off" onkeydown="if(event.key==='Enter')submitUsagePin()">
+            <button onclick="submitUsagePin()">Unlock</button>
+            <div class="pin-err" id="usagePinErr"></div>
         </div>
-        <div class="usage-stats">
-            <div class="usage-stat"><b id="usTotal">--</b><span>Total</span></div>
-            <div class="usage-stat"><b id="usAvg">--</b><span>Average</span></div>
-            <div class="usage-stat"><b id="usPeak">--</b><span>Peak</span></div>
+        <div id="usageBody" style="display:none">
+            <p class="usage-sub">Sri Lanka time. Visitors = unique browsers per day.</p>
+            <div class="usage-metrics">
+                <button class="usage-metric active" data-metric="visitors" onclick="setUsageMetric('visitors')">👥 Visitors</button>
+                <button class="usage-metric" data-metric="features" onclick="setUsageMetric('features')">🧩 Features</button>
+                <button class="usage-metric" data-metric="branches" onclick="setUsageMetric('branches')">🏢 Branches</button>
+                <button class="usage-metric" data-metric="hours" onclick="setUsageMetric('hours')">🕒 Peak hours</button>
+            </div>
+            <div class="usage-tabs">
+                <button class="usage-tab" data-mode="daily" onclick="setUsageMode('daily')">Daily</button>
+                <button class="usage-tab active" data-mode="weekly" onclick="setUsageMode('weekly')">Weekly</button>
+                <button class="usage-tab" data-mode="monthly" onclick="setUsageMode('monthly')">Monthly</button>
+                <button class="usage-tab" data-mode="yearly" onclick="setUsageMode('yearly')">Yearly</button>
+            </div>
+            <div class="usage-stats">
+                <div class="usage-stat"><b id="usTotal">--</b><span>Total</span></div>
+                <div class="usage-stat"><b id="usAvg">--</b><span>Average</span></div>
+                <div class="usage-stat"><b id="usPeak">--</b><span>Peak</span></div>
+            </div>
+            <div class="usage-chart-wrap" id="usageChart"><div class="usage-msg">Loading…</div></div>
+            <div class="usage-detail" id="usageDetail"></div>
+            <button class="usage-csv" onclick="downloadUsageCsv()">⬇️ Download CSV</button>
         </div>
-        <div class="usage-chart-wrap" id="usageChart"><div class="usage-msg">Loading…</div></div>
-        <div class="usage-detail" id="usageDetail">Tap a bar to see details</div>
     </div>
 </div>
 
@@ -3082,167 +3113,170 @@
 </script>
 
 <script>
-// ===== USAGE STATISTICS (weekly / monthly / yearly) =====
+// ===== USAGE STATISTICS + TRACKING + ADMIN PIN =====
 (function () {
+    var PIN_HASH = "f727f09abfc55cebb66e22d4e84f33f9b8babfd948867b36cca6949657343b73";
     var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    var dailyData = null;       // { 'YYYY-MM-DD': count }
-    var mode = 'weekly';
-    var loading = false;
+    var daily = null, usage = {}, mode = 'weekly', metric = 'visitors', loading = false, csvRows = [];
+    var fails = 0, lockUntil = 0;
 
-    function pad(n) { return String(n).padStart(2, '0'); }
-    function ymd(d) { return d.getUTCFullYear() + '-' + pad(d.getUTCMonth() + 1) + '-' + pad(d.getUTCDate()); }
-    function parseKey(k) {
-        var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(k);
-        return m ? new Date(Date.UTC(+m[1], +m[2] - 1, +m[3])) : null;
+    function pad(n){return String(n).padStart(2,'0');}
+    function ymd(d){return d.getUTCFullYear()+'-'+pad(d.getUTCMonth()+1)+'-'+pad(d.getUTCDate());}
+    function parseKey(k){var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(k);return m?new Date(Date.UTC(+m[1],+m[2]-1,+m[3])):null;}
+    function todayLK(){return parseKey(todayKeyLK());}
+    function mondayOf(d){var x=new Date(d.getTime());x.setUTCDate(x.getUTCDate()-((x.getUTCDay()+6)%7));return x;}
+    function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+    function safe(s){return String(s).replace(/[.#$\[\]\/]/g,'_').trim().slice(0,60)||'unknown';}
+
+    // ---------- TRACKING ----------
+    function bump(path){ try{ if(db) db.ref(path).transaction(function(n){return (n||0)+1;}); }catch(e){} }
+    function track(kind,name){ bump('usage/'+kind+'/'+safe(name)+'/'+todayKeyLK()); }
+    function hourLK(){ try{return pad(+new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Colombo',hour:'2-digit',hour12:false}).format(new Date())%24);}catch(e){return pad(new Date().getHours());} }
+    document.addEventListener('DOMContentLoaded',function(){
+        bump('usage/hours/'+todayKeyLK()+'/'+hourLK());
+        var names={lBtn:'My Loc',rBtn:'Generate',pBtn:'Print',saveBtn:'Save PDF'};
+        document.addEventListener('click',function(e){
+            var t=e.target.closest&&e.target.closest('#lBtn,#rBtn,#pBtn,#saveBtn,.menu-item-btn');
+            if(!t) return;
+            track('features', names[t.id] || t.textContent.replace(/\s+/g,' ').trim().slice(0,40));
+        },true);
+        if(typeof window.executeDrawAndPrint==='function'){
+            var orig=window.executeDrawAndPrint;
+            window.executeDrawAndPrint=function(){
+                try{ track('features','Draw Map (wizard)'); }catch(e){}
+                return orig.apply(this,arguments);
+            };
+        }
+        // count a branch every time a route is generated (wizard, map click, Generate, My Loc)
+        if(typeof window.generateRoute==='function'){
+            var origRoute=window.generateRoute;
+            window.generateRoute=function(){
+                try{ track('branches', currentBranchName); }catch(e){}
+                return origRoute.apply(this,arguments);
+            };
+        }
+        var pill=document.querySelector('#step0 .live-status-box');
+        if(pill){
+            pill.classList.add('has-stats');pill.setAttribute('role','button');pill.setAttribute('tabindex','0');
+            var ico=document.createElement('span');ico.className='live-chart-ico';ico.textContent='📊';pill.appendChild(ico);
+            pill.addEventListener('click',window.openUsageStats);
+            pill.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();window.openUsageStats();}});
+        }
+    });
+
+    // ---------- DATA HELPERS ----------
+    function rangeCutoff(){ var n={daily:1,weekly:7,monthly:30,yearly:365}[mode]; var d=todayLK(); d.setUTCDate(d.getUTCDate()-(n-1)); return ymd(d); }
+    function sumNode(node){ var c=rangeCutoff(),t=0; Object.keys(node||{}).forEach(function(k){ if(k>=c) t+=Number(node[k])||0; }); return t; }
+    function ranking(kind){
+        var src=usage[kind]||{}; return Object.keys(src).map(function(n){return {name:n,v:sumNode(src[n])};}).filter(function(x){return x.v>0;}).sort(function(a,b){return b.v-a.v;});
     }
-    function todayLK() { return parseKey(typeof todayKeyLK === 'function' ? todayKeyLK() : ymd(new Date())); }
-    function mondayOf(d) {
-        var x = new Date(d.getTime()), day = (x.getUTCDay() + 6) % 7; // Mon=0
-        x.setUTCDate(x.getUTCDate() - day);
-        return x;
+    function hoursSeries(){
+        var c=rangeCutoff(),out=[],h; for(h=0;h<24;h++) out.push({label:pad(h),full:pad(h)+':00 – '+pad(h)+':59',v:0});
+        var src=usage.hours||{}; Object.keys(src).forEach(function(day){ if(day>=c) Object.keys(src[day]||{}).forEach(function(hh){ if(out[+hh]) out[+hh].v+=Number(src[day][hh])||0; }); });
+        return out;
     }
-
-    function buildSeries() {
-        var today = todayLK(), out = [], i;
-        var entries = Object.keys(dailyData || {}).map(function (k) {
-            var d = parseKey(k); return d ? { d: d, v: Number(dailyData[k]) || 0 } : null;
-        }).filter(Boolean);
-
-        if (mode === 'weekly') {                       // last 12 weeks
-            var start = mondayOf(today);
-            for (i = 11; i >= 0; i--) {
-                var s = new Date(start.getTime()); s.setUTCDate(s.getUTCDate() - 7 * i);
-                var e = new Date(s.getTime()); e.setUTCDate(e.getUTCDate() + 6);
-                out.push({ s: s.getTime(), e: e.getTime(), v: 0,
-                    label: pad(s.getUTCDate()) + ' ' + MONTHS[s.getUTCMonth()],
-                    full: 'Week of ' + s.getUTCDate() + ' ' + MONTHS[s.getUTCMonth()] + ' – ' + e.getUTCDate() + ' ' + MONTHS[e.getUTCMonth()] + ' ' + e.getUTCFullYear() });
-            }
-            entries.forEach(function (x) { out.forEach(function (b) { if (x.d.getTime() >= b.s && x.d.getTime() <= b.e) b.v += x.v; }); });
-        } else if (mode === 'monthly') {               // last 12 months
-            for (i = 11; i >= 0; i--) {
-                var m = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() - i, 1));
-                out.push({ y: m.getUTCFullYear(), m: m.getUTCMonth(), v: 0,
-                    label: MONTHS[m.getUTCMonth()] + (m.getUTCMonth() === 0 || i === 11 ? " '" + String(m.getUTCFullYear()).slice(2) : ''),
-                    full: MONTHS[m.getUTCMonth()] + ' ' + m.getUTCFullYear() });
-            }
-            entries.forEach(function (x) { out.forEach(function (b) { if (x.d.getUTCFullYear() === b.y && x.d.getUTCMonth() === b.m) b.v += x.v; }); });
-        } else {                                       // yearly (at least last 4 years)
-            var first = today.getUTCFullYear() - 3;
-            entries.forEach(function (x) { if (x.d.getUTCFullYear() < first) first = x.d.getUTCFullYear(); });
-            for (var y = first; y <= today.getUTCFullYear(); y++) out.push({ y: y, v: 0, label: String(y), full: 'Year ' + y });
-            entries.forEach(function (x) { out.forEach(function (b) { if (x.d.getUTCFullYear() === b.y) b.v += x.v; }); });
+    function visitorSeries(){
+        var today=todayLK(),out=[],i; var ent=Object.keys(daily||{}).map(function(k){var d=parseKey(k);return d?{d:d,v:Number(daily[k])||0}:null;}).filter(Boolean);
+        if(mode==='daily'){
+            for(i=29;i>=0;i--){var d=new Date(today.getTime());d.setUTCDate(d.getUTCDate()-i);out.push({s:d.getTime(),e:d.getTime(),v:0,label:String(d.getUTCDate()),full:d.getUTCDate()+' '+MONTHS[d.getUTCMonth()]+' '+d.getUTCFullYear()});}
+            ent.forEach(function(x){out.forEach(function(b){if(x.d.getTime()===b.s)b.v+=x.v;});});
+        } else if(mode==='weekly'){
+            var st=mondayOf(today);
+            for(i=11;i>=0;i--){var s0=new Date(st.getTime());s0.setUTCDate(s0.getUTCDate()-7*i);var e0=new Date(s0.getTime());e0.setUTCDate(e0.getUTCDate()+6);
+                out.push({s:s0.getTime(),e:e0.getTime(),v:0,label:pad(s0.getUTCDate())+' '+MONTHS[s0.getUTCMonth()],full:'Week '+s0.getUTCDate()+' '+MONTHS[s0.getUTCMonth()]+' – '+e0.getUTCDate()+' '+MONTHS[e0.getUTCMonth()]+' '+e0.getUTCFullYear()});}
+            ent.forEach(function(x){out.forEach(function(b){if(x.d.getTime()>=b.s&&x.d.getTime()<=b.e)b.v+=x.v;});});
+        } else if(mode==='monthly'){
+            for(i=11;i>=0;i--){var m=new Date(Date.UTC(today.getUTCFullYear(),today.getUTCMonth()-i,1));
+                out.push({y:m.getUTCFullYear(),m:m.getUTCMonth(),v:0,label:MONTHS[m.getUTCMonth()]+(m.getUTCMonth()===0||i===11?" '"+String(m.getUTCFullYear()).slice(2):''),full:MONTHS[m.getUTCMonth()]+' '+m.getUTCFullYear()});}
+            ent.forEach(function(x){out.forEach(function(b){if(x.d.getUTCFullYear()===b.y&&x.d.getUTCMonth()===b.m)b.v+=x.v;});});
+        } else {
+            var first=today.getUTCFullYear()-3; ent.forEach(function(x){if(x.d.getUTCFullYear()<first)first=x.d.getUTCFullYear();});
+            for(var y=first;y<=today.getUTCFullYear();y++)out.push({y:y,v:0,label:String(y),full:'Year '+y});
+            ent.forEach(function(x){out.forEach(function(b){if(x.d.getUTCFullYear()===b.y)b.v+=x.v;});});
         }
         return out;
     }
+    function niceMax(v){if(v<=5)return 5;var p=Math.pow(10,Math.floor(Math.log10(v))),f=v/p;return (f<=1?1:f<=2?2:f<=5?5:10)*p;}
 
-    function niceMax(v) {
-        if (v <= 5) return 5;
-        var p = Math.pow(10, Math.floor(Math.log10(v))), f = v / p;
-        return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p;
+    // ---------- RENDER ----------
+    function setStats(total,avg,peak){document.getElementById('usTotal').textContent=total.toLocaleString();document.getElementById('usAvg').textContent=avg.toLocaleString();document.getElementById('usPeak').textContent=peak.toLocaleString();}
+    function msg(t){var b=document.getElementById('usageChart');if(b)b.innerHTML='<div class="usage-msg">'+t+'</div>';setStats('--','--','--');csvRows=[];}
+    function drawBars(series,rot){
+        var box=document.getElementById('usageChart'),det=document.getElementById('usageDetail');
+        var peak=series.reduce(function(a,b){return Math.max(a,b.v);},0);
+        var W=520,H=280,L=40,R=10,T=18,B=44,cw=W-L-R,ch=H-T-B,max=niceMax(peak),n=series.length,slot=cw/n,bw=Math.min(40,slot*0.62);
+        var v='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="usBar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2aa0d8"/><stop offset="1" stop-color="#0a5480"/></linearGradient></defs>';
+        for(var g=0;g<=4;g++){var gy=T+ch-ch*g/4;v+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+gy+'" y2="'+gy+'" stroke="#e2e8f0"/><text x="'+(L-6)+'" y="'+(gy+4)+'" text-anchor="end" font-size="10" fill="#64748b">'+Math.round(max*g/4)+'</text>';}
+        series.forEach(function(b,i){
+            var h=max?b.v/max*ch:0,x=L+slot*i+(slot-bw)/2,y=T+ch-h,last=i===n-1,showLbl=n<=14||i%3===(n-1)%3;
+            v+='<g class="usage-bar" data-i="'+i+'"><rect x="'+(L+slot*i)+'" y="'+T+'" width="'+slot+'" height="'+ch+'" fill="transparent"/><rect x="'+x+'" y="'+(b.v?y:T+ch-1)+'" width="'+bw+'" height="'+(b.v?h:1)+'" rx="3" fill="'+(last?'url(#usBar)':'#6bb8de')+'"/>';
+            if(b.v&&n<=14)v+='<text x="'+(x+bw/2)+'" y="'+(y-4)+'" text-anchor="middle" font-size="10" font-weight="700" fill="#0a5480">'+b.v+'</text>';
+            if(showLbl)v+='<text x="'+(x+bw/2)+'" y="'+(H-B+16)+'" text-anchor="middle" font-size="9.5" fill="#475569"'+(rot?' transform="rotate(-35 '+(x+bw/2)+' '+(H-B+16)+')"':'')+'>'+esc(b.label)+'</text>';
+            v+='</g>';
+        });
+        box.innerHTML=v+'</svg>';
+        Array.prototype.forEach.call(box.querySelectorAll('.usage-bar'),function(el){el.addEventListener('click',function(){var b=series[+el.getAttribute('data-i')];det.textContent=b.full+': '+b.v.toLocaleString();});});
     }
-
-    function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
-
-    function render() {
-        var box = document.getElementById('usageChart');
-        var det = document.getElementById('usageDetail');
-        if (!box) return;
-        if (dailyData === null) return;
-        var series = buildSeries();
-        var total = series.reduce(function (a, b) { return a + b.v; }, 0);
-        var peak = series.reduce(function (a, b) { return Math.max(a, b.v); }, 0);
-        var firstIdx = 0;
-        while (firstIdx < series.length && series[firstIdx].v === 0) firstIdx++;
-        var active = series.slice(firstIdx);   // ignore empty periods before tracking started
-        var avg = active.length ? Math.round(total / active.length) : 0;
-        document.getElementById('usTotal').textContent = total.toLocaleString();
-        document.getElementById('usAvg').textContent = avg.toLocaleString();
-        document.getElementById('usPeak').textContent = peak.toLocaleString();
-        det.textContent = 'Tap a bar to see details';
-
-        var W = 520, H = 280, L = 40, R = 10, T = 18, B = 40;
-        var cw = W - L - R, ch = H - T - B, max = niceMax(peak), n = series.length;
-        var slot = cw / n, bw = Math.min(40, slot * 0.62);
-        var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' + mode + ' usage chart">';
-        svg += '<defs><linearGradient id="usBar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2aa0d8"/><stop offset="1" stop-color="#0a5480"/></linearGradient></defs>';
-        for (var g = 0; g <= 4; g++) {
-            var gy = T + ch - (ch * g / 4), gv = Math.round(max * g / 4);
-            svg += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + gy + '" y2="' + gy + '" stroke="#e2e8f0" stroke-width="1"/>';
-            svg += '<text x="' + (L - 6) + '" y="' + (gy + 4) + '" text-anchor="end" font-size="10" fill="#64748b">' + gv + '</text>';
+    function drawRank(list,unit){
+        var box=document.getElementById('usageChart');
+        if(!list.length){box.innerHTML='<div class="usage-msg">No data for this period yet.<br><small>Tracking starts from now.</small></div>';return;}
+        var top=list.slice(0,10),max=top[0].v;
+        box.innerHTML='<div class="usage-rank">'+top.map(function(x){return '<div class="rank-row"><span class="rank-name" title="'+esc(x.name)+'">'+esc(x.name)+'</span><span class="rank-track"><span class="rank-fill" style="display:block;width:'+Math.max(3,x.v/max*100)+'%"></span></span><span class="rank-val">'+x.v+'</span></div>';}).join('')+'</div>';
+    }
+    function render(){
+        if(daily===null)return;
+        var det=document.getElementById('usageDetail'); det.textContent='';
+        if(metric==='visitors'){
+            var s=visitorSeries(),total=s.reduce(function(a,b){return a+b.v;},0),peak=s.reduce(function(a,b){return Math.max(a,b.v);},0);
+            var fi=0;while(fi<s.length&&s[fi].v===0)fi++;var act=s.slice(fi),avg=act.length?Math.round(total/act.length):0;
+            setStats(total,avg,peak); drawBars(s,s.length>8&&mode!=='yearly');
+            csvRows=[['period','visitors']].concat(s.map(function(b){return [b.full,b.v];}));
+            if(s.length>=2){var cur=s[s.length-1].v,prev=s[s.length-2].v; if(prev>0){var pc=Math.round((cur-prev)/prev*100);det.textContent=(pc>=0?'▲ ':'▼ ')+Math.abs(pc)+'% vs previous period (current still in progress)';}else det.textContent='Tap a bar to see details';}
+        } else if(metric==='hours'){
+            var hs=hoursSeries(),t=hs.reduce(function(a,b){return a+b.v;},0),p=hs.reduce(function(a,b){return Math.max(a,b.v);},0);
+            setStats(t,Math.round(t/24),p); if(!t){msg('No data for this period yet.<br><small>Tracking starts from now.</small>');return;}
+            drawBars(hs,false); csvRows=[['hour','page loads']].concat(hs.map(function(b){return [b.full,b.v];}));
+            var best=hs.reduce(function(a,b){return b.v>a.v?b:a;},hs[0]); det.textContent='Busiest hour: '+best.full+' ('+best.v+')';
+        } else {
+            var r=ranking(metric),tt=r.reduce(function(a,b){return a+b.v;},0);
+            setStats(tt,r.length?Math.round(tt/r.length):0,r.length?r[0].v:0); drawRank(r);
+            csvRows=[[metric==='features'?'feature':'branch','count']].concat(r.map(function(x){return [x.name,x.v];}));
+            det.textContent={daily:'Today',weekly:'Last 7 days',monthly:'Last 30 days',yearly:'Last 365 days'}[mode]+' · top 10';
         }
-        series.forEach(function (b, i) {
-            var h = max ? (b.v / max) * ch : 0, x = L + slot * i + (slot - bw) / 2, y = T + ch - h;
-            var isLast = i === n - 1;
-            svg += '<g class="usage-bar" data-i="' + i + '">';
-            svg += '<rect x="' + (L + slot * i) + '" y="' + T + '" width="' + slot + '" height="' + ch + '" fill="transparent"/>';
-            svg += '<rect x="' + x + '" y="' + (b.v ? y : T + ch - 1) + '" width="' + bw + '" height="' + (b.v ? h : 1) + '" rx="4" fill="' + (isLast ? 'url(#usBar)' : '#6bb8de') + '"/>';
-            if (b.v) svg += '<text x="' + (x + bw / 2) + '" y="' + (y - 4) + '" text-anchor="middle" font-size="10" font-weight="700" fill="#0a5480">' + b.v + '</text>';
-            svg += '<text x="' + (x + bw / 2) + '" y="' + (H - B + 16) + '" text-anchor="middle" font-size="9.5" fill="#475569"' + (n > 8 && mode !== 'yearly' ? ' transform="rotate(-35 ' + (x + bw / 2) + ' ' + (H - B + 16) + ')"' : '') + '>' + esc(b.label) + '</text>';
-            svg += '</g>';
-        });
-        svg += '</svg>';
-        box.innerHTML = svg;
-        Array.prototype.forEach.call(box.querySelectorAll('.usage-bar'), function (el) {
-            el.addEventListener('click', function () {
-                var b = series[+el.getAttribute('data-i')];
-                det.textContent = b.full + ': ' + b.v.toLocaleString() + ' visitors';
-            });
-        });
+    }
+    function load(){
+        if(loading)return; if(typeof db==='undefined'||!db){msg('Database unavailable.');return;}
+        loading=true; msg('Loading…'); daily=null;
+        var p1=db.ref('daily').once('value'), p2=db.ref('usage').once('value').catch(function(){return null;});
+        Promise.all([p1,p2]).then(function(r){daily=r[0].val()||{};usage=(r[1]&&r[1].val())||{};loading=false;render();})
+        .catch(function(){loading=false;msg('Could not load statistics.<br><small>(Check Firebase read rules for "daily" and "usage".)</small>');});
     }
 
-    function showMsg(t) {
-        var box = document.getElementById('usageChart');
-        if (box) box.innerHTML = '<div class="usage-msg">' + t + '</div>';
-        ['usTotal','usAvg','usPeak'].forEach(function (id) { var e = document.getElementById(id); if (e) e.textContent = '--'; });
-    }
-
-    function load() {
-        if (loading) return;
-        if (typeof db === 'undefined' || !db) { showMsg('Database unavailable. Please check your connection.'); return; }
-        loading = true;
-        showMsg('Loading…');
-        db.ref('daily').once('value').then(function (snap) {
-            dailyData = snap.val() || {};
-            loading = false;
-            render();
-        }).catch(function (err) {
-            loading = false;
-            console.warn('Usage stats load failed:', err);
-            showMsg('Could not load statistics.<br><small>(Check Firebase read rules for the "daily" node.)</small>');
+    // ---------- PIN ----------
+    function hex(buf){return Array.prototype.map.call(new Uint8Array(buf),function(x){return ('0'+x.toString(16)).slice(-2);}).join('');}
+    function showView(unlocked){document.getElementById('usagePin').style.display=unlocked?'none':'block';document.getElementById('usageBody').style.display=unlocked?'block':'none';}
+    window.submitUsagePin=function(){
+        var inp=document.getElementById('usagePinInput'),err=document.getElementById('usagePinErr');
+        if(Date.now()<lockUntil){err.textContent='Too many attempts. Wait a minute.';return;}
+        if(!(window.crypto&&crypto.subtle)){err.textContent='PIN check needs HTTPS.';return;}
+        crypto.subtle.digest('SHA-256',new TextEncoder().encode(inp.value)).then(function(b){
+            if(hex(b)===PIN_HASH){try{sessionStorage.setItem('hnbf_admin','1');}catch(e){} inp.value='';err.textContent='';showView(true);load();}
+            else{fails++;inp.value='';err.textContent='Wrong PIN';if(fails>=5){lockUntil=Date.now()+60000;fails=0;}}
         });
-    }
-
-    window.openUsageStats = function () {
-        var m = document.getElementById('usageModal');
-        if (!m) return;
-        m.style.display = 'flex';
-        dailyData = null;          // always refresh on open
-        load();
     };
-    window.closeUsageStats = function () {
-        var m = document.getElementById('usageModal'); if (m) m.style.display = 'none';
+    window.openUsageStats=function(){
+        var m=document.getElementById('usageModal');if(!m)return;m.style.display='flex';
+        var ok=false;try{ok=sessionStorage.getItem('hnbf_admin')==='1';}catch(e){}
+        showView(ok); if(ok)load(); else setTimeout(function(){var i=document.getElementById('usagePinInput');if(i)i.focus();},50);
     };
-    window.setUsageMode = function (m) {
-        mode = m;
-        Array.prototype.forEach.call(document.querySelectorAll('#usageModal .usage-tab'), function (t) {
-            t.classList.toggle('active', t.getAttribute('data-mode') === m);
-        });
-        render();
+    window.closeUsageStats=function(){var m=document.getElementById('usageModal');if(m)m.style.display='none';};
+    window.setUsageMode=function(m){mode=m;Array.prototype.forEach.call(document.querySelectorAll('#usageModal .usage-tab'),function(t){t.classList.toggle('active',t.getAttribute('data-mode')===m);});render();};
+    window.setUsageMetric=function(m){metric=m;Array.prototype.forEach.call(document.querySelectorAll('#usageModal .usage-metric'),function(t){t.classList.toggle('active',t.getAttribute('data-metric')===m);});render();};
+    window.downloadUsageCsv=function(){
+        if(!csvRows.length)return;
+        var csv=csvRows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
+        var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='usage-'+metric+'-'+mode+'-'+todayKeyLK()+'.csv';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},500);
     };
-
-    document.addEventListener('DOMContentLoaded', function () {
-        var pill = document.querySelector('#step0 .live-status-box');
-        if (!pill) return;
-        pill.classList.add('has-stats');
-        pill.setAttribute('role', 'button');
-        pill.setAttribute('tabindex', '0');
-        pill.setAttribute('title', 'View weekly / monthly / yearly usage');
-        var ico = document.createElement('span');
-        ico.className = 'live-chart-ico'; ico.textContent = '📊';
-        pill.appendChild(ico);
-        pill.addEventListener('click', window.openUsageStats);
-        pill.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); window.openUsageStats(); } });
-    });
 })();
 </script>
 </body>
