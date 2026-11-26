@@ -2186,7 +2186,7 @@
     
     <div class="controls no-print">
         <button class="btn-start" onclick="openWizard()">🗺️ Draw the Map</button>
-        <div class="input-group"><input type="text" id="destCoords" placeholder="Click map or paste coordinates"></div>
+        <div class="input-group"><input type="text" id="destCoords" name="hnbf-dest-coordinates" placeholder="Click map or paste coordinates" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true"></div>
         <button class="btn-live" id="lBtn">📍 My Loc</button>
         <button class="btn-route" id="rBtn">🚀 Generate</button>
         <select id="printOption">
@@ -2957,7 +2957,7 @@
         var ctl = L.control({ position: 'topleft' });
         ctl.onAdd = function() {
             var d = L.DomUtil.create('div', 'map-search no-print');
-            d.innerHTML = '<div class="ms-row"><input type="text" id="mapSearchInput" placeholder="🔍 Search address / village…" autocomplete="off"><button class="ms-clear" id="mapSearchClear" title="Clear">✕</button><button id="mapSearchBtn" title="Search">Go</button></div><div class="ms-list" id="mapSearchList"></div>';
+            d.innerHTML = '<div class="ms-row"><input type="text" id="mapSearchInput" name="hnbf-map-search" placeholder="🔍 Search address / village…" autocomplete="off" spellcheck="false"><button class="ms-clear" id="mapSearchClear" title="Clear">✕</button><button id="mapSearchBtn" title="Search">Go</button></div><div class="ms-list" id="mapSearchList"></div>';
             L.DomEvent.disableClickPropagation(d);
             L.DomEvent.disableScrollPropagation(d);
             return d;
@@ -3074,6 +3074,7 @@
         try { initMap(); } catch(e) { console.error('Map init failed:', e); }
         try { setupRealtimePresence(); } catch(e) { console.warn(e); }
         renderBranchList("");
+        document.getElementById('destCoords').value = '';
 
         document.getElementById('wizardModal').style.display = 'flex';
         goToStep(0);
