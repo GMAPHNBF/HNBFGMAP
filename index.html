@@ -2095,6 +2095,19 @@
         .logo-pop .lp-go { display: none; }
         @media print { .logo-pop { display: none !important; } }
 
+        /* ===== MAP SEARCH BOX ===== */
+        .map-search { width: min(320px, 78vw); font-family: inherit; }
+        .map-search .ms-row { display: flex; background: #fff; border-radius: 12px; box-shadow: 0 3px 12px rgba(0,0,0,.28); overflow: hidden; }
+        .map-search input { flex: 1; min-width: 0; border: 0; outline: 0; padding: 11px 12px; font-size: 16px; color: #0f172a; background: transparent; }
+        .map-search button { border: 0; background: #0a5480; color: #fff; padding: 0 14px; font-size: 16px; cursor: pointer; }
+        .map-search .ms-clear { background: transparent; color: #64748b; padding: 0 8px; display: none; }
+        .map-search .ms-list { margin-top: 6px; background: #fff; border-radius: 12px; box-shadow: 0 3px 12px rgba(0,0,0,.28); max-height: 240px; overflow-y: auto; display: none; }
+        .map-search .ms-item { padding: 9px 12px; font-size: 13px; color: #334155; border-bottom: 1px solid #eef2f7; cursor: pointer; line-height: 1.35; }
+        .map-search .ms-item:last-child { border-bottom: 0; }
+        .map-search .ms-item:hover { background: #f1f7fb; }
+        .map-search .ms-item b { display: block; color: #0a5480; font-size: 13.5px; }
+        .map-search .ms-msg { padding: 12px; font-size: 13px; color: #64748b; text-align: center; }
+        @media print { .map-search { display: none !important; } }
         /* ===== USAGE STATS (clickable live pill + chart modal) ===== */
         #step0 .live-status-box.has-stats { cursor: pointer; -webkit-tap-highlight-color: transparent; transition: transform .15s ease, filter .15s ease; }
         #step0 .live-status-box.has-stats:hover { filter: brightness(1.08); }
@@ -2931,11 +2944,63 @@
             subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
             attribution: '© Google Maps'
         }).addTo(map);
+        addMapSearch();
         updateBranchMarker();
         map.on('click', function(e) { 
             generateRoute(e.latlng.lat.toFixed(6), e.latlng.lng.toFixed(6)); 
         });
         refreshMapSize();
+    }
+
+    var searchMarker = null;
+    function addMapSearch() {
+        var ctl = L.control({ position: 'topleft' });
+        ctl.onAdd = function() {
+            var d = L.DomUtil.create('div', 'map-search no-print');
+            d.innerHTML = '<div class="ms-row"><input type="text" id="mapSearchInput" placeholder="🔍 Search address / village…" autocomplete="off"><button class="ms-clear" id="mapSearchClear" title="Clear">✕</button><button id="mapSearchBtn" title="Search">Go</button></div><div class="ms-list" id="mapSearchList"></div>';
+            L.DomEvent.disableClickPropagation(d);
+            L.DomEvent.disableScrollPropagation(d);
+            return d;
+        };
+        ctl.addTo(map);
+        var inp = document.getElementById('mapSearchInput'), list = document.getElementById('mapSearchList'), clr = document.getElementById('mapSearchClear');
+        function esc2(t) { return String(t).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+        function showMsg(t) { list.style.display = 'block'; list.innerHTML = '<div class="ms-msg">' + t + '</div>'; }
+        function pick(lat, lon, name) {
+            list.style.display = 'none';
+            if (searchMarker) { map.removeLayer(searchMarker); searchMarker = null; }
+            generateRoute(lat.toFixed(6), lon.toFixed(6));
+            if (name) document.getElementById('targetLabel').innerText = name;
+        }
+        function doSearch() {
+            var q = inp.value.trim();
+            if (!q) { list.style.display = 'none'; return; }
+            var m = /^(-?\d{1,2}(?:\.\d+)?)\s*[,\s]\s*(-?\d{1,3}(?:\.\d+)?)$/.exec(q);
+            if (m) { var la = parseFloat(m[1]), lo = parseFloat(m[2]); map.setView([la, lo], 16); pick(la, lo, ''); return; }
+            showMsg('Searching…');
+            fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&limit=6&countrycodes=lk&accept-language=en&q=' + encodeURIComponent(q))
+            .then(function(r){ return r.json(); })
+            .then(function(res) {
+                if (!res || !res.length) { showMsg('No results found.<br><small>Try a nearby town or a different spelling.</small>'); return; }
+                list.innerHTML = res.map(function(r, i) {
+                    var parts = r.display_name.split(',');
+                    return '<div class="ms-item" data-i="' + i + '"><b>' + esc2(parts[0]) + '</b>' + esc2(parts.slice(1, 4).join(',').trim()) + '</div>';
+                }).join('');
+                list.style.display = 'block';
+                Array.prototype.forEach.call(list.querySelectorAll('.ms-item'), function(el) {
+                    el.addEventListener('click', function() {
+                        var r = res[+el.getAttribute('data-i')], lat = parseFloat(r.lat), lon = parseFloat(r.lon);
+                        map.setView([lat, lon], 16);
+                        pick(lat, lon, r.display_name.split(',').slice(0, 2).join(',').trim());
+                    });
+                });
+            })
+            .catch(function() { showMsg('Search failed. Check your internet connection.'); });
+        }
+        document.getElementById('mapSearchBtn').addEventListener('click', doSearch);
+        inp.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); doSearch(); } });
+        inp.addEventListener('input', function() { clr.style.display = inp.value ? 'block' : 'none'; if (!inp.value) list.style.display = 'none'; });
+        clr.addEventListener('click', function() { inp.value = ''; clr.style.display = 'none'; list.style.display = 'none'; inp.focus(); });
     }
 
     function updateBranchMarker() {
