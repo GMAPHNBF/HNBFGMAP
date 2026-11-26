@@ -2139,6 +2139,10 @@
         #usageModal .rank-fill { height:100%; background:linear-gradient(90deg,#2aa0d8,#0a5480); border-radius:6px; }
         #usageModal .rank-val { flex:0 0 38px; text-align:right; font-family:monospace; font-weight:800; color:#0a5480; }
         #usageModal .usage-csv { margin-top:10px; width:100%; border:1px solid #cfe0ec; background:#f1f7fb; color:#0a5480; border-radius:10px; padding:8px; font-weight:700; cursor:pointer; }
+        #usageModal .usage-range { display:flex; align-items:flex-end; gap:6px; margin-bottom:12px; }
+        #usageModal .usage-range label { flex:1; display:flex; flex-direction:column; font-size:10.5px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:.5px; min-width:0; }
+        #usageModal .usage-range input { margin-top:3px; width:100%; box-sizing:border-box; padding:7px 6px; border:1.5px solid #cfe0ec; border-radius:10px; font-size:13px; color:#0a5480; background:#fff; }
+        #usageModal .usage-range button { border:1px solid #cfe0ec; background:#f1f7fb; color:#0a5480; border-radius:10px; padding:8px 10px; font-weight:700; font-size:12px; cursor:pointer; }
         #usageModal .pin-wrap { text-align:center; padding:18px 6px 8px; }
         #usageModal .pin-wrap input { width:80%; max-width:260px; padding:10px 12px; border:1.5px solid #cfe0ec; border-radius:10px; font-size:15px; text-align:center; }
         #usageModal .pin-wrap button { display:block; margin:12px auto 0; padding:10px 28px; border:0; border-radius:10px; background:linear-gradient(160deg,#1676aa,#0a5480); color:#fff; font-weight:800; cursor:pointer; }
@@ -2424,6 +2428,11 @@
                 <button class="usage-tab active" data-mode="weekly" onclick="setUsageMode('weekly')">Weekly</button>
                 <button class="usage-tab" data-mode="monthly" onclick="setUsageMode('monthly')">Monthly</button>
                 <button class="usage-tab" data-mode="yearly" onclick="setUsageMode('yearly')">Yearly</button>
+            </div>
+            <div class="usage-range">
+                <label>From<input type="date" id="usFrom" onchange="setUsageRange()"></label>
+                <label>To<input type="date" id="usTo" onchange="setUsageRange()"></label>
+                <button onclick="clearUsageRange()">✕ Clear</button>
             </div>
             <div class="usage-stats">
                 <div class="usage-stat"><b id="usTotal">--</b><span>Total</span></div>
@@ -3165,19 +3174,30 @@
     });
 
     // ---------- DATA HELPERS ----------
-    function rangeCutoff(){ var n={daily:1,weekly:7,monthly:30,yearly:365}[mode]; var d=todayLK(); d.setUTCDate(d.getUTCDate()-(n-1)); return ymd(d); }
-    function sumNode(node){ var c=rangeCutoff(),t=0; Object.keys(node||{}).forEach(function(k){ if(k>=c) t+=Number(node[k])||0; }); return t; }
+    var customFrom='', customTo='';
+    function isCustom(){ return !!(customFrom||customTo); }
+    function rangeCutoff(){ if(isCustom()) return customFrom||'0000-00-00'; var n={daily:1,weekly:7,monthly:30,yearly:365}[mode]; var d=todayLK(); d.setUTCDate(d.getUTCDate()-(n-1)); return ymd(d); }
+    function rangeEnd(){ return isCustom()?(customTo||ymd(todayLK())):'9999-12-31'; }
+    function sumNode(node){ var c=rangeCutoff(),e=rangeEnd(),t=0; Object.keys(node||{}).forEach(function(k){ if(k>=c&&k<=e) t+=Number(node[k])||0; }); return t; }
+    function rangeLabel(){ return (customFrom||'start')+'  →  '+(customTo||ymd(todayLK())); }
     function ranking(kind){
         var src=usage[kind]||{}; return Object.keys(src).map(function(n){return {name:n,v:sumNode(src[n])};}).filter(function(x){return x.v>0;}).sort(function(a,b){return b.v-a.v;});
     }
     function hoursSeries(){
         var c=rangeCutoff(),out=[],h; for(h=0;h<24;h++) out.push({label:pad(h),full:pad(h)+':00 – '+pad(h)+':59',v:0});
-        var src=usage.hours||{}; Object.keys(src).forEach(function(day){ if(day>=c) Object.keys(src[day]||{}).forEach(function(hh){ if(out[+hh]) out[+hh].v+=Number(src[day][hh])||0; }); });
+        var e=rangeEnd(),src=usage.hours||{}; Object.keys(src).forEach(function(day){ if(day>=c&&day<=e) Object.keys(src[day]||{}).forEach(function(hh){ if(out[+hh]) out[+hh].v+=Number(src[day][hh])||0; }); });
         return out;
     }
     function visitorSeries(){
         var today=todayLK(),out=[],i; var ent=Object.keys(daily||{}).map(function(k){var d=parseKey(k);return d?{d:d,v:Number(daily[k])||0}:null;}).filter(Boolean);
-        if(mode==='daily'){
+        if(isCustom()){
+            var a=customFrom?parseKey(customFrom):null, b=customTo?parseKey(customTo):new Date(today.getTime());
+            if(!a){ a=new Date(b.getTime()); a.setUTCDate(a.getUTCDate()-29); ent.forEach(function(x){ if(x.d<a&&x.d<=b) a=new Date(x.d.getTime()); }); }
+            if(a>b){var tmp=a;a=b;b=tmp;}
+            var cnt=Math.min(366,Math.round((b-a)/864e5)+1);
+            for(i=0;i<cnt;i++){var dd=new Date(b.getTime());dd.setUTCDate(dd.getUTCDate()-(cnt-1-i));out.push({s:dd.getTime(),e:dd.getTime(),v:0,label:cnt>31?dd.getUTCDate()+' '+MONTHS[dd.getUTCMonth()]:String(dd.getUTCDate()),full:dd.getUTCDate()+' '+MONTHS[dd.getUTCMonth()]+' '+dd.getUTCFullYear()});}
+            ent.forEach(function(x){out.forEach(function(o){if(x.d.getTime()===o.s)o.v+=x.v;});});
+        } else if(mode==='daily'){
             for(i=29;i>=0;i--){var d=new Date(today.getTime());d.setUTCDate(d.getUTCDate()-i);out.push({s:d.getTime(),e:d.getTime(),v:0,label:String(d.getUTCDate()),full:d.getUTCDate()+' '+MONTHS[d.getUTCMonth()]+' '+d.getUTCFullYear()});}
             ent.forEach(function(x){out.forEach(function(b){if(x.d.getTime()===b.s)b.v+=x.v;});});
         } else if(mode==='weekly'){
@@ -3208,7 +3228,7 @@
         var v='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="usBar" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2aa0d8"/><stop offset="1" stop-color="#0a5480"/></linearGradient></defs>';
         for(var g=0;g<=4;g++){var gy=T+ch-ch*g/4;v+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+gy+'" y2="'+gy+'" stroke="#e2e8f0"/><text x="'+(L-6)+'" y="'+(gy+4)+'" text-anchor="end" font-size="10" fill="#64748b">'+Math.round(max*g/4)+'</text>';}
         series.forEach(function(b,i){
-            var h=max?b.v/max*ch:0,x=L+slot*i+(slot-bw)/2,y=T+ch-h,last=i===n-1,showLbl=n<=14||i%3===(n-1)%3;
+            var h=max?b.v/max*ch:0,x=L+slot*i+(slot-bw)/2,y=T+ch-h,last=i===n-1,step=Math.max(3,Math.ceil(n/12)),showLbl=n<=14||i%step===(n-1)%step;
             v+='<g class="usage-bar" data-i="'+i+'"><rect x="'+(L+slot*i)+'" y="'+T+'" width="'+slot+'" height="'+ch+'" fill="transparent"/><rect x="'+x+'" y="'+(b.v?y:T+ch-1)+'" width="'+bw+'" height="'+(b.v?h:1)+'" rx="3" fill="'+(last?'url(#usBar)':'#6bb8de')+'"/>';
             if(b.v&&n<=14)v+='<text x="'+(x+bw/2)+'" y="'+(y-4)+'" text-anchor="middle" font-size="10" font-weight="700" fill="#0a5480">'+b.v+'</text>';
             if(showLbl)v+='<text x="'+(x+bw/2)+'" y="'+(H-B+16)+'" text-anchor="middle" font-size="9.5" fill="#475569"'+(rot?' transform="rotate(-35 '+(x+bw/2)+' '+(H-B+16)+')"':'')+'>'+esc(b.label)+'</text>';
@@ -3231,17 +3251,17 @@
             var fi=0;while(fi<s.length&&s[fi].v===0)fi++;var act=s.slice(fi),avg=act.length?Math.round(total/act.length):0;
             setStats(total,avg,peak); drawBars(s,s.length>8&&mode!=='yearly');
             csvRows=[['period','visitors']].concat(s.map(function(b){return [b.full,b.v];}));
-            if(s.length>=2){var cur=s[s.length-1].v,prev=s[s.length-2].v; if(prev>0){var pc=Math.round((cur-prev)/prev*100);det.textContent=(pc>=0?'▲ ':'▼ ')+Math.abs(pc)+'% vs previous period (current still in progress)';}else det.textContent='Tap a bar to see details';}
+            if(isCustom()){det.textContent=rangeLabel()+' · tap a bar for details';} else if(s.length>=2){var cur=s[s.length-1].v,prev=s[s.length-2].v; if(prev>0){var pc=Math.round((cur-prev)/prev*100);det.textContent=(pc>=0?'▲ ':'▼ ')+Math.abs(pc)+'% vs previous period (current still in progress)';}else det.textContent='Tap a bar to see details';}
         } else if(metric==='hours'){
             var hs=hoursSeries(),t=hs.reduce(function(a,b){return a+b.v;},0),p=hs.reduce(function(a,b){return Math.max(a,b.v);},0);
             setStats(t,Math.round(t/24),p); if(!t){msg('No data for this period yet.<br><small>Tracking starts from now.</small>');return;}
             drawBars(hs,false); csvRows=[['hour','page loads']].concat(hs.map(function(b){return [b.full,b.v];}));
-            var best=hs.reduce(function(a,b){return b.v>a.v?b:a;},hs[0]); det.textContent='Busiest hour: '+best.full+' ('+best.v+')';
+            var best=hs.reduce(function(a,b){return b.v>a.v?b:a;},hs[0]); det.textContent=(isCustom()?rangeLabel()+' · ':'')+'Busiest hour: '+best.full+' ('+best.v+')';
         } else {
             var r=ranking(metric),tt=r.reduce(function(a,b){return a+b.v;},0);
             setStats(tt,r.length?Math.round(tt/r.length):0,r.length?r[0].v:0); drawRank(r);
             csvRows=[[metric==='features'?'feature':'branch','count']].concat(r.map(function(x){return [x.name,x.v];}));
-            det.textContent={daily:'Today',weekly:'Last 7 days',monthly:'Last 30 days',yearly:'Last 365 days'}[mode]+' · top 10';
+            det.textContent=(isCustom()?rangeLabel():{daily:'Today',weekly:'Last 7 days',monthly:'Last 30 days',yearly:'Last 365 days'}[mode])+' · top 10';
         }
     }
     function load(){
@@ -3266,16 +3286,24 @@
     };
     window.openUsageStats=function(){
         var m=document.getElementById('usageModal');if(!m)return;m.style.display='flex';
+        ['usFrom','usTo'].forEach(function(id){var el=document.getElementById(id);if(el)el.max=todayKeyLK();});
         var ok=false;try{ok=sessionStorage.getItem('hnbf_admin')==='1';}catch(e){}
         showView(ok); if(ok)load(); else setTimeout(function(){var i=document.getElementById('usagePinInput');if(i)i.focus();},50);
     };
     window.closeUsageStats=function(){var m=document.getElementById('usageModal');if(m)m.style.display='none';};
-    window.setUsageMode=function(m){mode=m;Array.prototype.forEach.call(document.querySelectorAll('#usageModal .usage-tab'),function(t){t.classList.toggle('active',t.getAttribute('data-mode')===m);});render();};
+    window.setUsageRange=function(){
+        customFrom=document.getElementById('usFrom').value||''; customTo=document.getElementById('usTo').value||'';
+        if(customFrom&&customTo&&customFrom>customTo){var t=customFrom;customFrom=customTo;customTo=t;document.getElementById('usFrom').value=customFrom;document.getElementById('usTo').value=customTo;}
+        Array.prototype.forEach.call(document.querySelectorAll('#usageModal .usage-tab'),function(t){t.classList.toggle('active',!isCustom()&&t.getAttribute('data-mode')===mode);});
+        render();
+    };
+    window.clearUsageRange=function(){document.getElementById('usFrom').value='';document.getElementById('usTo').value='';customFrom=customTo='';window.setUsageRange();};
+    window.setUsageMode=function(m){mode=m;customFrom=customTo='';var f=document.getElementById('usFrom'),t=document.getElementById('usTo');if(f)f.value='';if(t)t.value='';Array.prototype.forEach.call(document.querySelectorAll('#usageModal .usage-tab'),function(t){t.classList.toggle('active',t.getAttribute('data-mode')===m);});render();};
     window.setUsageMetric=function(m){metric=m;Array.prototype.forEach.call(document.querySelectorAll('#usageModal .usage-metric'),function(t){t.classList.toggle('active',t.getAttribute('data-metric')===m);});render();};
     window.downloadUsageCsv=function(){
         if(!csvRows.length)return;
         var csv=csvRows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
-        var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='usage-'+metric+'-'+mode+'-'+todayKeyLK()+'.csv';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},500);
+        var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='usage-'+metric+'-'+(isCustom()?(customFrom||'start')+'_to_'+(customTo||'today'):mode)+'-'+todayKeyLK()+'.csv';document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},500);
     };
 })();
 </script>
